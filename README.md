@@ -1,5 +1,7 @@
 # Restaurant
-
+## Dane autorów
+- Michał Gryglicki
+- Marcin Polewski
 
 
 ## Getting started
