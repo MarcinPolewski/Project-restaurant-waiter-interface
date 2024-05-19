@@ -12,7 +12,7 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(googletest)
 
-set(PROJECT_SOURCES address.h)
+set(PROJECT_SOURCES address.h destination.h)
 
 add_executable(testGoogle testGoogle.cpp ${PROJECT_SOURCES})
 

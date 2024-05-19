@@ -13,7 +13,7 @@ struct Address
         const std::string strt, const std::string& num, const std::string& AI = "")
         : city(cty), postalCode(post_code), street(strt), number(num), additionalInfo(AI) {}
 
-    std::string getAddress() const
+    std::string str() const
     {
         std::string output = this->street + " " + this->number + "\n" + this->postalCode + " " + this->city;
         if (additionalInfo.empty())
