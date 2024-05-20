@@ -2,6 +2,7 @@
 #include "address.h"
 #include "destination.h"
 #include "menuItem.h"
+#include "menu.h"
 
 TEST(AddressTest, create_typical)
 {
@@ -106,4 +107,20 @@ TEST(MenuItemTest, cast_beverage)
     MenuItem &item = woda;
     ASSERT_EQ(typeid(item), typeid(woda));
     ASSERT_EQ(dynamic_cast<Beverage &>(item).alcoholPercentage, 0);
+}
+
+TEST(MenuTest, initialization)
+{
+
+    std::vector<Beverage> beverages;
+    beverages.push_back(Beverage("Coca Cola", "Refreshing cola drink", 199, 0, 330));
+    beverages.push_back(Beverage("Orange Juice", "Freshly squeezed orange juice", 299, 0, 250));
+
+    std::vector<Dish> dishes;
+    dishes.push_back(Dish("Pizza", "Pizza Neapoletana", 1499, "dough, tomato sauce, cheese, toppings", 500));
+    dishes.push_back(Dish("Burger", "Burger with fries and vegetables", 1299, "beef patty, cheese, lettuce, tomato, onion", 300));
+
+    Menu menu(beverages, dishes);
+    ASSERT_EQ(menu.beverages.size(), 2);
+    ASSERT_EQ(menu.dishes.size(), 2);
 }
