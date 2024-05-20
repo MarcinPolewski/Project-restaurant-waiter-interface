@@ -24,6 +24,7 @@ struct MenuItem
 
     virtual MenuItem &get() = 0;
     unsigned int calories() { return 100; } // calculate calories based on ingredients
+    virtual ~MenuItem() = default;
 };
 
 struct Dish : public MenuItem
