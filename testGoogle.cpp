@@ -143,6 +143,6 @@ TEST(MenuTest, initialization)
     items.push_back(std::make_unique<Dish>("Pizza", "Pizza Neapoletana", category2, 1499, "dough, tomato sauce, cheese, toppings", 500));
     items.push_back(std::make_unique<Dish>("Burger", "Burger with fries and vegetables", category3, 1299, "beef patty, cheese, lettuce, tomato, onion", 300));
 
-    Menu menu(items);
-    ASSERT_EQ(items.size(), 4);
+    Menu menu = Menu(std::move(items));
+    ASSERT_EQ(menu.menuItems.size(), 4);
 }
