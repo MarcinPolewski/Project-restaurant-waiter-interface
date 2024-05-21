@@ -34,11 +34,26 @@ TEST(TableTest, occupy)
     ASSERT_EQ(tbl.occupied, true);
 }
 
-TEST(RemoteTest, typical)
+TEST(TableTest, get_typical)
+{
+    Table tbl(Table::Position(3, 5, 0), 4);
+    ASSERT_EQ(&tbl, &(tbl.get()));
+}
+
+TEST(RemoteTest, create_typical)
 {
     Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
-    Remote remote(adr);
+    Remote remote("Elzbieta Kopyto", "123456789", adr);
+    ASSERT_EQ(remote.name, "Elzbieta Kopyto");
+    ASSERT_EQ(remote.phoneNumber, "123456789");
     ASSERT_EQ(remote.address.city, "Olsztyn");
+}
+
+TEST(RemoteTest, get_typical)
+{
+    Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
+    Remote remote("Elzbieta Kopyto", "123456789", adr);
+    ASSERT_EQ(&remote, &(remote.get()));
 }
 
 TEST(DestinationTest, cast_table)
@@ -51,7 +66,7 @@ TEST(DestinationTest, cast_table)
 
 TEST(DestinationTest, cast_remote)
 {
-    Remote remote(Address("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6"));
+    Remote remote("Elzbieta Kopyto", "123456789", Address("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6"));
     Destination &dst = remote;
     ASSERT_EQ(typeid(dst), typeid(remote));
     ASSERT_EQ(dynamic_cast<Remote &>(dst).address.postalCode, "10-555");

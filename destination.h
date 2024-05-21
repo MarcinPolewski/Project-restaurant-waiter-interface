@@ -33,10 +33,12 @@ struct Table : public Destination
 
 struct Remote : public Destination
 {
+    const std::string name;
+    const std::string phoneNumber;
     const Address address;
 
-    Remote(const Address& addr)
-        : address(addr) {}
+    Remote(const std::string& nme, const std::string& pNumber, const Address& addr)
+        : name(nme), phoneNumber(pNumber), address(addr) {}
 
     Destination& get() override {return *this;}
 };
