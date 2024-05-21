@@ -143,7 +143,7 @@ TEST(MenuTest, initialization)
 
 TEST(OrderItemTest, create_typical)
 {
-    const Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
     OrderItem order1(pierogi, 1);
     ASSERT_EQ(order1.menuItem.name, "Pierogi");
     ASSERT_EQ(order1.quantity, 1);
