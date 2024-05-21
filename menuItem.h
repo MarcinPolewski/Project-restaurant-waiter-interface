@@ -22,11 +22,6 @@ struct MenuItem
     {
     }
 
-
-    // virtual const std::string& name() const = 0; // return name
-    // virtual const std::string& description() const = 0; // return description
-    // virtual unsigned int price() const = 0; // return price
-    // virtual unsigned int volume() const = 0; // return volume
     virtual std::unique_ptr<MenuItem> get() = 0;
     virtual ~MenuItem() = default;
 };
