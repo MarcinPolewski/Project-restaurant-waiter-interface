@@ -132,16 +132,16 @@ TEST(MenuItemTest, cast_beverage)
 
 TEST(MenuTest, initialization)
 {
-    std::vector<MenuItem> items;
+    std::vector<std::unique_ptr<MenuItem>> items;
 
     MenuItem::CATEGORY category1 = MenuItem::CATEGORY::coldBeverage;
-    items.push_back(Beverage("Coca Cola", "Refreshing cola drink", category1, 199, 0, 330));
-    items.push_back(Beverage("Orange Juice", "Freshly squeezed orange juice", category1, 299, 0, 250));
+    items.push_back(std::make_unique<Beverage>("Coca Cola", "Refreshing cola drink", category1, 199, 0, 330));
+    items.push_back(std::make_unique<Beverage>("Orange Juice", "Freshly squeezed orange juice", category1, 299, 0, 250));
 
     MenuItem::CATEGORY category2 = MenuItem::CATEGORY::pizza;
     MenuItem::CATEGORY category3 = MenuItem::CATEGORY::burger;
-    items.push_back(Dish("Pizza", "Pizza Neapoletana", category2, 1499, "dough, tomato sauce, cheese, toppings", 500));
-    items.push_back(Dish("Burger", "Burger with fries and vegetables", category3, 1299, "beef patty, cheese, lettuce, tomato, onion", 300));
+    items.push_back(std::make_unique<Dish>("Pizza", "Pizza Neapoletana", category2, 1499, "dough, tomato sauce, cheese, toppings", 500));
+    items.push_back(std::make_unique<Dish>("Burger", "Burger with fries and vegetables", category3, 1299, "beef patty, cheese, lettuce, tomato, onion", 300));
 
     Menu menu(items);
     ASSERT_EQ(items.size(), 4);
