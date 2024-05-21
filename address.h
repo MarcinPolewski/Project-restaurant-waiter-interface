@@ -13,12 +13,15 @@ struct Address
         const std::string strt, const std::string& num, const std::string& AI = "")
         : city(cty), postalCode(post_code), street(strt), number(num), additionalInfo(AI) {}
 
-    std::string str() const
-    {
-        std::string output = this->street + " " + this->number + "\n" + this->postalCode + " " + this->city;
-        if (additionalInfo.empty())
-            return output;
-        output += "\nAI: " + this->additionalInfo;
-        return output;
-    }
+    std::string str() const;
+
 };
+
+std::string Address::str() const
+{
+    std::string output = this->street + " " + this->number + "\n" + this->postalCode + " " + this->city;
+    if (additionalInfo.empty())
+        return output;
+    output += "\nAI: " + this->additionalInfo;
+    return output;
+}
