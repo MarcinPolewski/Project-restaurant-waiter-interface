@@ -79,38 +79,43 @@ TEST(DishTest, initialization)
     unsigned int price = 1999;
     std::string ingredients = "mięso, mąka, woda, cebula, przyprawy";
     unsigned int volume = 300;
+    MenuItem::CATEGORY category = MenuItem::CATEGORY::mainCourse;
 
-    Dish pierogi(name, description, price, ingredients, volume);
+    Dish pierogi(name, description, category, price, ingredients, volume);
 
     ASSERT_EQ(pierogi.name, name);
     ASSERT_EQ(pierogi.description, description);
     ASSERT_EQ(pierogi.price, price);
+    ASSERT_EQ(pierogi.category, category);
     ASSERT_EQ(pierogi.ingredients, ingredients);
-    ASSERT_EQ(pierogi.unit, UNIT::g);
+    ASSERT_EQ(pierogi.unit, MenuItem::UNIT::g);
     ASSERT_EQ(pierogi.volume, volume);
 }
 
 TEST(BeverageTest, initialization)
 {
+    MenuItem::CATEGORY category = MenuItem::CATEGORY::coldBeverage;
     std::string name = "Woda";
     std::string description = "Woda mineralna niegazowana";
     unsigned int price = 299;
     unsigned int alcoholPercentage = 0;
     unsigned int volume = 500;
 
-    Beverage woda(name, description, price, alcoholPercentage, volume);
+    Beverage woda(name, description, category, price, alcoholPercentage, volume);
 
     ASSERT_EQ(woda.name, name);
     ASSERT_EQ(woda.description, description);
+    ASSERT_EQ(woda.category, category);
     ASSERT_EQ(woda.price, price);
     ASSERT_EQ(woda.alcoholPercentage, alcoholPercentage);
-    ASSERT_EQ(woda.unit, UNIT::ml);
+    ASSERT_EQ(woda.unit, MenuItem::UNIT::ml);
     ASSERT_EQ(woda.volume, volume);
 }
 
 TEST(MenuItemTest, cast_dish)
 {
-    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    MenuItem::CATEGORY category = MenuItem::CATEGORY::mainCourse;
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", category, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
     MenuItem &item = pierogi;
     ASSERT_EQ(typeid(item), typeid(pierogi));
     ASSERT_EQ(dynamic_cast<Dish &>(item).ingredients, "mięso, mąka, woda, cebula, przyprawy");
@@ -118,7 +123,8 @@ TEST(MenuItemTest, cast_dish)
 
 TEST(MenuItemTest, cast_beverage)
 {
-    Beverage woda("Woda", "Woda mineralna niegazowana", 299, 0, 500);
+    MenuItem::CATEGORY category = MenuItem::CATEGORY::coldBeverage;
+    Beverage woda("Woda", "Woda mineralna niegazowana", category, 299, 0, 500);
     MenuItem &item = woda;
     ASSERT_EQ(typeid(item), typeid(woda));
     ASSERT_EQ(dynamic_cast<Beverage &>(item).alcoholPercentage, 0);
@@ -126,16 +132,17 @@ TEST(MenuItemTest, cast_beverage)
 
 TEST(MenuTest, initialization)
 {
+    std::vector<MenuItem> items;
 
-    std::vector<Beverage> beverages;
-    beverages.push_back(Beverage("Coca Cola", "Refreshing cola drink", 199, 0, 330));
-    beverages.push_back(Beverage("Orange Juice", "Freshly squeezed orange juice", 299, 0, 250));
+    MenuItem::CATEGORY category1 = MenuItem::CATEGORY::coldBeverage;
+    items.push_back(Beverage("Coca Cola", "Refreshing cola drink", category1, 199, 0, 330));
+    items.push_back(Beverage("Orange Juice", "Freshly squeezed orange juice", category1, 299, 0, 250));
 
-    std::vector<Dish> dishes;
-    dishes.push_back(Dish("Pizza", "Pizza Neapoletana", 1499, "dough, tomato sauce, cheese, toppings", 500));
-    dishes.push_back(Dish("Burger", "Burger with fries and vegetables", 1299, "beef patty, cheese, lettuce, tomato, onion", 300));
+    MenuItem::CATEGORY category2 = MenuItem::CATEGORY::pizza;
+    MenuItem::CATEGORY category3 = MenuItem::CATEGORY::burger;
+    items.push_back(Dish("Pizza", "Pizza Neapoletana", category2, 1499, "dough, tomato sauce, cheese, toppings", 500));
+    items.push_back(Dish("Burger", "Burger with fries and vegetables", category3, 1299, "beef patty, cheese, lettuce, tomato, onion", 300));
 
-    Menu menu(beverages, dishes);
-    ASSERT_EQ(menu.beverages.size(), 2);
-    ASSERT_EQ(menu.dishes.size(), 2);
+    Menu menu(items);
+    ASSERT_EQ(items.size(), 4);
 }
