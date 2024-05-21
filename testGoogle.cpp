@@ -86,7 +86,7 @@ TEST(DishTest, initialization)
     ASSERT_EQ(pierogi.description, description);
     ASSERT_EQ(pierogi.price, price);
     ASSERT_EQ(pierogi.ingredients, ingredients);
-    ASSERT_EQ(pierogi.unit, UNIT::g);
+    ASSERT_EQ(pierogi.unit, MenuItem::UNIT::g);
     ASSERT_EQ(pierogi.volume, volume);
 }
 
@@ -104,7 +104,7 @@ TEST(BeverageTest, initialization)
     ASSERT_EQ(woda.description, description);
     ASSERT_EQ(woda.price, price);
     ASSERT_EQ(woda.alcoholPercentage, alcoholPercentage);
-    ASSERT_EQ(woda.unit, UNIT::ml);
+    ASSERT_EQ(woda.unit, MenuItem::UNIT::ml);
     ASSERT_EQ(woda.volume, volume);
 }
 

@@ -2,15 +2,15 @@
 
 #include <string>
 
-enum class UNIT
-{
-    g,
-    ml,
-    piece
-};
-
 struct MenuItem
 {
+    enum UNIT
+    {
+        g,
+        ml,
+        piece
+    };
+
     const std::string name;
     const std::string description;
     const unsigned int price;
