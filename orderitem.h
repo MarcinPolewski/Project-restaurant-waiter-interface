@@ -1,16 +1,13 @@
-class orderitem
+#pragma once
+#include "menuItem.h"
+#include<time.h>
+
+class OrderItem
 {
 private:
-    /* data */
+    unsigned int discount = 0;
 public:
-    orderitem(/* args */);
-    ~orderitem();
+    const MenuItem& menuItem;
+    std::string comment;
+    const time_t orderTime;
 };
-
-orderitem::orderitem(/* args */)
-{
-}
-
-orderitem::~orderitem()
-{
-}
