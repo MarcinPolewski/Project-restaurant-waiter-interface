@@ -26,7 +26,11 @@ public:
     OrderItem(const OrderItem&) = delete;
     OrderItem(OrderItem&&) = delete;
 
+    void operator=(const MenuItem&) = delete;
+    void operator=(MenuItem&&) = delete;
+
     void add_comment(const std::string& new_comment);
+    // void add_comment(std::string&& new_comment);    // TODO
     void set_discount(unsigned int new_discount);
 
     const std::string& get_comment() const {return this->comment;}
