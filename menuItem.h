@@ -22,6 +22,7 @@ struct MenuItem
     {
     }
 
+    // virtual std::string info() const = 0;
     virtual std::unique_ptr<MenuItem> get() = 0;
     virtual ~MenuItem() = default;
 };
