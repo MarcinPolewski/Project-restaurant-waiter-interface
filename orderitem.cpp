@@ -1,11 +1,11 @@
 #include "orderitem.h"
 
 OrderItem::OrderItem(const MenuItem& menu_item, unsigned int count,
-    unsigned int discnt, const std::string& com)
+    const std::string& com, unsigned int discnt)
     : menuItem(menu_item), quantity(count)
 {
     this->add_comment(com);
-    this->add_discount(discnt);
+    this->set_discount(discnt);
 }
 
 void OrderItem::add_comment(const std::string& new_comment)
@@ -15,7 +15,7 @@ void OrderItem::add_comment(const std::string& new_comment)
     this->comment = new_comment;
 }
 
-void OrderItem::add_discount(unsigned int new_discount)
+void OrderItem::set_discount(unsigned int new_discount)
 {
     if (new_discount > 100)
         throw (std::invalid_argument("Discount must be in range 0..100 (%)."));

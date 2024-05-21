@@ -147,4 +147,86 @@ TEST(OrderItemTest, create_typical)
     OrderItem order1(pierogi, 1);
     ASSERT_EQ(order1.menuItem.name, "Pierogi");
     ASSERT_EQ(order1.quantity, 1);
+    ASSERT_EQ(order1.get_discount(), 0);
+    ASSERT_EQ(order1.get_comment(), "");
+}
+
+TEST(OrderItemTest, create_with_comment)
+{
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    OrderItem order1(pierogi, 1, "Bez masla");
+    ASSERT_EQ(order1.get_comment(), "Bez masla");
+    std::string com;
+    for (int i = 1; i <= 255; i++)
+        com += "a";
+    OrderItem order2(pierogi, 1, com);
+    ASSERT_EQ(order2.get_comment(), com);
+}
+
+TEST(OrderItemTest, create_with_discount)
+{
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    OrderItem order1(pierogi, 1, "", 20);
+    ASSERT_EQ(order1.get_discount(), 20);
+    OrderItem order2(pierogi, 1, "", 100);
+    ASSERT_EQ(order2.get_discount(), 100);
+}
+
+TEST(OrderItemTest, create_too_long_comment)
+{
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    std::string com;
+    for (int i = 1; i <= 256; i++)
+        com += "a";
+    EXPECT_THROW(OrderItem(pierogi, 1, com), std::invalid_argument);
+}
+
+TEST(OrderItemTest, create_too_big_discount)
+{
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    EXPECT_THROW(OrderItem(pierogi, 1, "", 101), std::invalid_argument);
+}
+
+TEST(OrderItemTest, add_comment_typical)
+{
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    OrderItem order1(pierogi, 1);
+    order1.add_comment("Połowa porcji");
+    ASSERT_EQ(order1.get_comment(), "Połowa porcji");
+    std::string com;
+    for (int i = 1; i <= 255; i++)
+        com += "a";
+    order1.add_comment(com);
+    ASSERT_EQ(order1.get_comment(), com);
+    order1.add_comment("");
+    ASSERT_EQ(order1.get_comment(), "");
+}
+
+TEST(OrderItemTest, add_comment_too_long)
+{
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    OrderItem order1(pierogi, 1);
+    std::string com;
+    for (int i = 1; i <= 256; i++)
+        com += "a";
+    EXPECT_THROW(order1.add_comment(com), std::invalid_argument);
+}
+
+TEST(OrderItemTest, add_discount_typical)
+{
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    OrderItem order1(pierogi, 1);
+    order1.set_discount(40);
+    ASSERT_EQ(order1.get_discount(), 40);
+    order1.set_discount(100);
+    ASSERT_EQ(order1.get_discount(), 100);
+    order1.set_discount(0);
+    ASSERT_EQ(order1.get_discount(), 0);
+}
+
+TEST(OrderItemTest, add_discount_too_big)
+{
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    OrderItem order1(pierogi, 1);
+    EXPECT_THROW(order1.set_discount(101), std::invalid_argument);
 }
