@@ -15,13 +15,9 @@ void OrderItem::add_comment(const std::string& new_comment)
     this->comment = new_comment;
 }
 
-const std::string& OrderItem::get_comment() const {return this->comment;}
-
 void OrderItem::add_discount(unsigned int new_discount)
 {
     if (new_discount > 100)
         throw (std::invalid_argument("Discount must be in range 0..100 (%)."));
     this->discount = new_discount;
 }
-
-unsigned int OrderItem::get_discount() const {return this->discount;}
