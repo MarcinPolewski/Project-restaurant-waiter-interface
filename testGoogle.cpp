@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include <unistd.h>
 #include "address.h"
 #include "destination.h"
 #include "menuItem.h"
@@ -151,32 +152,33 @@ TEST(MenuTest, initialization)
 TEST(OrderItemTest, create_typical)
 {
     Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse,  1999, "mięso, mąka, woda, cebula, przyprawy", 300);
-    OrderItem order1(pierogi, 1);
-    ASSERT_EQ(order1.menuItem.name, "Pierogi");
-    ASSERT_EQ(order1.quantity, 1);
-    ASSERT_EQ(order1.get_discount(), 0);
-    ASSERT_EQ(order1.get_comment(), "");
+    OrderItem orderit1(pierogi, 1);
+    ASSERT_EQ(orderit1.menuItem.name, "Pierogi");
+    ASSERT_EQ(orderit1.quantity, 1);
+    ASSERT_EQ(orderit1.getDiscount(), 0);
+    ASSERT_EQ(orderit1.getComment(), "");
+    ASSERT_EQ(orderit1.getStatus(), OrderItem::ItemStatus::ordered);
 }
 
 TEST(OrderItemTest, create_with_comment)
 {
     Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse,  1999, "mięso, mąka, woda, cebula, przyprawy", 300);
-    OrderItem order1(pierogi, 1, "Bez masla");
-    ASSERT_EQ(order1.get_comment(), "Bez masla");
+    OrderItem orderit1(pierogi, 1, "Bez masla");
+    ASSERT_EQ(orderit1.getComment(), "Bez masla");
     std::string com;
     for (int i = 1; i <= 255; i++)
         com += "a";
-    OrderItem order2(pierogi, 1, com);
-    ASSERT_EQ(order2.get_comment(), com);
+    OrderItem orderit2(pierogi, 1, com);
+    ASSERT_EQ(orderit2.getComment(), com);
 }
 
 TEST(OrderItemTest, create_with_discount)
 {
     Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse,  1999, "mięso, mąka, woda, cebula, przyprawy", 300);
-    OrderItem order1(pierogi, 1, "", 20);
-    ASSERT_EQ(order1.get_discount(), 20);
-    OrderItem order2(pierogi, 1, "", 100);
-    ASSERT_EQ(order2.get_discount(), 100);
+    OrderItem orderit1(pierogi, 1, "", 20);
+    ASSERT_EQ(orderit1.getDiscount(), 20);
+    OrderItem orderit2(pierogi, 1, "", 100);
+    ASSERT_EQ(orderit2.getDiscount(), 100);
 }
 
 TEST(OrderItemTest, create_too_long_comment)
@@ -194,46 +196,93 @@ TEST(OrderItemTest, create_too_big_discount)
     EXPECT_THROW(OrderItem(pierogi, 1, "", 101), std::invalid_argument);
 }
 
-TEST(OrderItemTest, add_comment_typical)
+TEST(OrderItemTest, create_zero_quantity)
 {
     Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse,  1999, "mięso, mąka, woda, cebula, przyprawy", 300);
-    OrderItem order1(pierogi, 1);
-    order1.add_comment("Połowa porcji");
-    ASSERT_EQ(order1.get_comment(), "Połowa porcji");
+    EXPECT_THROW(OrderItem(pierogi, 0), std::invalid_argument);
+}
+
+TEST(OrderItemTest, addComment_typical)
+{
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse,  1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    OrderItem orderit1(pierogi, 1);
+    orderit1.addComment("Połowa porcji");
+    ASSERT_EQ(orderit1.getComment(), "Połowa porcji");
     std::string com;
     for (int i = 1; i <= 255; i++)
         com += "a";
-    order1.add_comment(com);
-    ASSERT_EQ(order1.get_comment(), com);
-    order1.add_comment("");
-    ASSERT_EQ(order1.get_comment(), "");
+    orderit1.addComment(com);
+    ASSERT_EQ(orderit1.getComment(), com);
+    orderit1.addComment("");
+    ASSERT_EQ(orderit1.getComment(), "");
 }
 
-TEST(OrderItemTest, add_comment_too_long)
+TEST(OrderItemTest, addComment_too_long)
 {
     Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse,  1999, "mięso, mąka, woda, cebula, przyprawy", 300);
-    OrderItem order1(pierogi, 1);
+    OrderItem orderit1(pierogi, 1);
     std::string com;
     for (int i = 1; i <= 256; i++)
         com += "a";
-    EXPECT_THROW(order1.add_comment(com), std::invalid_argument);
+    EXPECT_THROW(orderit1.addComment(com), std::invalid_argument);
 }
 
 TEST(OrderItemTest, add_discount_typical)
 {
     Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse,  1999, "mięso, mąka, woda, cebula, przyprawy", 300);
-    OrderItem order1(pierogi, 1);
-    order1.set_discount(40);
-    ASSERT_EQ(order1.get_discount(), 40);
-    order1.set_discount(100);
-    ASSERT_EQ(order1.get_discount(), 100);
-    order1.set_discount(0);
-    ASSERT_EQ(order1.get_discount(), 0);
+    OrderItem orderit1(pierogi, 1);
+    orderit1.setDiscount(40);
+    ASSERT_EQ(orderit1.getDiscount(), 40);
+    orderit1.setDiscount(100);
+    ASSERT_EQ(orderit1.getDiscount(), 100);
+    orderit1.setDiscount(0);
+    ASSERT_EQ(orderit1.getDiscount(), 0);
 }
 
 TEST(OrderItemTest, add_discount_too_big)
 {
     Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse,  1999, "mięso, mąka, woda, cebula, przyprawy", 300);
-    OrderItem order1(pierogi, 1);
-    EXPECT_THROW(order1.set_discount(101), std::invalid_argument);
+    OrderItem orderit1(pierogi, 1);
+    EXPECT_THROW(orderit1.setDiscount(101), std::invalid_argument);
+}
+
+TEST(OrderItemTest, setDelivered_typical)
+{
+    // TODO
+}
+
+TEST(OrderItemTest, setDelivered_while_not_ready)
+{
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse,  1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    OrderItem orderit1(pierogi, 1);
+    ASSERT_EQ(orderit1.getStatus(), OrderItem::ItemStatus::ordered);
+    EXPECT_THROW(orderit1.setDelivered(), std::runtime_error);
+}
+
+TEST(OrderItemTest, setCancelled_typical)
+{
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse,  1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    OrderItem orderit1(pierogi, 1);
+    ASSERT_EQ(orderit1.getStatus(), OrderItem::ItemStatus::ordered);
+    orderit1.setCancelled();
+    ASSERT_EQ(orderit1.getStatus(), OrderItem::ItemStatus::canceled);
+}
+
+TEST(OrderItemTest, getPrice_typical)
+{
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse,  1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    OrderItem orderit1(pierogi, 1);
+    ASSERT_EQ(orderit1.getPrice(), 1999);
+    OrderItem orderit2(pierogi, 3);
+    ASSERT_EQ(orderit2.getPrice(), 3 * 1999);
+}
+
+TEST(OrderItemTest, getWaitingTime_typical)
+{
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse,  1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    OrderItem orderit1(pierogi, 1);
+    sleep(3);
+    ASSERT_EQ(orderit1.getWaitingTime(), 3);
+    sleep(2);
+    ASSERT_EQ(orderit1.getWaitingTime(), 5);
 }

@@ -10,6 +10,7 @@ public:
         ordered,
         inPreparation,
         readyToDeliver,
+        delivered,
         canceled,
     };
 private:
@@ -29,10 +30,19 @@ public:
     void operator=(const MenuItem&) = delete;
     void operator=(MenuItem&&) = delete;
 
-    void add_comment(const std::string& new_comment);
+    void addComment(const std::string& new_comment);
     // void add_comment(std::string&& new_comment);    // TODO
-    void set_discount(unsigned int new_discount);
+    const std::string& getComment() const {return this->comment;}
 
-    const std::string& get_comment() const {return this->comment;}
-    unsigned int get_discount() const {return this->discount;}
+    void setDiscount(unsigned int new_discount);
+    unsigned int getDiscount() const {return this->discount;}
+
+    void setDelivered();
+    void setCancelled();
+    const ItemStatus& getStatus() const {return this->itemStatus;}
+
+    unsigned int getPrice() const {return quantity * menuItem.price;}
+    time_t getWaitingTime() const {return time(NULL) - orderTime;}
+
+
 };
