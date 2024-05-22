@@ -10,6 +10,17 @@ bool ServerHandler::pathIsCorrect(std::string &path)
     return std::filesystem::exists(path);
 }
 
+void ServerHandler::updateFile(const std::string &pathToLocal)
+{
+    /*
+    this method is only a place holder, for sake of this project we will
+    not create a server.
+
+    This method would send request to server, that would compare versions of files.
+    If local version was outdated, new version would be downloaded.
+    */
+}
+
 void ServerHandler::readConfig()
 {
     std::ifstream confFileReader(configPath);
@@ -49,18 +60,61 @@ void ServerHandler::readConfig()
     confFileReader.close();
 }
 
+Menu ServerHandler::fetchMenu()
+{
+    updateFile(menuPath);
+
+    std::ifstream menuReader(menuPath);
+    if (!menuReader.good())
+        throw std::runtime_error("Could not open file with menu");
+
+    Menu menu;
+    menuReader >> menu;
+
+    menuReader.close();
+    return menu;
+}
+
 std::vector<Waiter> ServerHandler::fetchWaiters()
 {
-    // 1. check if downloaded version of waiters is up to date
-    // 2. if not, download new version
-    // 3. read waiters (if error encountered, download file and try again, if not print message)
-    // 4. return them
+    updateFile(waitersPath);
+
+    std::ifstream waitersReader(waitersPath);
+    if (!waitersReader.good())
+        throw std::runtime_error("Could not open file with waiters");
+
+    std::vector<Waiter> waiters;
+    Waiter waiter;
+    while (waitersReader >> waiter)
+        waiters.push_back(waiter);
+
+    waitersReader.close();
+    return waiters;
 }
 
 std::vector<Table> ServerHandler::fetchTables()
 {
-    // 1. check if downloaded version of tables is up to date
-    // 2. if not, download new version
-    // 3. read tables
-    // 4. return them
+    updateFile(tablesPath);
+
+    std::ifstream tablesReader(tablesPath);
+    if (!tablesReader.good())
+        throw std::runtime_error("Could not open file with waiters");
+
+    std::vector<Table> tables;
+    Table table;
+    while (tablesReader >> table)
+        tables.push_back(table);
+
+    tablesReader.close();
+    return tables;
+}
+
+void archiveOrder(const Order *order)
+{
+    /*
+    this is only a place holder method
+
+    normaly it would send this order to server, where it would be stored
+    for statistics
+    */
 }

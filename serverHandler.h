@@ -17,8 +17,8 @@ class ServerHandler
     std::string waitersPath;
     std::string tablesPath;
 
-    bool pathIsCorrect(std::string &path);               // check if provided path is ok
-    bool isFileCurrent(const std::string &localVersion); // check if file is up to date
+    bool pathIsCorrect(std::string &path);           // check if provided path is ok
+    void updateFile(const std::string &pathToLocal); // check if file is up to date
     void readConfig();
 
 public:
