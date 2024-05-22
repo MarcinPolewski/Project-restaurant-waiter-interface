@@ -60,6 +60,46 @@ void ServerHandler::readConfig()
     confFileReader.close();
 }
 
+std::unique_ptr<Dish> ServerHandler::readDish(std::istream &stream)
+{
+    char c;
+    stream >> c;
+    if (c != '{')
+        throw std::runtime_error("Invalid dish structure provided");
+
+    std::string name;
+    std::string description;
+    std::string ingredients;
+    unsigned int price, volume;
+
+    stream >> name >> description >> price >> ingredients >> volume;
+
+    stream >> c;
+    if (c != '}')
+        throw std::runtime_error("Invalid dish structure provided");
+    return std::make_unique<Dish>(name, description, price, ingredients, volume);
+}
+
+//     Beverage(const std::string &name, const std::string &description, unsigned int price, unsigned int alcoholPercentage, unsigned int volume)
+std::unique_ptr<Beverage> ServerHandler::readBeverage(std::istream &stream)
+{
+    char c;
+    stream >> c;
+    if (c != '{')
+        throw std::runtime_error("Invalid dish structure provided");
+
+    std::string name;
+    std::string description;
+    unsigned int price, volume, alcoholPercentage;
+
+    stream >> name >> description >> price >> alcoholPercentage >> volume;
+
+    stream >> c;
+    if (c != '}')
+        throw std::runtime_error("Invalid dish structure provided");
+    return std::make_unique<Beverage>(name, description, price, alcoholPercentage, volume);
+}
+
 Menu ServerHandler::fetchMenu()
 {
     updateFile(menuPath);
@@ -68,11 +108,26 @@ Menu ServerHandler::fetchMenu()
     if (!menuReader.good())
         throw std::runtime_error("Could not open file with menu");
 
-    Menu menu;
-    menuReader >> menu;
+    // read version
+    std::string version;
+    menuReader >> version;
+
+    std::vector<std::unique_ptr<MenuItem>> items;
+
+    std::string classType;
+    while (!menuReader.eof())
+    {
+        menuReader >> classType;
+        if (classType == "Dish")
+            items.push_back(readDish(menuReader));
+        else
+            items.push_back(readBeverage(menuReader));
+    }
+
+    // read items
 
     menuReader.close();
-    return menu;
+    return Menu(std::move(items));
 }
 
 std::vector<Waiter> ServerHandler::fetchWaiters()
@@ -83,10 +138,13 @@ std::vector<Waiter> ServerHandler::fetchWaiters()
     if (!waitersReader.good())
         throw std::runtime_error("Could not open file with waiters");
 
+    // read version
+    std::string version;
+    waitersReader >> version;
+
     std::vector<Waiter> waiters;
-    Waiter waiter;
-    while (waitersReader >> waiter)
-        waiters.push_back(waiter);
+    while (waitersReader.eof())
+        waiters.push_back(readWaiter(waitersReader));
 
     waitersReader.close();
     return waiters;
@@ -100,10 +158,13 @@ std::vector<Table> ServerHandler::fetchTables()
     if (!tablesReader.good())
         throw std::runtime_error("Could not open file with waiters");
 
+    // read version
+    std::string version;
+    tablesReader >> version;
+
     std::vector<Table> tables;
-    Table table;
-    while (tablesReader >> table)
-        tables.push_back(table);
+    while (tablesReader.eof())
+        tables.push_back(readTable(tablesReader));
 
     tablesReader.close();
     return tables;

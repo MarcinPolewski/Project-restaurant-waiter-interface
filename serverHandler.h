@@ -21,6 +21,11 @@ class ServerHandler
     void updateFile(const std::string &pathToLocal); // check if file is up to date
     void readConfig();
 
+    std::unique_ptr<Dish> readDish(std::istream &stream);         // reads dish from stream
+    std::unique_ptr<Beverage> readBeverage(std::istream &stream); // reads Beverage from stream
+    Table readTable(std::istream &stream);
+    Waiter readWaiter(std::istream &stream);
+
 public:
     ServerHandler();
     Menu fetchMenu();
