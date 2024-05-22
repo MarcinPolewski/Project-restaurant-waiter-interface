@@ -1,0 +1,3 @@
+waiters_local_path: /Users/marcinpolewski/Documents/Studia/SEM2/PROI/restaurant/serverHandlerConf/waiters.txt
+tables_local_path: /Users/marcinpolewski/Documents/Studia/SEM2/PROI/restaurant/serverHandlerConf/tables.txt
+menu_local_path: /Users/marcinpolewski/Documents/Studia/SEM2/PROI/restaurant/serverHandlerConf/menu.txt

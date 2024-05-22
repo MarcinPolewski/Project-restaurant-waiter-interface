@@ -3,6 +3,7 @@
 #include "destination.h"
 #include "menuItem.h"
 #include "menu.h"
+#include "serverHandler.h"
 
 TEST(AddressTest, create_typical)
 {
@@ -123,4 +124,9 @@ TEST(MenuTest, initialization)
     Menu menu(beverages, dishes);
     ASSERT_EQ(menu.beverages.size(), 2);
     ASSERT_EQ(menu.dishes.size(), 2);
+}
+
+TEST(ServerHandlerTest, initialization_and_reading_config)
+{
+    ASSERT_NO_THROW(ServerHandler sh = ServerHandler());
 }
