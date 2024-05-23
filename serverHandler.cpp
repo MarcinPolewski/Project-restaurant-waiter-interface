@@ -1,8 +1,13 @@
 #include "serverHandler.h"
+// #include "rapidcsv.h"
+#include "csv.h"
+// #include "build/_deps/csv-src/src/rapidcsv.h"
+// #include "_deps/csv-src/src/rapidcsv.h"
 
 ServerHandler::ServerHandler()
 {
     readConfig();
+    update();
 }
 
 bool ServerHandler::pathIsCorrect(std::string &path)
@@ -19,6 +24,14 @@ void ServerHandler::updateFile(const std::string &pathToLocal)
     This method would send request to server, that would compare versions of files.
     If local version was outdated, new version would be downloaded.
     */
+}
+
+void ServerHandler::update()
+{
+    updateFile(tablesPath);
+    updateFile(waitersPath);
+    updateFile(beveragesPath);
+    updateFile(dishesPath);
 }
 
 void ServerHandler::readConfig()
@@ -49,125 +62,111 @@ void ServerHandler::readConfig()
     if (!pathIsCorrect(tablesPath))
         throw std::runtime_error("Invalid path to tables provided");
 
-    // read path to menu
+    // read path to dishes
     confFileReader >> s;
-    if (s != "menu_local_path:")
+    if (s != "dishes_local_path:")
         throw std::runtime_error("Invalid conf file structure");
-    confFileReader >> menuPath;
-    if (!pathIsCorrect(menuPath))
+    confFileReader >> dishesPath;
+    if (!pathIsCorrect(dishesPath))
         throw std::runtime_error("Invalid path to menu provided");
+
+    // read path to beverages
+    confFileReader >> s;
+    if (s != "beverages_local_path:")
+        throw std::runtime_error("Invalid conf file structure");
+    confFileReader >> beveragesPath;
+    if (!pathIsCorrect(beveragesPath))
+        throw std::runtime_error("Invalid path to menu provided");
+
+    // ---------------- Reading version
+    confFileReader >> s;
+    if (s != "waiters_local_version:")
+        throw std::runtime_error("Invalid conf file structure");
+    confFileReader >> waitersLocalVersion;
+
+    confFileReader >> s;
+    if (s != "tables_local_version:")
+        throw std::runtime_error("Invalid conf file structure");
+    confFileReader >> tablesLocalVersion;
+
+    confFileReader >> s;
+    if (s != "dishes_local_version:")
+        throw std::runtime_error("Invalid conf file structure");
+    confFileReader >> dishesLocalVersion;
+
+    confFileReader >> s;
+    if (s != "beverages_local_version:")
+        throw std::runtime_error("Invalid conf file structure");
+    confFileReader >> beveragesLocalVersion;
 
     confFileReader.close();
 }
 
-std::unique_ptr<Dish> ServerHandler::readDish(std::istream &stream)
+void ServerHandler::fetchDishes(std::vector<std::unique_ptr<MenuItem>> &arr)
 {
-    char c;
-    stream >> c;
-    if (c != '{')
-        throw std::runtime_error("Invalid dish structure provided");
+
+    io::CSVReader<5, io::trim_chars<' '>, io::double_quote_escape<',', '\"'>> in(dishesPath);
+    // io::CSVReader<5> in(dishesPath);
+    in.read_header(io::ignore_extra_column, "name", "description", "price", "ingredients", "volume");
 
     std::string name;
     std::string description;
+    unsigned int price;
     std::string ingredients;
-    unsigned int price, volume;
+    unsigned int volume;
 
-    stream >> name >> description >> price >> ingredients >> volume;
-
-    stream >> c;
-    if (c != '}')
-        throw std::runtime_error("Invalid dish structure provided");
-    return std::make_unique<Dish>(name, description, price, ingredients, volume);
+    while (in.read_row(name, description, price, ingredients, volume))
+    {
+        arr.push_back(std::make_unique<Dish>(
+            name,
+            description,
+            price,
+            ingredients,
+            volume));
+    }
 }
 
-//     Beverage(const std::string &name, const std::string &description, unsigned int price, unsigned int alcoholPercentage, unsigned int volume)
-std::unique_ptr<Beverage> ServerHandler::readBeverage(std::istream &stream)
+void ServerHandler::fetchBeverages(std::vector<std::unique_ptr<MenuItem>> &arr)
 {
-    char c;
-    stream >> c;
-    if (c != '{')
-        throw std::runtime_error("Invalid dish structure provided");
+    updateFile(beveragesPath);
+
+    io::CSVReader<5, io::trim_chars<' '>, io::double_quote_escape<',', '\"'>> in(beveragesPath);
+    in.read_header(io::ignore_extra_column, "name", "description", "price", "alcoholPercentage", "volume");
 
     std::string name;
     std::string description;
-    unsigned int price, volume, alcoholPercentage;
+    unsigned int price;
+    unsigned int alcoholPercentage;
+    unsigned int volume;
 
-    stream >> name >> description >> price >> alcoholPercentage >> volume;
-
-    stream >> c;
-    if (c != '}')
-        throw std::runtime_error("Invalid dish structure provided");
-    return std::make_unique<Beverage>(name, description, price, alcoholPercentage, volume);
+    while (in.read_row(name, description, price, alcoholPercentage, volume))
+    {
+        arr.push_back(std::make_unique<Beverage>(
+            name,
+            description,
+            price,
+            alcoholPercentage,
+            volume));
+    }
 }
 
 Menu ServerHandler::fetchMenu()
 {
-    updateFile(menuPath);
-
-    std::ifstream menuReader(menuPath);
-    if (!menuReader.good())
-        throw std::runtime_error("Could not open file with menu");
-
-    // read version
-    std::string version;
-    menuReader >> version;
-
     std::vector<std::unique_ptr<MenuItem>> items;
+    fetchDishes(items);
+    fetchBeverages(items);
 
-    std::string classType;
-    while (!menuReader.eof())
-    {
-        menuReader >> classType;
-        if (classType == "Dish")
-            items.push_back(readDish(menuReader));
-        else
-            items.push_back(readBeverage(menuReader));
-    }
-
-    // read items
-
-    menuReader.close();
     return Menu(std::move(items));
 }
 
 std::vector<Waiter> ServerHandler::fetchWaiters()
 {
     updateFile(waitersPath);
-
-    std::ifstream waitersReader(waitersPath);
-    if (!waitersReader.good())
-        throw std::runtime_error("Could not open file with waiters");
-
-    // read version
-    std::string version;
-    waitersReader >> version;
-
-    std::vector<Waiter> waiters;
-    while (waitersReader.eof())
-        waiters.push_back(readWaiter(waitersReader));
-
-    waitersReader.close();
-    return waiters;
 }
 
 std::vector<Table> ServerHandler::fetchTables()
 {
     updateFile(tablesPath);
-
-    std::ifstream tablesReader(tablesPath);
-    if (!tablesReader.good())
-        throw std::runtime_error("Could not open file with waiters");
-
-    // read version
-    std::string version;
-    tablesReader >> version;
-
-    std::vector<Table> tables;
-    while (tablesReader.eof())
-        tables.push_back(readTable(tablesReader));
-
-    tablesReader.close();
-    return tables;
 }
 
 void archiveOrder(const Order *order)

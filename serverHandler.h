@@ -11,20 +11,27 @@
 
 class ServerHandler
 {
+    const char separator = '|';
+
     std::string configPath = "/Users/marcinpolewski/Documents/Studia/SEM2/PROI/restaurant/serverHandlerConf/conf.txt"; // configuration file for behaviour of handler
 
-    std::string menuPath;
+    std::string dishesPath;
+    std::string beveragesPath;
     std::string waitersPath;
     std::string tablesPath;
 
+    std::string dishesLocalVersion;
+    std::string beveragesLocalVersion;
+    std::string waitersLocalVersion;
+    std::string tablesLocalVersion;
+
     bool pathIsCorrect(std::string &path);           // check if provided path is ok
     void updateFile(const std::string &pathToLocal); // check if file is up to date
+    void update();
     void readConfig();
 
-    std::unique_ptr<Dish> readDish(std::istream &stream);         // reads dish from stream
-    std::unique_ptr<Beverage> readBeverage(std::istream &stream); // reads Beverage from stream
-    Table readTable(std::istream &stream);
-    Waiter readWaiter(std::istream &stream);
+    void fetchDishes(std::vector<std::unique_ptr<MenuItem>> &arr);
+    void fetchBeverages(std::vector<std::unique_ptr<MenuItem>> &arr);
 
 public:
     ServerHandler();

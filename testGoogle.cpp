@@ -130,3 +130,10 @@ TEST(ServerHandlerTest, initialization_and_reading_config)
 {
     ASSERT_NO_THROW(ServerHandler sh = ServerHandler());
 }
+
+TEST(ServerHandlerTest, fetchMenu)
+{
+    ServerHandler sh = ServerHandler();
+    Menu menu = sh.fetchMenu();
+    ASSERT_TRUE(menu.menuItems.size() != 0);
+}
