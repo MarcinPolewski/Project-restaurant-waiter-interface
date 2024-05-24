@@ -169,7 +169,7 @@ std::vector<Table> ServerHandler::fetchTables()
     updateFile(tablesPath);
 }
 
-void archiveOrder(const Order *order)
+void ServerHandler::archiveOrder(const Order *order)
 {
     /*
     this is only a place holder method
@@ -177,4 +177,9 @@ void archiveOrder(const Order *order)
     normaly it would send this order to server, where it would be stored
     for statistics
     */
+}
+
+void ServerHandler::sendOrderItem(OrderItem *order)
+{
+    requestedOrders.push_back(order);
 }

@@ -9,9 +9,20 @@
 #include <string>
 #include <filesystem>
 
-class ServerHandler
+class ServerHandlerInterface
 {
-    const char separator = '|';
+public:
+    virtual Menu fetchMenu() = 0;
+    virtual std::vector<Waiter> fetchWaiters() = 0;
+    virtual std::vector<Table> fetchTables() = 0;
+    virtual void archiveOrder(const Order *order) = 0;
+    virtual void sendOrderItem(OrderItem *order) = 0;
+};
+
+class ServerHandler : public ServerHandlerInterface
+{
+
+    std::vector<OrderItem *> requestedOrders;
 
     std::string configPath = "/Users/marcinpolewski/Documents/Studia/SEM2/PROI/restaurant/serverHandlerConf/conf.txt"; // configuration file for behaviour of handler
 
@@ -35,8 +46,9 @@ class ServerHandler
 
 public:
     ServerHandler();
-    Menu fetchMenu();
-    std::vector<Waiter> fetchWaiters();
-    std::vector<Table> fetchTables();
-    void archiveOrder(const Order *order);
+    Menu fetchMenu() override;
+    std::vector<Waiter> fetchWaiters() override;
+    std::vector<Table> fetchTables() override;
+    void archiveOrder(const Order *order) override;
+    void sendOrderItem(OrderItem *order) override; // sends this message to server
 };
