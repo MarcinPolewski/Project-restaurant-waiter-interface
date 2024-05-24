@@ -240,6 +240,16 @@ TEST(OrderItemTest, addComment_too_long)
     EXPECT_THROW(orderit1.addComment(com), std::invalid_argument);
 }
 
+TEST(OrderItemTest, addComment_move_typical)
+{
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    OrderItem orderit1(pierogi, 1);
+    orderit1.addComment(std::move("Połowa porcji"));
+    ASSERT_EQ(orderit1.getComment(), "Połowa porcji");
+    orderit1.addComment(std::move(""));
+    ASSERT_EQ(orderit1.getComment(), "");
+}
+
 TEST(OrderItemTest, add_discount_typical)
 {
     Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);

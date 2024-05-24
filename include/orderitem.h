@@ -8,6 +8,7 @@ class WaiterOrderItem
 {
 public:
     virtual void addComment(const std::string&) = 0;
+    virtual void addComment(std::string&&) = 0;
     virtual const std::string& getComment() const = 0;
     virtual void setDiscount(unsigned int) = 0;
     virtual unsigned int getDiscount() const = 0;
@@ -43,7 +44,7 @@ public:
         const std::string& com = "", unsigned int discnt = 0);
 
     void addComment(const std::string& new_comment) override;
-    // void add_comment(std::string&& new_comment);    // TODO
+    void addComment(std::string&& new_comment) override;
     const std::string& getComment() const override {return this->comment;}
 
     void setDiscount(unsigned int new_discount) override;
@@ -54,5 +55,5 @@ public:
     ItemStatus getStatus() const override {return this->itemStatus;}
 
     unsigned int getPrice() const override {return quantity * menuItem.price;}
-    time_t getWaitingTime() const override {return time(NULL) - orderTime;} 
+    time_t getWaitingTime() const override {return time(NULL) - orderTime;}
 };
