@@ -1,4 +1,5 @@
 #pragma once
+
 #include "address.h"
 
 struct Destination
