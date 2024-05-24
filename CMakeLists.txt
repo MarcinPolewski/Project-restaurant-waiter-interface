@@ -6,7 +6,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_CXX_FLAGS "-pedantic -Wall -Wextra")
 
 include(FetchContent)
-
 FetchContent_Declare(
    googletest
    GIT_REPOSITORY https://github.com/google/googletest.git
@@ -21,19 +20,13 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(csvReader)
 
-set(PROJECT_SOURCES address.h destination.h menuItem.h menu.h serverHandler.h serverHandler.cpp orderitem.h orderitem.cpp order.h table.h waiter.h restaurant.h restaurant.cpp)
-
-
-add_executable(testGoogle testGoogle.cpp ${PROJECT_SOURCES})
-add_executable(gui gui.cpp ${PROJECT_SOURCES})
-
-target_link_libraries(testGoogle PUBLIC gtest_main)
-
-# used for implementing external csv-reader library
-add_definitions(-DCMAKE_EXPORT_COMPILE_COMMANDS=ON)
-# include_directories("${CMAKE_CURRENT_SOURCE_DIR}/build/_deps/csv-src/src/")
-include_directories("${csvreader_SOURCE_DIR}")
-
 find_package(Curses REQUIRED)
-include_directories(${CURSES_INCLUDE_DIR})
+include_directories(${Restaurant_SOURCE_DIR}/include "${csvreader_SOURCE_DIR}" ${CURSES_INCLUDE_DIR})
+add_subdirectory(src)
+
+add_executable(testGoogle testGoogle.cpp)
+add_executable(gui gui.cpp)
+
+add_definitions(-DCMAKE_EXPORT_COMPILE_COMMANDS=ON)
+target_link_libraries(testGoogle PUBLIC gtest_main restaurant)
 target_link_libraries(gui ${CURSES_LIBRARIES})
