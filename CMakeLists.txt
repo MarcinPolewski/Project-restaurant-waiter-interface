@@ -21,7 +21,7 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(csvReader)
 
-set(PROJECT_SOURCES address.h destination.h menuItem.h menu.h serverHandler.h serverHandler.cpp orderitem.h orderitem.cpp order.h table.h waiter.h)
+set(PROJECT_SOURCES address.h destination.h menuItem.h menu.h serverHandler.h serverHandler.cpp orderitem.h orderitem.cpp order.h table.h waiter.h restaurant.h restaurant.cpp)
 
 
 add_executable(testGoogle testGoogle.cpp ${PROJECT_SOURCES})

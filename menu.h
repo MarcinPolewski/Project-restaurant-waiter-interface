@@ -16,4 +16,9 @@ struct Menu
         : menuItems(std::move(sourceMenu))
     {
     }
+
+    bool empty()
+    {
+        return menuItems.empty();
+    }
 };
