@@ -105,21 +105,25 @@ void ServerHandler::readConfig()
 void ServerHandler::fetchDishes(std::vector<std::unique_ptr<MenuItem>> &arr)
 {
 
-    io::CSVReader<5, io::trim_chars<' '>, io::double_quote_escape<',', '\"'>> in(dishesPath);
+    io::CSVReader<6, io::trim_chars<' '>, io::double_quote_escape<',', '\"'>> in(dishesPath);
     // io::CSVReader<5> in(dishesPath);
-    in.read_header(io::ignore_extra_column, "name", "description", "price", "ingredients", "volume");
+    in.read_header(io::ignore_extra_column, "name", "description", "category", "price", "ingredients", "volume");
 
     std::string name;
     std::string description;
+    unsigned int category;
     unsigned int price;
     std::string ingredients;
     unsigned int volume;
 
-    while (in.read_row(name, description, price, ingredients, volume))
+    while (in.read_row(name, description, category, price, ingredients, volume))
     {
+
+        MenuItem::CATEGORY convertedCategory = static_cast<MenuItem::CATEGORY>(category);
         arr.push_back(std::make_unique<Dish>(
             name,
             description,
+            convertedCategory,
             price,
             ingredients,
             volume));
@@ -130,20 +134,24 @@ void ServerHandler::fetchBeverages(std::vector<std::unique_ptr<MenuItem>> &arr)
 {
     updateFile(beveragesPath);
 
-    io::CSVReader<5, io::trim_chars<' '>, io::double_quote_escape<',', '\"'>> in(beveragesPath);
-    in.read_header(io::ignore_extra_column, "name", "description", "price", "alcoholPercentage", "volume");
+    io::CSVReader<6, io::trim_chars<' '>, io::double_quote_escape<',', '\"'>> in(beveragesPath);
+    in.read_header(io::ignore_extra_column, "name", "description", "category", "price", "alcoholPercentage", "volume");
 
     std::string name;
     std::string description;
+    unsigned int category;
     unsigned int price;
     unsigned int alcoholPercentage;
     unsigned int volume;
 
-    while (in.read_row(name, description, price, alcoholPercentage, volume))
+    while (in.read_row(name, description, category, price, alcoholPercentage, volume))
     {
+        MenuItem::CATEGORY convertedCategory = static_cast<MenuItem::CATEGORY>(category);
+
         arr.push_back(std::make_unique<Beverage>(
             name,
             description,
+            convertedCategory,
             price,
             alcoholPercentage,
             volume));
