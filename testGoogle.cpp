@@ -303,16 +303,16 @@ TEST(OrderItemTest, getPrice_typical)
 TEST(OrderItemTest, getPrice_discount_typical)
 {
     Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
-    OrderItem orderit2(pierogi, 3);
-    ASSERT_EQ(orderit2.getPrice(), 3 * 1999);
-    orderit2.setDiscount(5);
-    ASSERT_EQ(orderit2.getPrice(), 5697);
-    orderit2.setDiscount(1);
-    ASSERT_EQ(orderit2.getPrice(), 5937);
-    orderit2.setDiscount(99);
-    ASSERT_EQ(orderit2.getPrice(), 59);
-    orderit2.setDiscount(100);
-    ASSERT_EQ(orderit2.getPrice(), 0);
+    OrderItem orderit1(pierogi, 3);
+    ASSERT_EQ(orderit1.getPrice(), 3 * 1999);
+    orderit1.setDiscount(5);
+    ASSERT_EQ(orderit1.getPrice(), 5697);
+    orderit1.setDiscount(1);
+    ASSERT_EQ(orderit1.getPrice(), 5937);
+    orderit1.setDiscount(99);
+    ASSERT_EQ(orderit1.getPrice(), 59);
+    orderit1.setDiscount(100);
+    ASSERT_EQ(orderit1.getPrice(), 0);
 }
 
 TEST(OrderItemTest, getPrice_discount_big_price)
@@ -380,4 +380,8 @@ TEST(WaiterOrderItemTest, interface_methods)
 
     sleep(1);
     ASSERT_EQ(order.getWaitingTime(), 1);
+
+    ASSERT_EQ(order.getStatus(), WaiterOrderItem::ItemStatus::ordered);
+    order.setCancelled();
+    ASSERT_EQ(order.getStatus(), WaiterOrderItem::ItemStatus::canceled);
 }
