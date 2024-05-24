@@ -21,7 +21,7 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(csvReader)
 
-set(PROJECT_SOURCES address.h destination.h menuItem.h menu.h serverHandler.h serverHandler.cpp orderitem.h orderitem.cpp)
+set(PROJECT_SOURCES address.h destination.h menuItem.h menu.h serverHandler.h serverHandler.cpp orderitem.h orderitem.cpp order.h table.h waiter.h)
 
 
 add_executable(testGoogle testGoogle.cpp ${PROJECT_SOURCES})
@@ -29,6 +29,7 @@ add_executable(gui gui.cpp ${PROJECT_SOURCES})
 
 target_link_libraries(testGoogle PUBLIC gtest_main)
 
+# used for implementing external csv-reader library
 add_definitions(-DCMAKE_EXPORT_COMPILE_COMMANDS=ON)
 # include_directories("${CMAKE_CURRENT_SOURCE_DIR}/build/_deps/csv-src/src/")
 include_directories("${csvreader_SOURCE_DIR}")
