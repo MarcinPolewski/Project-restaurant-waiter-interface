@@ -46,3 +46,16 @@ void OrderItem::setCancelled()
     else
         throw (std::runtime_error("Unable to cancel, item is already in preparation."));
 }
+
+unsigned int OrderItem::getPrice() const
+{
+    unsigned int full_price = quantity * this->menuItem.price;
+    if (full_price > 42949600)
+        throw(std::runtime_error("Cannot compute price - overflow"));
+    unsigned int discnt = (full_price * this->discount);
+    if (discnt % 100 != 0)
+        discnt = discnt / 100 + 1;
+    else
+        discnt = discnt / 100;
+    return full_price - discnt;
+}

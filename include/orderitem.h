@@ -54,6 +54,6 @@ public:
     void setCancelled() override;
     ItemStatus getStatus() const override {return this->itemStatus;}
 
-    unsigned int getPrice() const override {return quantity * menuItem.price;}
+    unsigned int getPrice() const override;
     time_t getWaitingTime() const override {return time(NULL) - orderTime;}
 };

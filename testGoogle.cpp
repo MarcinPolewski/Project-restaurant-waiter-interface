@@ -300,6 +300,55 @@ TEST(OrderItemTest, getPrice_typical)
     ASSERT_EQ(orderit2.getPrice(), 3 * 1999);
 }
 
+TEST(OrderItemTest, getPrice_discount_typical)
+{
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    OrderItem orderit2(pierogi, 3);
+    ASSERT_EQ(orderit2.getPrice(), 3 * 1999);
+    orderit2.setDiscount(5);
+    ASSERT_EQ(orderit2.getPrice(), 5697);
+    orderit2.setDiscount(1);
+    ASSERT_EQ(orderit2.getPrice(), 5937);
+    orderit2.setDiscount(99);
+    ASSERT_EQ(orderit2.getPrice(), 59);
+    orderit2.setDiscount(100);
+    ASSERT_EQ(orderit2.getPrice(), 0);
+}
+
+TEST(OrderItemTest, getPrice_discount_big_price)
+{
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 2345678, "mięso, mąka, woda, cebula, przyprawy", 300);
+    OrderItem orderit1(pierogi, 7);
+    ASSERT_EQ(orderit1.getPrice(), 7 * 2345678);
+    orderit1.setDiscount(1);
+    ASSERT_EQ(orderit1.getPrice(), 16255548);
+    orderit1.setDiscount(13);
+    ASSERT_EQ(orderit1.getPrice(), 14285179);
+    orderit1.setDiscount(97);
+    ASSERT_EQ(orderit1.getPrice(), 492592);
+    orderit1.setDiscount(100);
+    ASSERT_EQ(orderit1.getPrice(), 0);
+
+    Dish pierogi2("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 42949600, "mięso, mąka, woda, cebula, przyprawy", 300);
+    OrderItem orderit2(pierogi2, 1);
+    ASSERT_EQ(orderit2.getPrice(), 42949600);
+    orderit2.setDiscount(1);
+    ASSERT_EQ(orderit2.getPrice(), 42520104);
+    orderit2.setDiscount(17);
+    ASSERT_EQ(orderit2.getPrice(), 35648168);
+    orderit2.setDiscount(99);
+    ASSERT_EQ(orderit2.getPrice(), 429496);
+    orderit2.setDiscount(100);
+    ASSERT_EQ(orderit2.getPrice(), 0);
+}
+
+TEST(OrderItemTest, getPrice_discount_too_big_price)
+{
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 42949601, "mięso, mąka, woda, cebula, przyprawy", 300);
+    OrderItem orderit1(pierogi, 1);
+    EXPECT_THROW(orderit1.getPrice(), std::runtime_error);
+}
+
 TEST(OrderItemTest, getWaitingTime_typical)
 {
     Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
@@ -308,4 +357,27 @@ TEST(OrderItemTest, getWaitingTime_typical)
     ASSERT_EQ(orderit1.getWaitingTime(), 3);
     sleep(2);
     ASSERT_EQ(orderit1.getWaitingTime(), 5);
+}
+
+TEST(WaiterOrderItemTest, interface_methods)
+{
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    OrderItem orderit1(pierogi, 3);
+
+    WaiterOrderItem &order = orderit1;
+
+    ASSERT_EQ(order.getComment(), "");
+    order.addComment("Bez posypki.");
+    ASSERT_EQ(order.getComment(), "Bez posypki.");
+
+    ASSERT_EQ(order.getPrice(), 5997);
+
+    ASSERT_EQ(order.getDiscount(), 0);
+    order.setDiscount(5);
+    ASSERT_EQ(order.getDiscount(), 5);
+
+    ASSERT_EQ(order.getPrice(), 5697);
+
+    sleep(1);
+    ASSERT_EQ(order.getWaitingTime(), 1);
 }
