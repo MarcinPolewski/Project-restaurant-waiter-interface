@@ -14,7 +14,14 @@ Restaurant::Restaurant()
     currentWaiter = &waiters[0];
 }
 
-// dodać do serverhander metode allOrdersComplete - returns true if no ongoing orders
+void Restaurant::closeRestaurant()
+{
+    for (auto it : waiters)
+    {
+        if (it.hasOrders())
+            throw std::runtime_error("cannot cloase restaurant, when some orders are still in progress");
+    }
+}
 
 void Restaurant::changeCurrentWaiter(Waiter *waiter)
 {
