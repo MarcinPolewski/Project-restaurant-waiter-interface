@@ -5,6 +5,7 @@
 #include "menuItem.h"
 #include "orderitem.h"
 #include "menu.h"
+#include "serverHandler.h"
 
 TEST(AddressTest, create_typical)
 {
@@ -145,8 +146,21 @@ TEST(MenuTest, initialization)
     items.push_back(std::make_unique<Dish>("Pizza", "Pizza Neapoletana", category2, 1499, "dough, tomato sauce, cheese, toppings", 500));
     items.push_back(std::make_unique<Dish>("Burger", "Burger with fries and vegetables", category3, 1299, "beef patty, cheese, lettuce, tomato, onion", 300));
 
-    Menu menu = Menu(std::move(items));
-    ASSERT_EQ(menu.menuItems.size(), 4);
+    Menu menu(beverages, dishes);
+    ASSERT_EQ(menu.beverages.size(), 2);
+    ASSERT_EQ(menu.dishes.size(), 2);
+}
+
+TEST(ServerHandlerTest, initialization_and_reading_config)
+{
+    ASSERT_NO_THROW(ServerHandler sh = ServerHandler());
+}
+
+TEST(ServerHandlerTest, fetchMenu)
+{
+    ServerHandler sh = ServerHandler();
+    Menu menu = sh.fetchMenu();
+    ASSERT_TRUE(menu.menuItems.size() != 0);
 }
 
 TEST(OrderItemTest, create_typical)

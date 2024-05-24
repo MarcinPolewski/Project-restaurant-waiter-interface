@@ -1,0 +1,8 @@
+waiters_local_path: /Users/marcinpolewski/Documents/Studia/SEM2/PROI/restaurant/serverHandlerConf/waiters.csv
+tables_local_path: /Users/marcinpolewski/Documents/Studia/SEM2/PROI/restaurant/serverHandlerConf/tables.csv
+dishes_local_path: /Users/marcinpolewski/Documents/Studia/SEM2/PROI/restaurant/serverHandlerConf/dishes.csv
+beverages_local_path: /Users/marcinpolewski/Documents/Studia/SEM2/PROI/restaurant/serverHandlerConf/beverages.csv
+waiters_local_version: 1.0.0
+tables_local_version: 1.0.0
+dishes_local_version: 1.0.0
+beverages_local_version: 1.0.0
