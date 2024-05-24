@@ -146,9 +146,8 @@ TEST(MenuTest, initialization)
     items.push_back(std::make_unique<Dish>("Pizza", "Pizza Neapoletana", category2, 1499, "dough, tomato sauce, cheese, toppings", 500));
     items.push_back(std::make_unique<Dish>("Burger", "Burger with fries and vegetables", category3, 1299, "beef patty, cheese, lettuce, tomato, onion", 300));
 
-    Menu menu(beverages, dishes);
-    ASSERT_EQ(menu.beverages.size(), 2);
-    ASSERT_EQ(menu.dishes.size(), 2);
+    Menu menu(std::move(items));
+    ASSERT_EQ(menu.menuItems.size(), 4);
 }
 
 TEST(ServerHandlerTest, initialization_and_reading_config)
@@ -165,7 +164,7 @@ TEST(ServerHandlerTest, fetchMenu)
 
 TEST(OrderItemTest, create_typical)
 {
-    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse,  1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
     OrderItem orderit1(pierogi, 1);
     ASSERT_EQ(orderit1.menuItem.name, "Pierogi");
     ASSERT_EQ(orderit1.quantity, 1);
@@ -176,7 +175,7 @@ TEST(OrderItemTest, create_typical)
 
 TEST(OrderItemTest, create_with_comment)
 {
-    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse,  1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
     OrderItem orderit1(pierogi, 1, "Bez masla");
     ASSERT_EQ(orderit1.getComment(), "Bez masla");
     std::string com;
@@ -188,7 +187,7 @@ TEST(OrderItemTest, create_with_comment)
 
 TEST(OrderItemTest, create_with_discount)
 {
-    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse,  1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
     OrderItem orderit1(pierogi, 1, "", 20);
     ASSERT_EQ(orderit1.getDiscount(), 20);
     OrderItem orderit2(pierogi, 1, "", 100);
@@ -197,7 +196,7 @@ TEST(OrderItemTest, create_with_discount)
 
 TEST(OrderItemTest, create_too_long_comment)
 {
-    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse,  1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
     std::string com;
     for (int i = 1; i <= 256; i++)
         com += "a";
@@ -206,19 +205,19 @@ TEST(OrderItemTest, create_too_long_comment)
 
 TEST(OrderItemTest, create_too_big_discount)
 {
-    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse,  1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
     EXPECT_THROW(OrderItem(pierogi, 1, "", 101), std::invalid_argument);
 }
 
 TEST(OrderItemTest, create_zero_quantity)
 {
-    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse,  1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
     EXPECT_THROW(OrderItem(pierogi, 0), std::invalid_argument);
 }
 
 TEST(OrderItemTest, addComment_typical)
 {
-    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse,  1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
     OrderItem orderit1(pierogi, 1);
     orderit1.addComment("Połowa porcji");
     ASSERT_EQ(orderit1.getComment(), "Połowa porcji");
@@ -233,7 +232,7 @@ TEST(OrderItemTest, addComment_typical)
 
 TEST(OrderItemTest, addComment_too_long)
 {
-    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse,  1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
     OrderItem orderit1(pierogi, 1);
     std::string com;
     for (int i = 1; i <= 256; i++)
@@ -243,7 +242,7 @@ TEST(OrderItemTest, addComment_too_long)
 
 TEST(OrderItemTest, add_discount_typical)
 {
-    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse,  1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
     OrderItem orderit1(pierogi, 1);
     orderit1.setDiscount(40);
     ASSERT_EQ(orderit1.getDiscount(), 40);
@@ -255,7 +254,7 @@ TEST(OrderItemTest, add_discount_typical)
 
 TEST(OrderItemTest, add_discount_too_big)
 {
-    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse,  1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
     OrderItem orderit1(pierogi, 1);
     EXPECT_THROW(orderit1.setDiscount(101), std::invalid_argument);
 }
@@ -267,7 +266,7 @@ TEST(OrderItemTest, setDelivered_typical)
 
 TEST(OrderItemTest, setDelivered_while_not_ready)
 {
-    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse,  1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
     OrderItem orderit1(pierogi, 1);
     ASSERT_EQ(orderit1.getStatus(), OrderItem::ItemStatus::ordered);
     EXPECT_THROW(orderit1.setDelivered(), std::runtime_error);
@@ -275,7 +274,7 @@ TEST(OrderItemTest, setDelivered_while_not_ready)
 
 TEST(OrderItemTest, setCancelled_typical)
 {
-    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse,  1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
     OrderItem orderit1(pierogi, 1);
     ASSERT_EQ(orderit1.getStatus(), OrderItem::ItemStatus::ordered);
     orderit1.setCancelled();
@@ -284,7 +283,7 @@ TEST(OrderItemTest, setCancelled_typical)
 
 TEST(OrderItemTest, getPrice_typical)
 {
-    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse,  1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
     OrderItem orderit1(pierogi, 1);
     ASSERT_EQ(orderit1.getPrice(), 1999);
     OrderItem orderit2(pierogi, 3);
@@ -293,7 +292,7 @@ TEST(OrderItemTest, getPrice_typical)
 
 TEST(OrderItemTest, getWaitingTime_typical)
 {
-    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse,  1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
     OrderItem orderit1(pierogi, 1);
     sleep(3);
     ASSERT_EQ(orderit1.getWaitingTime(), 3);

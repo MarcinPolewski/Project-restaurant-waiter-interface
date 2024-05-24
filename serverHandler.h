@@ -4,6 +4,7 @@
 #include "waiter.h"
 #include "destination.h"
 #include "order.h"
+#include "orderitem.h"
 
 #include <fstream>
 #include <string>
