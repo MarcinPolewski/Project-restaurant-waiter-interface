@@ -2,10 +2,10 @@
 #include <unistd.h>
 #include "address.h"
 #include "destination.h"
-#include "menuItem.h"
+#include "menuitem.h"
 #include "orderitem.h"
 #include "menu.h"
-#include "serverHandler.h"
+#include "serverhandler.h"
 
 TEST(AddressTest, create_typical)
 {
