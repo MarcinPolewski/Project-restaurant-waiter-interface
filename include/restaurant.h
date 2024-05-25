@@ -1,6 +1,7 @@
 #pragma once
 
 #include "serverhandler.h"
+#include "waiter.h"
 
 #include <stdexcept>
 
