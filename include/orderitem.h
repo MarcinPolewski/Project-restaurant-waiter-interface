@@ -4,6 +4,15 @@
 
 #include <time.h>
 
+enum class ItemStatus
+{
+    ordered,
+    inPreparation,
+    readyToDeliver,
+    delivered,
+    canceled,
+};
+
 class WaiterOrderItem
 {
 public:
@@ -14,24 +23,15 @@ public:
     virtual unsigned int getDiscount() const = 0;
     virtual void setDelivered() = 0;
     virtual void setCancelled() = 0;
+    virtual ItemStatus getStatus() const = 0;
     virtual unsigned int getPrice() const = 0;
     virtual time_t getWaitingTime() const = 0;
-
-    enum class ItemStatus
-    {
-        ordered,
-        inPreparation,
-        readyToDeliver,
-        delivered,
-        canceled,
-    };
-
-    virtual ItemStatus getStatus() const = 0;
 };
 
 class OrderItem : public WaiterOrderItem
 {
 private:
+
     ItemStatus itemStatus = ItemStatus::ordered;
     std::string comment;
     unsigned int discount;
