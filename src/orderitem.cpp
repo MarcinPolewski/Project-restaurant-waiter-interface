@@ -1,5 +1,7 @@
 #include "orderitem.h"
 
+#define MAX_ORDER_ITEM_PRICE 42949600
+
 OrderItem::OrderItem(const MenuItem& menu_item, unsigned int count,
     const std::string& com, unsigned int discnt)
     : menuItem(menu_item), quantity(count)
@@ -50,7 +52,7 @@ void OrderItem::setCancelled()
 unsigned int OrderItem::getPrice() const
 {
     unsigned int full_price = quantity * this->menuItem.price;
-    if (full_price > 42949600)
+    if (full_price > MAX_ORDER_ITEM_PRICE)
         throw(std::runtime_error("Cannot compute price - overflow"));
     unsigned int discnt = (full_price * this->discount);
     if (discnt % 100 != 0)
