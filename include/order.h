@@ -2,12 +2,17 @@
 
 class Order
 {
+public:
+    virtual void nothing() = 0;
+    virtual ~Order() = default;
 };
 
-class LocalOrder : Order
+class LocalOrder : public Order
 {
+    void nothing() override {}
 };
 
-class RemoteOrder : Order
+class RemoteOrder : public Order
 {
+    void nothing() override {}
 };

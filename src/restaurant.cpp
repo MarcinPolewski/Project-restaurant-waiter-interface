@@ -14,6 +14,18 @@ Restaurant::Restaurant()
     currentWaiter = &waiters[0];
 }
 
+RemoteOrder *Restaurant::newRemoteOrder(Destination *destination)
+{
+    remoteOrders.push_back(RemoteOrder());
+    return &remoteOrders.back();
+}
+
+LocalOrder *Restaurant::newLocalOrder(Table *table)
+{
+    localOrders.push_back(LocalOrder());
+    return &localOrders.back();
+}
+
 void Restaurant::closeRestaurant()
 {
     for (auto it : waiters)

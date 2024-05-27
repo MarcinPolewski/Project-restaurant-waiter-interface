@@ -26,18 +26,16 @@ public:
 
 class Waiter : public Employee
 {
-    std::vector<LocalOrder> localOrders;
-    std::vector<RemoteOrder> remoteOrders;
+    std::vector<LocalOrder *> localOrders;
+    std::vector<RemoteOrder *> remoteOrders;
 
 public:
     using Employee::Employee; // inheriting constructors from parent
 
-    std::vector<LocalOrder *> getLocalOrders();
-    std::vector<RemoteOrder *> getRemoteOrders();
+    const std::vector<LocalOrder *> &getLocalOrders();
+    const std::vector<RemoteOrder *> &getRemoteOrders();
 
-    void newOrder(Table *table);
-    void newOrder(Remote *remote);
-
+    void addOrder(Order *);
     void closeOrder(Order *order);
 
     bool hasOrders();
