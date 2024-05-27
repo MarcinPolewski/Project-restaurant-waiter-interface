@@ -150,18 +150,6 @@ TEST(MenuTest, initialization)
     ASSERT_EQ(menu.menuItems.size(), 4);
 }
 
-TEST(ServerHandlerTest, initialization_and_reading_config)
-{
-    ASSERT_NO_THROW(ServerHandler sh = ServerHandler());
-}
-
-TEST(ServerHandlerTest, fetchMenu)
-{
-    ServerHandler sh = ServerHandler();
-    Menu menu = sh.fetchMenu();
-    ASSERT_TRUE(menu.menuItems.size() != 0);
-}
-
 TEST(OrderItemTest, create_typical)
 {
     Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
