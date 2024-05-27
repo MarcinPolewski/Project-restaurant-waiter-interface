@@ -12,6 +12,9 @@ class Restaurant
     std::vector<Waiter> waiters;
     std::vector<Table> tables;
 
+    std::vector<LocalOrder> localOrders;
+    std::vector<RemoteOrder> remoteOrders;
+
     Waiter *currentWaiter;
 
 public:
@@ -20,6 +23,9 @@ public:
 
     void changeCurrentWaiter(Waiter *waiter);
     Waiter const *getCurrentWaiter();
+
+    RemoteOrder *newRemoteOrder(Destination *destination);
+    LocalOrder *newLocalOrder(Table *table);
 
     std::vector<Waiter> const &getWaiters();
     std::vector<Table> const &getTables();
