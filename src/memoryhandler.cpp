@@ -1,40 +1,11 @@
-#include "serverhandler.h"
-// #include "rapidcsv.h"
-#include "csv.h"
-// #include "build/_deps/csv-src/src/rapidcsv.h"
-// #include "_deps/csv-src/src/rapidcsv.h"
+#include "memoryhandler.h"
 
-ServerHandler::ServerHandler()
-{
-    readConfig();
-    update();
-}
-
-bool ServerHandler::pathIsCorrect(std::string &path)
+bool MemoryHandler::pathIsCorrect(std::string &path)
 {
     return std::filesystem::exists(path);
 }
 
-void ServerHandler::updateFile(const std::string &pathToLocal)
-{
-    /*
-    this method is only a place holder, for sake of this project we will
-    not create a server.
-
-    This method would send request to server, that would compare versions of files.
-    If local version was outdated, new version would be downloaded.
-    */
-}
-
-void ServerHandler::update()
-{
-    updateFile(tablesPath);
-    updateFile(waitersPath);
-    updateFile(beveragesPath);
-    updateFile(dishesPath);
-}
-
-void ServerHandler::readConfig()
+void MemoryHandler::readConfig()
 {
     std::ifstream confFileReader(configPath);
     // auto pwd = std::filesystem::current_path();
@@ -102,7 +73,7 @@ void ServerHandler::readConfig()
     confFileReader.close();
 }
 
-void ServerHandler::fetchDishes(std::vector<std::unique_ptr<MenuItem>> &arr)
+void MemoryHandler::fetchDishes(std::vector<std::unique_ptr<MenuItem>> &arr)
 {
 
     io::CSVReader<6, io::trim_chars<' '>, io::double_quote_escape<',', '\"'>> in(dishesPath);
@@ -130,9 +101,8 @@ void ServerHandler::fetchDishes(std::vector<std::unique_ptr<MenuItem>> &arr)
     }
 }
 
-void ServerHandler::fetchBeverages(std::vector<std::unique_ptr<MenuItem>> &arr)
+void MemoryHandler::fetchBeverages(std::vector<std::unique_ptr<MenuItem>> &arr)
 {
-    updateFile(beveragesPath);
 
     io::CSVReader<6, io::trim_chars<' '>, io::double_quote_escape<',', '\"'>> in(beveragesPath);
     in.read_header(io::ignore_extra_column, "name", "description", "category", "price", "alcoholPercentage", "volume");
@@ -158,7 +128,7 @@ void ServerHandler::fetchBeverages(std::vector<std::unique_ptr<MenuItem>> &arr)
     }
 }
 
-Menu ServerHandler::fetchMenu()
+Menu MemoryHandler::fetchMenu()
 {
     std::vector<std::unique_ptr<MenuItem>> items;
     fetchDishes(items);
@@ -167,27 +137,91 @@ Menu ServerHandler::fetchMenu()
     return Menu(std::move(items));
 }
 
-std::vector<Waiter> ServerHandler::fetchWaiters()
+std::vector<Waiter> MemoryHandler::fetchWaiters()
 {
-    updateFile(waitersPath);
+    io::CSVReader<3, io::trim_chars<' '>, io::double_quote_escape<',', '\"'>> in(beveragesPath);
+    in.read_header(io::ignore_extra_column, "id", "name", "surname");
+
+    std::string name;
+    std::string surname;
+    unsigned int id;
+
+    std::vector<Waiter> arr;
+    while (in.read_row(id, name, surname))
+    {
+        arr.push_back(Waiter(id, name, surname));
+    }
+
+    return arr;
 }
 
-std::vector<Table> ServerHandler::fetchTables()
+std::vector<Table> MemoryHandler::fetchTables()
 {
-    updateFile(tablesPath);
+    io::CSVReader<4, io::trim_chars<' '>, io::double_quote_escape<',', '\"'>> in(beveragesPath);
+    in.read_header(io::ignore_extra_column, "x", "y", "level", "numerOfSeats");
+
+    unsigned int x;
+    unsigned int y;
+    int level;
+    unsigned int nOfSeats;
+
+    std::vector<Table> arr;
+    while (in.read_row(x, y, level, nOfSeats))
+    {
+        arr.push_back(Table(Table::Position(x, y, level), nOfSeats));
+    }
+
+    return arr;
 }
 
-void ServerHandler::archiveOrder(const Order *order)
+std::string MemoryHandler::getWaitersVersion() const
 {
-    /*
-    this is only a place holder method
-
-    normaly it would send this order to server, where it would be stored
-    for statistics
-    */
+    return waitersLocalVersion;
+}
+std::string MemoryHandler::getTablesVersion() const
+{
+    return tablesLocalVersion;
 }
 
-void ServerHandler::sendOrderItem(OrderItem *order)
+std::string MemoryHandler::getDishesVersion() const
 {
-    requestedOrders.push_back(order);
+    return dishesLocalVersion;
+}
+std::string MemoryHandler::getBeveragesVersion() const
+{
+    return beveragesLocalVersion;
+}
+
+void MemoryHandler::setWaitersVersion(const std::string &version)
+{
+    waitersLocalVersion = version;
+}
+void MemoryHandler::setTablesVersion(const std::string &version)
+{
+    tablesLocalVersion = version;
+}
+void MemoryHandler::setDishesVersion(const std::string &version)
+{
+    dishesLocalVersion = version;
+}
+void MemoryHandler::setBeveragesVersion(const std::string &version)
+{
+    beveragesLocalVersion = version;
+}
+
+std::string MemoryHandler::getWaitersPath() const
+{
+    return waitersPath;
+}
+std::string MemoryHandler::getTablesPath() const
+{
+    return tablesPath;
+}
+std::string MemoryHandler::getDishesPath() const
+{
+    return dishesPath;
+}
+std::string MemoryHandler::getBeveragesPath() const
+{
+    return beveragesPath;
 }

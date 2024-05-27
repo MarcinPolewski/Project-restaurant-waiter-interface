@@ -9,12 +9,12 @@
 class Employee
 {
 public:
+    const unsigned int id;
     const std::string name;
     const std::string surname;
-    const unsigned int id;
 
-    Employee(std::string &name, std::string &surname, unsigned int id)
-        : name(name), surname(surname), id(id)
+    Employee(unsigned int id, std::string &name, std::string &surname)
+        : id(id), name(name), surname(surname)
     {
     }
 

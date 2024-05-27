@@ -1,10 +1,11 @@
 #include "restaurant.h"
 
 Restaurant::Restaurant()
-    : serverHandler(),
-      menu(serverHandler.fetchMenu()),
-      waiters(serverHandler.fetchWaiters()),
-      tables(serverHandler.fetchTables())
+    : memoryHandler(),
+      serverHandler(memoryHandler),
+      menu(memoryHandler.fetchMenu()),
+      waiters(memoryHandler.fetchWaiters()),
+      tables(memoryHandler.fetchTables())
 {
     if (menu.empty())
         throw std::runtime_error("Menu cannot be empty");
