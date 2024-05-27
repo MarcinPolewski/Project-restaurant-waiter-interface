@@ -6,6 +6,7 @@
 #include "orderitem.h"
 #include "menu.h"
 #include "serverhandler.h"
+#include "order.h"
 
 TEST(AddressTest, create_typical)
 {
@@ -372,4 +373,38 @@ TEST(WaiterOrderItemTest, interface_methods)
     ASSERT_EQ(order.getStatus(), ItemStatus::ordered);
     order.setCancelled();
     ASSERT_EQ(order.getStatus(), ItemStatus::canceled);
+}
+
+TEST(OrderTest, getTotalPrice)
+{
+    LocalOrder lo;
+    Order& ord = lo;
+
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    Beverage cola("Cola", "Niezdrowy napoj", MenuItem::CATEGORY::coldBeverage, 800, 0, 500);
+
+    ord.addOrderItem(pierogi, 5);
+    ord.addOrderItem(cola, 4);
+
+    ASSERT_EQ(lo.getTotalPrice(), 13195);
+}
+
+TEST(OrderTest, addOrderItem)
+{
+    LocalOrder lo;
+    Order& ord = lo;
+
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+
+    OrderItem& ordit = ord.addOrderItem(pierogi, 5);
+    ASSERT_EQ(ordit.getPrice(), 9995);
+}
+
+TEST(OrderTest, getOrderTime)
+{
+    LocalOrder lo;
+    Order& ord = lo;
+
+    ASSERT_EQ(ord.orderTime, time(NULL));
+    ASSERT_EQ(ord.getOrderTime(), time(NULL));
 }

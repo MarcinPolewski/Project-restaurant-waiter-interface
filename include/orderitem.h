@@ -43,6 +43,8 @@ public:
     OrderItem(const MenuItem& menu_item, unsigned int count,
         const std::string& com = "", unsigned int discnt = 0);
 
+    // TODO - nie działa operator przypisania - usunąć?
+
     void addComment(const std::string& new_comment) override;
     void addComment(std::string&& new_comment) override;
     const std::string& getComment() const override {return this->comment;}
