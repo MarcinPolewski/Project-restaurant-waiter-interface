@@ -208,3 +208,20 @@ void MemoryHandler::setBeveragesVersion(const std::string &version)
 {
     beveragesLocalVersion = version;
 }
+
+std::string MemoryHandler::getWaitersPath() const
+{
+    return waitersPath;
+}
+std::string MemoryHandler::getTablesPath() const
+{
+    return tablesPath;
+}
+std::string MemoryHandler::getDishesPath() const
+{
+    return dishesPath;
+}
+std::string MemoryHandler::getBeveragesPath() const
+{
+    return beveragesPath;
+}

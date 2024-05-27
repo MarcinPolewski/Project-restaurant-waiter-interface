@@ -1,12 +1,14 @@
 #pragma once
 
 #include "serverhandler.h"
+#include "memoryhandler.h"
 #include "waiter.h"
 
 #include <stdexcept>
 
 class Restaurant
 {
+    MemoryHandler memoryHandler;
     ServerHandler serverHandler;
     Menu menu;
     std::vector<Waiter> waiters;

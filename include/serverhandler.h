@@ -5,6 +5,7 @@
 #include "destination.h"
 #include "order.h"
 #include "orderitem.h"
+#include "memoryhandler.h"
 
 #include <string>
 
@@ -24,6 +25,14 @@ class ServerHandler : public ServerHandlerInterface
     // void updateFile(const std::string &pathToLocal); // check if file is up to date
 
 public:
+    ServerHandler(MemoryHandler &memoryHandler)
+    {
+        updateFile(memoryHandler.getWaitersPath(), memoryHandler.getWaitersVersion());
+        updateFile(memoryHandler.getTablesPath(), memoryHandler.getTablesVersion());
+        updateFile(memoryHandler.getDishesPath(), memoryHandler.getDishesVersion());
+        updateFile(memoryHandler.getBeveragesPath(), memoryHandler.getBeveragesVersion());
+    }
+
     std::string updateFile(const std::string &path, const std::string &version)
     {
         return "1.1.0";

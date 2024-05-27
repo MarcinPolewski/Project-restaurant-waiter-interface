@@ -24,6 +24,11 @@ public:
     virtual std::string getDishesVersion() const = 0;
     virtual std::string getBeveragesVersion() const = 0;
 
+    virtual std::string getWaitersPath() const = 0;
+    virtual std::string getTablesPath() const = 0;
+    virtual std::string getDishesPath() const = 0;
+    virtual std::string getBeveragesPath() const = 0;
+
     virtual void setWaitersVersion(const std::string &version) = 0;
     virtual void setTablesVersion(const std::string &version) = 0;
     virtual void setBeveragesVersion(const std::string &version) = 0;
@@ -62,6 +67,11 @@ public:
     std::string getTablesVersion() const override;
     std::string getDishesVersion() const override;
     std::string getBeveragesVersion() const override;
+
+    virtual std::string getWaitersPath() const override;
+    virtual std::string getTablesPath() const override;
+    virtual std::string getDishesPath() const override;
+    virtual std::string getBeveragesPath() const override;
 
     void setWaitersVersion(const std::string &version) override;
     void setTablesVersion(const std::string &version) override;
