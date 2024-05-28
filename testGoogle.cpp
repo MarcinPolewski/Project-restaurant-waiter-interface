@@ -158,7 +158,7 @@ TEST(OrderItemTest, create_typical)
     ASSERT_EQ(orderit1.quantity, 1);
     ASSERT_EQ(orderit1.getDiscount(), 0);
     ASSERT_EQ(orderit1.getComment(), "");
-    ASSERT_EQ(orderit1.getStatus(), ItemStatus::ordered);
+    ASSERT_EQ(orderit1.getStatus(), ItemStatus::created);
 }
 
 TEST(OrderItemTest, create_with_comment)
@@ -253,30 +253,143 @@ TEST(OrderItemTest, add_discount_typical)
 TEST(OrderItemTest, add_discount_too_big)
 {
     Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
-    OrderItem orderit1(pierogi, 1);
-    EXPECT_THROW(orderit1.setDiscount(101), std::invalid_argument);
+    OrderItem orderit(pierogi, 1);
+    EXPECT_THROW(orderit.setDiscount(101), std::invalid_argument);
+}
+
+TEST(OrderItemTest, changeStatus_typical)
+{
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    OrderItem orderit(pierogi, 1);
+
+    ASSERT_EQ(orderit.getStatus(), ItemStatus::created);
+
+    orderit.changeStatus(ItemStatus::ordered);
+    ASSERT_EQ(orderit.getStatus(), ItemStatus::ordered);
+
+    orderit.changeStatus(ItemStatus::inPreparation);
+    ASSERT_EQ(orderit.getStatus(), ItemStatus::inPreparation);
+
+    orderit.changeStatus(ItemStatus::readyToDeliver);
+    ASSERT_EQ(orderit.getStatus(), ItemStatus::readyToDeliver);
+
+    orderit.changeStatus(ItemStatus::delivered);
+    ASSERT_EQ(orderit.getStatus(), ItemStatus::delivered);
+}
+
+TEST(OrderItemTest, changeStatus_decrease)
+{
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    OrderItem orderit(pierogi, 1);
+
+    orderit.changeStatus(ItemStatus::ordered);
+    ASSERT_EQ(orderit.getStatus(), ItemStatus::ordered);
+    EXPECT_THROW(orderit.changeStatus(ItemStatus::created), std::runtime_error);
+
+    orderit.changeStatus(ItemStatus::inPreparation);
+    ASSERT_EQ(orderit.getStatus(), ItemStatus::inPreparation);
+    EXPECT_THROW(orderit.changeStatus(ItemStatus::created), std::runtime_error);
+    EXPECT_THROW(orderit.changeStatus(ItemStatus::ordered), std::runtime_error);
+
+    orderit.changeStatus(ItemStatus::readyToDeliver);
+    ASSERT_EQ(orderit.getStatus(), ItemStatus::readyToDeliver);
+    EXPECT_THROW(orderit.changeStatus(ItemStatus::created), std::runtime_error);
+    EXPECT_THROW(orderit.changeStatus(ItemStatus::ordered), std::runtime_error);
+    EXPECT_THROW(orderit.changeStatus(ItemStatus::inPreparation), std::runtime_error);
+
+    orderit.changeStatus(ItemStatus::delivered);
+    ASSERT_EQ(orderit.getStatus(), ItemStatus::delivered);
+    EXPECT_THROW(orderit.changeStatus(ItemStatus::created), std::runtime_error);
+    EXPECT_THROW(orderit.changeStatus(ItemStatus::ordered), std::runtime_error);
+    EXPECT_THROW(orderit.changeStatus(ItemStatus::inPreparation), std::runtime_error);
+    EXPECT_THROW(orderit.changeStatus(ItemStatus::readyToDeliver), std::runtime_error);
+    EXPECT_THROW(orderit.changeStatus(ItemStatus::canceled), std::runtime_error);
+}
+
+TEST(OrderItemTest, changeStatus_cancel)
+{
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    OrderItem orderit(pierogi, 1);
+
+    ASSERT_EQ(orderit.getStatus(), ItemStatus::created);
+    orderit.changeStatus(ItemStatus::canceled);
+    ASSERT_EQ(orderit.getStatus(), ItemStatus::canceled);
+
+    EXPECT_THROW(orderit.changeStatus(ItemStatus::created), std::runtime_error);
+    EXPECT_THROW(orderit.changeStatus(ItemStatus::ordered), std::runtime_error);
+    EXPECT_THROW(orderit.changeStatus(ItemStatus::inPreparation), std::runtime_error);
+    EXPECT_THROW(orderit.changeStatus(ItemStatus::readyToDeliver), std::runtime_error);
+    EXPECT_THROW(orderit.changeStatus(ItemStatus::delivered), std::runtime_error);
+
+    OrderItem orderit2(pierogi, 1);
+    orderit2.changeStatus(ItemStatus::ordered);
+    orderit2.changeStatus(ItemStatus::canceled);
+    ASSERT_EQ(orderit2.getStatus(), ItemStatus::canceled);
+
+    OrderItem orderit3(pierogi, 1);
+    orderit3.changeStatus(ItemStatus::inPreparation);
+    orderit3.changeStatus(ItemStatus::canceled);
+    ASSERT_EQ(orderit3.getStatus(), ItemStatus::canceled);
+
+    OrderItem orderit4(pierogi, 1);
+    orderit4.changeStatus(ItemStatus::readyToDeliver);
+    orderit4.changeStatus(ItemStatus::canceled);
+    ASSERT_EQ(orderit4.getStatus(), ItemStatus::canceled);
+
+    OrderItem orderit5(pierogi, 1);
+    orderit5.changeStatus(ItemStatus::delivered);
+    EXPECT_THROW(orderit5.changeStatus(ItemStatus::canceled), std::runtime_error);
 }
 
 TEST(OrderItemTest, setDelivered_typical)
 {
-    // TODO
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    OrderItem orderit(pierogi, 1);
+    orderit.changeStatus(ItemStatus::readyToDeliver);
+    orderit.setDelivered();
+    ASSERT_EQ(orderit.getStatus(), ItemStatus::delivered);
 }
 
 TEST(OrderItemTest, setDelivered_while_not_ready)
 {
     Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
-    OrderItem orderit1(pierogi, 1);
-    ASSERT_EQ(orderit1.getStatus(), ItemStatus::ordered);
-    EXPECT_THROW(orderit1.setDelivered(), std::runtime_error);
+    OrderItem orderit(pierogi, 1);
+    ASSERT_EQ(orderit.getStatus(), ItemStatus::created);
+    EXPECT_THROW(orderit.setDelivered(), std::runtime_error);
+    orderit.changeStatus(ItemStatus::ordered);
+    EXPECT_THROW(orderit.setDelivered(), std::runtime_error);
+    orderit.changeStatus(ItemStatus::inPreparation);
+    EXPECT_THROW(orderit.setDelivered(), std::runtime_error);
 }
 
 TEST(OrderItemTest, setCancelled_typical)
 {
     Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
     OrderItem orderit1(pierogi, 1);
-    ASSERT_EQ(orderit1.getStatus(), ItemStatus::ordered);
+
+    ASSERT_EQ(orderit1.getStatus(), ItemStatus::created);
     orderit1.setCancelled();
     ASSERT_EQ(orderit1.getStatus(), ItemStatus::canceled);
+
+    OrderItem orderit2(pierogi, 1);
+    orderit2.changeStatus(ItemStatus::ordered);
+    orderit2.setCancelled();
+    ASSERT_EQ(orderit2.getStatus(), ItemStatus::canceled);
+}
+
+TEST(OrderItemTest, setCancelled_after_ordered)
+{
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    OrderItem orderit(pierogi, 1);
+
+    orderit.changeStatus(ItemStatus::inPreparation);
+    EXPECT_THROW(orderit.setCancelled(), std::runtime_error);
+
+    orderit.changeStatus(ItemStatus::readyToDeliver);
+    EXPECT_THROW(orderit.setCancelled(), std::runtime_error);
+
+    orderit.changeStatus(ItemStatus::delivered);
+    EXPECT_THROW(orderit.setCancelled(), std::runtime_error);
 }
 
 TEST(OrderItemTest, getPrice_typical)
@@ -369,7 +482,7 @@ TEST(WaiterOrderItemTest, interface_methods)
     sleep(1);
     ASSERT_EQ(order.getWaitingTime(), 1);
 
-    ASSERT_EQ(order.getStatus(), ItemStatus::ordered);
+    ASSERT_EQ(order.getStatus(), ItemStatus::created);
     order.setCancelled();
     ASSERT_EQ(order.getStatus(), ItemStatus::canceled);
 }
