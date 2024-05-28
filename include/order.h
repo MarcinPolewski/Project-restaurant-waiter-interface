@@ -18,7 +18,7 @@ class WaiterOrder
 {
     virtual WaiterOrderItem& addOrderItem(const MenuItem& menu_item, unsigned int count,
         const std::string& com = "", unsigned int discnt = 0) = 0;
-    // virtual WaiterOrderItem& getOrderItem(unsigned int index) = 0;
+    virtual WaiterOrderItem& getOrderItem(unsigned int index) = 0;
     // virtual void removeOrderItem(unsigned int index) = 0;
     // virtual Destination& getDestination() = 0;
     // virtual OrderStatus getStatus() = 0;
@@ -42,7 +42,11 @@ public:
 
     OrderItem& addOrderItem(const MenuItem& menu_item, unsigned int count,
         const std::string& com = "", unsigned int discnt = 0) override;
+
+    OrderItem& getOrderItem(unsigned int index) override;
+
     time_t getOrderTime() const override {return this->orderTime;}
+
     unsigned int getTotalPrice() const override;
     virtual void nothing() = 0;
 };
