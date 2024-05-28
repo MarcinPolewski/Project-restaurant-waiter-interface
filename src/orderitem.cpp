@@ -33,18 +33,33 @@ void OrderItem::setDiscount(unsigned int new_discount)
     this->discount = new_discount;
 }
 
+void OrderItem::changeStatus(ItemStatus new_status)
+{
+    if (this->itemStatus == ItemStatus::delivered)
+        throw (std::runtime_error("Cannot cancel already delivered order."));
+    else if (new_status < this->itemStatus)
+        throw (std::runtime_error("Cannot decrease item status."));
+    else
+        this->itemStatus = new_status;
+}
+
+void OrderItem::setOrdered()
+{
+    this->changeStatus(ItemStatus::ordered);
+}
+
 void OrderItem::setDelivered()
 {
     if (this->itemStatus == ItemStatus::readyToDeliver)
-        this->itemStatus = ItemStatus::delivered;
+        this->changeStatus(ItemStatus::delivered);
     else
-        throw (std::runtime_error("Unable to set delivered - item is not ready to delivered yet."));
+        throw (std::runtime_error("Unable to set delivered, item is not ready to be delivered yet."));
 }
 
 void OrderItem::setCancelled()
 {
-    if (this->itemStatus == ItemStatus::ordered)
-        this->itemStatus = ItemStatus::canceled;
+    if (this->itemStatus < ItemStatus::inPreparation)
+        this->changeStatus(ItemStatus::canceled);
     else
         throw (std::runtime_error("Unable to cancel, item is already in preparation."));
 }
