@@ -6,6 +6,7 @@
 
 enum class ItemStatus
 {
+    created,
     ordered,
     inPreparation,
     readyToDeliver,
@@ -21,6 +22,7 @@ public:
     virtual const std::string& getComment() const = 0;
     virtual void setDiscount(unsigned int) = 0;
     virtual unsigned int getDiscount() const = 0;
+    virtual void setOrdered() = 0;
     virtual void setDelivered() = 0;
     virtual void setCancelled() = 0;
     virtual ItemStatus getStatus() const = 0;
@@ -32,7 +34,7 @@ class OrderItem : public WaiterOrderItem
 {
 private:
 
-    ItemStatus itemStatus = ItemStatus::ordered;
+    ItemStatus itemStatus = ItemStatus::created;
     std::string comment;
     unsigned int discount;
 public:
@@ -52,6 +54,8 @@ public:
     void setDiscount(unsigned int new_discount) override;
     unsigned int getDiscount() const override {return this->discount;}
 
+    void changeStatus(ItemStatus new_status);
+    void setOrdered() override;
     void setDelivered() override;
     void setCancelled() override;
     ItemStatus getStatus() const override {return this->itemStatus;}
