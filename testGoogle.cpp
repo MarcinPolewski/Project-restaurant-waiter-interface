@@ -419,6 +419,29 @@ TEST(OrderTest, getOrderTime)
     ASSERT_EQ(ord.getOrderTime(), time(NULL));
 }
 
+TEST(OrderTest, getWaitingTime_typical)
+{
+    LocalOrder lo;
+    Order& ord = lo;
+
+    sleep(3);
+    ASSERT_EQ(ord.getWaitingTime(), 3);
+    sleep(1);
+    ASSERT_EQ(ord.getWaitingTime(), 4);
+}
+
+TEST(OrderTest, resetWaitingTime_typical)
+{
+    LocalOrder lo;
+    Order& ord = lo;
+
+    sleep(2);
+    ASSERT_EQ(ord.getWaitingTime(), 2);
+    ord.resetWaitingTime();
+    sleep(1);
+    ASSERT_EQ(ord.getWaitingTime(), 1);
+}
+
 TEST(OrderTest, getTotalPrice)
 {
     LocalOrder lo;

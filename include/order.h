@@ -23,8 +23,8 @@ class WaiterOrder
     // virtual Destination& getDestination() = 0;
     // virtual OrderStatus getStatus() = 0;
     virtual time_t getOrderTime() const = 0;
-    // virtual time_t getWaitingTime() = 0;
-    // virtual void resetWaitingTime() = 0;
+    virtual time_t getWaitingTime() const = 0;
+    virtual void resetWaitingTime() = 0;
     virtual unsigned int getTotalPrice() const = 0;
     // virtual std::string& getRecipt() = 0;
 };
@@ -46,6 +46,8 @@ public:
     OrderItem& getOrderItem(unsigned int index) override;
 
     time_t getOrderTime() const override {return this->orderTime;}
+    time_t getWaitingTime() const override {return time(NULL) - this->waitingTimeStamp;}
+    void resetWaitingTime() override {this->waitingTimeStamp = time(NULL);}
 
     unsigned int getTotalPrice() const override;
     virtual void nothing() = 0;
