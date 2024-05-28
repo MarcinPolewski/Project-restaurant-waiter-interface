@@ -59,6 +59,7 @@ class MemoryHandler : MemoryHandlerInterface
     void readConfig();
 
 public:
+    MemoryHandler();
     Menu fetchMenu() override;
     std::vector<Waiter> fetchWaiters() override;
     std::vector<Table> fetchTables() override;

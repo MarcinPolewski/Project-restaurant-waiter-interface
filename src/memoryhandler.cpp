@@ -5,6 +5,11 @@ bool MemoryHandler::pathIsCorrect(std::string &path)
     return std::filesystem::exists(path);
 }
 
+MemoryHandler::MemoryHandler()
+{
+    readConfig();
+}
+
 void MemoryHandler::readConfig()
 {
     std::ifstream confFileReader(configPath);
