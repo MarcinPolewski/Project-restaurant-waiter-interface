@@ -6,6 +6,7 @@
 #include "orderitem.h"
 #include "menu.h"
 #include "serverhandler.h"
+#include "memoryhandler.h"
 
 TEST(AddressTest, create_typical)
 {
@@ -372,4 +373,70 @@ TEST(WaiterOrderItemTest, interface_methods)
     ASSERT_EQ(order.getStatus(), ItemStatus::ordered);
     order.setCancelled();
     ASSERT_EQ(order.getStatus(), ItemStatus::canceled);
+}
+
+TEST(MemoryHandlerTest, initialization_and_readConfig)
+{
+    std::string folderName = "memoryHandlerTestFiles";
+    MemoryHandler mh(folderName);
+
+    ASSERT_EQ(mh.getWaitersPath(), "serverHandlerConf/waiters.csv");
+    ASSERT_EQ(mh.getTablesPath(), "serverHandlerConf/tables.csv");
+    ASSERT_EQ(mh.getDishesPath(), "serverHandlerConf/dishes.csv");
+    ASSERT_EQ(mh.getBeveragesPath(), "serverHandlerConf/beverages.csv");
+}
+
+TEST(MemoryHandlerTest, version_getters_and_setters)
+{
+    MemoryHandler mh = MemoryHandler();
+
+    std::string v1 = "1.1.1";
+    mh.setWaitersVersion(v1);
+    ASSERT_EQ(mh.getWaitersVersion(), v1);
+
+    std::string v2 = "2.2.2";
+    mh.setTablesVersion(v2);
+    ASSERT_EQ(mh.getTablesVersion(), v2);
+
+    std::string v3 = "3.3.3";
+    mh.setDishesVersion(v3);
+    ASSERT_EQ(mh.getDishesVersion(), v3);
+
+    std::string v4 = "4.4.4";
+    mh.setBeveragesVersion(v4);
+    ASSERT_EQ(mh.getBeveragesVersion(), v4);
+}
+
+TEST(MemoryHandlerTest, path_getters)
+{
+    MemoryHandler mh = MemoryHandler();
+    ASSERT_TRUE(std::filesystem::exists(mh.getBeveragesPath()));
+    ASSERT_TRUE(std::filesystem::exists(mh.getDishesPath()));
+    ASSERT_TRUE(std::filesystem::exists(mh.getTablesPath()));
+    ASSERT_TRUE(std::filesystem::exists(mh.getWaitersPath()));
+}
+
+TEST(MemoryHandlerTest, fetchMenu)
+{
+    MemoryHandler mh = MemoryHandler();
+    Menu menu = mh.fetchMenu();
+
+    ASSERT_FALSE(menu.empty());
+}
+
+TEST(MemoryHandlerTest, Waiteres)
+{
+    MemoryHandler mh = MemoryHandler();
+    std::vector<Waiter> waiters = mh.fetchWaiters();
+
+    ASSERT_FALSE(waiters.empty());
+}
+
+TEST(MemoryHandlerTest, Tables)
+{
+
+    MemoryHandler mh = MemoryHandler();
+    std::vector<Table> tables = mh.fetchTables();
+
+    ASSERT_FALSE(tables.empty());
 }

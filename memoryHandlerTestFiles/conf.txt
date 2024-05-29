@@ -1,0 +1,8 @@
+waiters_local_path: serverHandlerConf/waiters.csv
+tables_local_path: serverHandlerConf/tables.csv
+dishes_local_path: serverHandlerConf/dishes.csv
+beverages_local_path: serverHandlerConf/beverages.csv
+waiters_local_version: 1.0.0
+tables_local_version: 2.0.0
+dishes_local_version: 3.0.0
+beverages_local_version: 4.0.0

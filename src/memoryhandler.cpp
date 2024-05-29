@@ -1,12 +1,18 @@
 #include "memoryhandler.h"
 
-bool MemoryHandler::pathIsCorrect(std::string &path)
+bool MemoryHandler::pathIsCorrect(const std::string &path)
 {
     return std::filesystem::exists(path);
 }
 
-MemoryHandler::MemoryHandler()
+MemoryHandler::MemoryHandler(const std::string &configFolderName)
 {
+    auto pth = std::filesystem::current_path();
+    pth = pth.parent_path();
+    pth = pth / configFolderName;
+    pth = pth / "conf.txt";
+    configPath = pth;
+
     readConfig();
 }
 
@@ -144,7 +150,7 @@ Menu MemoryHandler::fetchMenu()
 
 std::vector<Waiter> MemoryHandler::fetchWaiters()
 {
-    io::CSVReader<3, io::trim_chars<' '>, io::double_quote_escape<',', '\"'>> in(beveragesPath);
+    io::CSVReader<3, io::trim_chars<' '>, io::double_quote_escape<',', '\"'>> in(waitersPath);
     in.read_header(io::ignore_extra_column, "id", "name", "surname");
 
     std::string name;
@@ -162,7 +168,7 @@ std::vector<Waiter> MemoryHandler::fetchWaiters()
 
 std::vector<Table> MemoryHandler::fetchTables()
 {
-    io::CSVReader<4, io::trim_chars<' '>, io::double_quote_escape<',', '\"'>> in(beveragesPath);
+    io::CSVReader<4, io::trim_chars<' '>, io::double_quote_escape<',', '\"'>> in(tablesPath);
     in.read_header(io::ignore_extra_column, "x", "y", "level", "numerOfSeats");
 
     unsigned int x;
