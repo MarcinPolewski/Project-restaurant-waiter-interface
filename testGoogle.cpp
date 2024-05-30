@@ -596,3 +596,119 @@ TEST(MemoryHandlerTest, Tables)
     ASSERT_EQ(tables[1].position.level, 7);
     ASSERT_EQ(tables[1].seats, 8);
 }
+
+TEST(Employee, init)
+{
+    unsigned int id = 4;
+    std::string name("n");
+    std::string surname("s");
+
+    Employee e(id, name, surname);
+
+    ASSERT_EQ(e.id, id);
+    ASSERT_EQ(e.name, name);
+    ASSERT_EQ(e.surname, surname);
+}
+
+TEST(Employee, to_string)
+{
+    unsigned int id = 4;
+    std::string name("n");
+    std::string surname("s");
+
+    Employee e(id, name, surname);
+    ASSERT_EQ(e.toString(), "4. n s");
+}
+
+TEST(Waiter, init)
+{
+    unsigned int id = 4;
+    std::string name("n");
+    std::string surname("s");
+
+    Waiter e(id, name, surname);
+
+    ASSERT_EQ(e.id, id);
+    ASSERT_EQ(e.name, name);
+    ASSERT_EQ(e.surname, surname);
+    ASSERT_EQ(e.toString(), "4. n s");
+}
+
+TEST(Waiter, getLocalOrders_addOrder_closeOrder)
+{
+    unsigned int id = 4;
+    std::string name("n");
+    std::string surname("s");
+
+    Waiter e(id, name, surname);
+
+    LocalOrder order;
+
+    e.addOrder(&order);
+
+    ASSERT_EQ(e.getLocalOrders()[0], &order);
+    ASSERT_EQ(e.getLocalOrders().size(), 1);
+    ASSERT_EQ(e.getRemoteOrders().size(), 0);
+
+    e.closeOrder(&order);
+    ASSERT_EQ(e.getLocalOrders().size(), 0);
+    ASSERT_EQ(e.getRemoteOrders().size(), 0);
+}
+
+TEST(Waiter, getRemoteOrders_addOrder_closeOrder)
+{
+    unsigned int id = 4;
+    std::string name("n");
+    std::string surname("s");
+
+    Waiter e(id, name, surname);
+
+    RemoteOrder order;
+
+    e.addOrder(&order);
+
+    ASSERT_EQ(e.getRemoteOrders()[0], &order);
+    ASSERT_EQ(e.getRemoteOrders().size(), 1);
+    ASSERT_EQ(e.getLocalOrders().size(), 0);
+
+    e.closeOrder(&order);
+    ASSERT_EQ(e.getLocalOrders().size(), 0);
+    ASSERT_EQ(e.getRemoteOrders().size(), 0);
+}
+
+TEST(Waiter, multiple_addOrder_and_closeOrder)
+{
+    unsigned int id = 4;
+    std::string name("n");
+    std::string surname("s");
+
+    Waiter e(id, name, surname);
+
+    RemoteOrder r1, r2;
+    LocalOrder l1, l2;
+
+    // adding order
+    e.addOrder(&r1);
+    ASSERT_EQ(e.getRemoteOrders()[0], &r1);
+    e.addOrder(&r2);
+    ASSERT_EQ(e.getRemoteOrders()[1], &r2);
+    ASSERT_EQ(e.getRemoteOrders().size(), 2);
+
+    ASSERT_EQ(e.getLocalOrders().size(), 0);
+    e.addOrder(&l1);
+    ASSERT_EQ(e.getLocalOrders()[0], &l1);
+    e.addOrder(&l2);
+    ASSERT_EQ(e.getLocalOrders()[1], &l2);
+
+    ASSERT_EQ(e.getRemoteOrders().size(), 2);
+    ASSERT_EQ(e.getLocalOrders().size(), 2);
+
+    // closing orders
+    e.closeOrder(&r1);
+    ASSERT_EQ(e.getRemoteOrders()[0], &r2);
+    ASSERT_EQ(e.getRemoteOrders().size(), 1);
+
+    e.closeOrder(&l2);
+    ASSERT_EQ(e.getLocalOrders()[0], &l1);
+    ASSERT_EQ(e.getLocalOrders().size(), 1);
+}
