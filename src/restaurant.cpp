@@ -38,20 +38,20 @@ void Restaurant::changeCurrentWaiter(Waiter *waiter)
     currentWaiter = waiter;
 }
 
-Waiter const *Restaurant::getCurrentWaiter()
+Waiter const *Restaurant::getCurrentWaiter() const
 {
     return currentWaiter;
 }
 
-std::vector<Waiter> const &Restaurant::getWaiters()
+std::vector<Waiter> const &Restaurant::getWaiters() const
 {
     return waiters;
 }
-std::vector<Table> const &Restaurant::getTables()
+std::vector<Table> const &Restaurant::getTables() const
 {
     return tables;
 }
-Menu const &Restaurant::getMenu()
+Menu const &Restaurant::getMenu() const
 {
     return menu;
 }
