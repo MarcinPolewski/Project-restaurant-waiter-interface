@@ -35,8 +35,6 @@ public:
     const std::vector<LocalOrder *> &getLocalOrders();
     const std::vector<RemoteOrder *> &getRemoteOrders();
 
-    void addOrder(Order *);
+    void addOrder(Order *order);
     void closeOrder(Order *order);
-
-    bool hasOrders();
 };
