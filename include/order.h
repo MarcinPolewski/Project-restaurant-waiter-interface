@@ -8,9 +8,8 @@
 
 enum class OrderStatus
 {
-    inPreparation,
-    readyToDeliver,
-    delivered,
+    inProgress,
+    closed,
     canceled
 };
 
@@ -29,14 +28,20 @@ class WaiterOrder
     // virtual std::string& getRecipt() = 0;
 };
 
+// iterator i const_iterator
+// Waiter constr
+// destination
+
 class Order : WaiterOrder
 {
 private:
-    OrderStatus orderStatus = OrderStatus::inPreparation;
+    OrderStatus orderStatus = OrderStatus::inProgress;
     time_t waitingTimeStamp = time(NULL);
     std::vector<OrderItem> orderItems;
 public:
     const time_t orderTime = this->waitingTimeStamp;
+
+    // Order(Waiter waiter);
 
     virtual ~Order() = default;
 
