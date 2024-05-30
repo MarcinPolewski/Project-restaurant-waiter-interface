@@ -37,7 +37,8 @@ public:
 
 class MemoryHandler : MemoryHandlerInterface
 {
-    std::string configPath = "/Users/marcinpolewski/Documents/Studia/SEM2/PROI/restaurant/serverHandlerConf/conf.txt"; // configuration file for behaviour of handler
+    std::string configFilePath;
+    std::string configFolderPath;
 
     // paths to files
     std::string dishesPath;
@@ -51,7 +52,7 @@ class MemoryHandler : MemoryHandlerInterface
     std::string waitersLocalVersion;
     std::string tablesLocalVersion;
 
-    bool pathIsCorrect(std::string &path); // check if provided path is ok
+    bool pathIsCorrect(const std::string &path); // check if provided path is ok
 
     void fetchDishes(std::vector<std::unique_ptr<MenuItem>> &arr);
     void fetchBeverages(std::vector<std::unique_ptr<MenuItem>> &arr);
@@ -59,6 +60,7 @@ class MemoryHandler : MemoryHandlerInterface
     void readConfig();
 
 public:
+    MemoryHandler(const std::string &configFolderName = "memoryHandlerConf");
     Menu fetchMenu() override;
     std::vector<Waiter> fetchWaiters() override;
     std::vector<Table> fetchTables() override;
@@ -68,10 +70,10 @@ public:
     std::string getDishesVersion() const override;
     std::string getBeveragesVersion() const override;
 
-    virtual std::string getWaitersPath() const override;
-    virtual std::string getTablesPath() const override;
-    virtual std::string getDishesPath() const override;
-    virtual std::string getBeveragesPath() const override;
+    std::string getWaitersPath() const override;
+    std::string getTablesPath() const override;
+    std::string getDishesPath() const override;
+    std::string getBeveragesPath() const override;
 
     void setWaitersVersion(const std::string &version) override;
     void setTablesVersion(const std::string &version) override;

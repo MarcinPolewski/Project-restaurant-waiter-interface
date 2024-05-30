@@ -1,13 +1,28 @@
 #include "memoryhandler.h"
 
-bool MemoryHandler::pathIsCorrect(std::string &path)
+bool MemoryHandler::pathIsCorrect(const std::string &path)
 {
     return std::filesystem::exists(path);
 }
 
+MemoryHandler::MemoryHandler(const std::string &configFolderName)
+{
+    auto pth = std::filesystem::current_path();
+    pth = pth.parent_path();
+    pth = pth / configFolderName;
+    configFolderPath = pth;
+
+    pth = pth / "conf.txt";
+    configFilePath = pth;
+
+    if (!pathIsCorrect(configFilePath))
+        throw std::invalid_argument("could not reach config file");
+    readConfig();
+}
+
 void MemoryHandler::readConfig()
 {
-    std::ifstream confFileReader(configPath);
+    std::ifstream confFileReader(configFilePath);
     // auto pwd = std::filesystem::current_path();
 
     if (!confFileReader.good())
@@ -21,7 +36,8 @@ void MemoryHandler::readConfig()
     confFileReader >> s;
     if (s != "waiters_local_path:")
         throw std::runtime_error("Invalid conf file structure");
-    confFileReader >> waitersPath;
+    confFileReader >> s;
+    waitersPath = configFolderPath + '/' + s;
     if (!pathIsCorrect(waitersPath))
         throw std::runtime_error("Invalid path to waiters provided");
 
@@ -29,7 +45,8 @@ void MemoryHandler::readConfig()
     confFileReader >> s;
     if (s != "tables_local_path:")
         throw std::runtime_error("Invalid conf file structure");
-    confFileReader >> tablesPath;
+    confFileReader >> s;
+    tablesPath = configFolderPath + '/' + s;
     if (!pathIsCorrect(tablesPath))
         throw std::runtime_error("Invalid path to tables provided");
 
@@ -37,7 +54,8 @@ void MemoryHandler::readConfig()
     confFileReader >> s;
     if (s != "dishes_local_path:")
         throw std::runtime_error("Invalid conf file structure");
-    confFileReader >> dishesPath;
+    confFileReader >> s;
+    dishesPath = configFolderPath + '/' + s;
     if (!pathIsCorrect(dishesPath))
         throw std::runtime_error("Invalid path to menu provided");
 
@@ -45,7 +63,8 @@ void MemoryHandler::readConfig()
     confFileReader >> s;
     if (s != "beverages_local_path:")
         throw std::runtime_error("Invalid conf file structure");
-    confFileReader >> beveragesPath;
+    confFileReader >> s;
+    beveragesPath = configFolderPath + '/' + s;
     if (!pathIsCorrect(beveragesPath))
         throw std::runtime_error("Invalid path to menu provided");
 
@@ -139,7 +158,7 @@ Menu MemoryHandler::fetchMenu()
 
 std::vector<Waiter> MemoryHandler::fetchWaiters()
 {
-    io::CSVReader<3, io::trim_chars<' '>, io::double_quote_escape<',', '\"'>> in(beveragesPath);
+    io::CSVReader<3, io::trim_chars<' '>, io::double_quote_escape<',', '\"'>> in(waitersPath);
     in.read_header(io::ignore_extra_column, "id", "name", "surname");
 
     std::string name;
@@ -157,7 +176,7 @@ std::vector<Waiter> MemoryHandler::fetchWaiters()
 
 std::vector<Table> MemoryHandler::fetchTables()
 {
-    io::CSVReader<4, io::trim_chars<' '>, io::double_quote_escape<',', '\"'>> in(beveragesPath);
+    io::CSVReader<4, io::trim_chars<' '>, io::double_quote_escape<',', '\"'>> in(tablesPath);
     in.read_header(io::ignore_extra_column, "x", "y", "level", "numerOfSeats");
 
     unsigned int x;
