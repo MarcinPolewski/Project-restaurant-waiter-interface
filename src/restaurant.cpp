@@ -29,11 +29,8 @@ LocalOrder *Restaurant::newLocalOrder(Table *table)
 
 void Restaurant::closeRestaurant()
 {
-    for (auto it : waiters)
-    {
-        if (it.hasOrders())
-            throw std::runtime_error("cannot cloase restaurant, when some orders are still in progress");
-    }
+    if (!localOrders.empty() || !remoteOrders.empty())
+        throw std::runtime_error("cannot close restaurant, when some orders are still in progress");
 }
 
 void Restaurant::changeCurrentWaiter(Waiter *waiter)

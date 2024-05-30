@@ -21,7 +21,7 @@ class Restaurant
 
 public:
     Restaurant();
-    void closeRestaurant(); // returns true if operation successful
+    void closeRestaurant();
 
     void changeCurrentWaiter(Waiter *waiter);
     Waiter const *getCurrentWaiter();
