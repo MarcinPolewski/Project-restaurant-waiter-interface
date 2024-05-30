@@ -29,11 +29,8 @@ LocalOrder *Restaurant::newLocalOrder(Table *table)
 
 void Restaurant::closeRestaurant()
 {
-    for (auto it : waiters)
-    {
-        if (it.hasOrders())
-            throw std::runtime_error("cannot cloase restaurant, when some orders are still in progress");
-    }
+    if (!localOrders.empty() || !remoteOrders.empty())
+        throw std::runtime_error("cannot close restaurant, when some orders are still in progress");
 }
 
 void Restaurant::changeCurrentWaiter(Waiter *waiter)
@@ -41,20 +38,20 @@ void Restaurant::changeCurrentWaiter(Waiter *waiter)
     currentWaiter = waiter;
 }
 
-Waiter const *Restaurant::getCurrentWaiter()
+Waiter const *Restaurant::getCurrentWaiter() const
 {
     return currentWaiter;
 }
 
-std::vector<Waiter> const &Restaurant::getWaiters()
+std::vector<Waiter> const &Restaurant::getWaiters() const
 {
     return waiters;
 }
-std::vector<Table> const &Restaurant::getTables()
+std::vector<Table> const &Restaurant::getTables() const
 {
     return tables;
 }
-Menu const &Restaurant::getMenu()
+Menu const &Restaurant::getMenu() const
 {
     return menu;
 }
