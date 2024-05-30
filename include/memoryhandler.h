@@ -37,7 +37,8 @@ public:
 
 class MemoryHandler : MemoryHandlerInterface
 {
-    std::string configPath = "/Users/marcinpolewski/Documents/Studia/SEM2/PROI/restaurant/serverHandlerConf/conf.txt"; // configuration file for behaviour of handler
+    std::string configFilePath;
+    std::string configFolderPath;
 
     // paths to files
     std::string dishesPath;

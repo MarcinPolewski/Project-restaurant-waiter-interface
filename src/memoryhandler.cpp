@@ -10,15 +10,19 @@ MemoryHandler::MemoryHandler(const std::string &configFolderName)
     auto pth = std::filesystem::current_path();
     pth = pth.parent_path();
     pth = pth / configFolderName;
-    pth = pth / "conf.txt";
-    configPath = pth;
+    configFolderPath = pth;
 
+    pth = pth / "conf.txt";
+    configFilePath = pth;
+
+    if (!pathIsCorrect(configFilePath))
+        throw std::invalid_argument("could not reach config file");
     readConfig();
 }
 
 void MemoryHandler::readConfig()
 {
-    std::ifstream confFileReader(configPath);
+    std::ifstream confFileReader(configFilePath);
     // auto pwd = std::filesystem::current_path();
 
     if (!confFileReader.good())
@@ -32,7 +36,8 @@ void MemoryHandler::readConfig()
     confFileReader >> s;
     if (s != "waiters_local_path:")
         throw std::runtime_error("Invalid conf file structure");
-    confFileReader >> waitersPath;
+    confFileReader >> s;
+    waitersPath = configFolderPath + '/' + s;
     if (!pathIsCorrect(waitersPath))
         throw std::runtime_error("Invalid path to waiters provided");
 
@@ -40,7 +45,8 @@ void MemoryHandler::readConfig()
     confFileReader >> s;
     if (s != "tables_local_path:")
         throw std::runtime_error("Invalid conf file structure");
-    confFileReader >> tablesPath;
+    confFileReader >> s;
+    tablesPath = configFolderPath + '/' + s;
     if (!pathIsCorrect(tablesPath))
         throw std::runtime_error("Invalid path to tables provided");
 
@@ -48,7 +54,8 @@ void MemoryHandler::readConfig()
     confFileReader >> s;
     if (s != "dishes_local_path:")
         throw std::runtime_error("Invalid conf file structure");
-    confFileReader >> dishesPath;
+    confFileReader >> s;
+    dishesPath = configFolderPath + '/' + s;
     if (!pathIsCorrect(dishesPath))
         throw std::runtime_error("Invalid path to menu provided");
 
@@ -56,7 +63,8 @@ void MemoryHandler::readConfig()
     confFileReader >> s;
     if (s != "beverages_local_path:")
         throw std::runtime_error("Invalid conf file structure");
-    confFileReader >> beveragesPath;
+    confFileReader >> s;
+    beveragesPath = configFolderPath + '/' + s;
     if (!pathIsCorrect(beveragesPath))
         throw std::runtime_error("Invalid path to menu provided");
 

@@ -375,20 +375,23 @@ TEST(WaiterOrderItemTest, interface_methods)
     ASSERT_EQ(order.getStatus(), ItemStatus::canceled);
 }
 
-TEST(MemoryHandlerTest, initialization_and_readConfig)
+TEST(MemoryHandlerTest, initialization_readConfig_and_path_getters)
 {
     std::string folderName = "memoryHandlerTestFiles";
     MemoryHandler mh(folderName);
 
-    ASSERT_EQ(mh.getWaitersPath(), "serverHandlerConf/waiters.csv");
-    ASSERT_EQ(mh.getTablesPath(), "serverHandlerConf/tables.csv");
-    ASSERT_EQ(mh.getDishesPath(), "serverHandlerConf/dishes.csv");
-    ASSERT_EQ(mh.getBeveragesPath(), "serverHandlerConf/beverages.csv");
+    std::filesystem::path(mh.getWaitersPath()).filename();
+
+    ASSERT_EQ(std::filesystem::path(mh.getWaitersPath()).filename(), "waiters.csv");
+    ASSERT_EQ(std::filesystem::path(mh.getTablesPath()).filename(), "tables.csv");
+    ASSERT_EQ(std::filesystem::path(mh.getDishesPath()).filename(), "dishes.csv");
+    ASSERT_EQ(std::filesystem::path(mh.getBeveragesPath()).filename(), "beverages.csv");
 }
 
 TEST(MemoryHandlerTest, version_getters_and_setters)
 {
-    MemoryHandler mh = MemoryHandler();
+    std::string folderName = "memoryHandlerTestFiles";
+    MemoryHandler mh(folderName);
 
     std::string v1 = "1.1.1";
     mh.setWaitersVersion(v1);
@@ -407,36 +410,76 @@ TEST(MemoryHandlerTest, version_getters_and_setters)
     ASSERT_EQ(mh.getBeveragesVersion(), v4);
 }
 
-TEST(MemoryHandlerTest, path_getters)
-{
-    MemoryHandler mh = MemoryHandler();
-    ASSERT_TRUE(std::filesystem::exists(mh.getBeveragesPath()));
-    ASSERT_TRUE(std::filesystem::exists(mh.getDishesPath()));
-    ASSERT_TRUE(std::filesystem::exists(mh.getTablesPath()));
-    ASSERT_TRUE(std::filesystem::exists(mh.getWaitersPath()));
-}
-
 TEST(MemoryHandlerTest, fetchMenu)
 {
-    MemoryHandler mh = MemoryHandler();
+    std::string folderName = "memoryHandlerTestFiles";
+    MemoryHandler mh(folderName);
     Menu menu = mh.fetchMenu();
 
     ASSERT_FALSE(menu.empty());
-}
 
+    Dish *mi = dynamic_cast<Dish *>(menu.menuItems[0].get());
+    ASSERT_EQ(mi->name, "Caesar Salad");
+    ASSERT_EQ(mi->description, "A classic salad with romaine lettuce and Caesar dressing");
+    ASSERT_EQ(mi->category, 14);
+    ASSERT_EQ(mi->price, 1200);
+    ASSERT_EQ(mi->ingredients, "Romaine Lettuce Caesar Dressing Parmesan Croutons");
+    ASSERT_EQ(mi->volume, 350);
+
+    mi = dynamic_cast<Dish *>(menu.menuItems[1].get());
+    ASSERT_EQ(mi->name, "Tomato Soup");
+    ASSERT_EQ(mi->description, "A creamy tomato soup");
+    ASSERT_EQ(mi->category, 13);
+    ASSERT_EQ(mi->price, 700);
+    ASSERT_EQ(mi->ingredients, "Tomatoes Cream Garlic Basil");
+    ASSERT_EQ(mi->volume, 300);
+
+    Beverage *b = dynamic_cast<Beverage *>(menu.menuItems[2].get());
+    ASSERT_EQ(b->name, "Margarita");
+    ASSERT_EQ(b->description, "A refreshing cocktail with lime juice and tequila");
+    ASSERT_EQ(b->category, 0);
+    ASSERT_EQ(b->price, 850);
+    ASSERT_EQ(b->alcoholPercentage, 40);
+    ASSERT_EQ(b->volume, 250);
+
+    b = dynamic_cast<Beverage *>(menu.menuItems[3].get());
+    ASSERT_EQ(b->name, "Red Wine");
+    ASSERT_EQ(b->description, "Full-bodied red wine with notes of cherry and oak");
+    ASSERT_EQ(b->category, 5);
+    ASSERT_EQ(b->price, 2500);
+    ASSERT_EQ(b->alcoholPercentage, 14);
+    ASSERT_EQ(b->volume, 750);
+}
 TEST(MemoryHandlerTest, Waiteres)
 {
-    MemoryHandler mh = MemoryHandler();
+    std::string folderName = "memoryHandlerTestFiles";
+    MemoryHandler mh(folderName);
     std::vector<Waiter> waiters = mh.fetchWaiters();
 
     ASSERT_FALSE(waiters.empty());
+
+    ASSERT_EQ(waiters[0].id, 1);
+    ASSERT_EQ(waiters[0].name, "John");
+    ASSERT_EQ(waiters[0].surname, "Travolta");
+    ASSERT_EQ(waiters[1].id, 2);
+    ASSERT_EQ(waiters[1].name, "Jorek");
+    ASSERT_EQ(waiters[1].surname, "Ogorek");
 }
 
 TEST(MemoryHandlerTest, Tables)
 {
-
-    MemoryHandler mh = MemoryHandler();
+    std::string folderName = "memoryHandlerTestFiles";
+    MemoryHandler mh(folderName);
     std::vector<Table> tables = mh.fetchTables();
 
     ASSERT_FALSE(tables.empty());
+
+    ASSERT_EQ(tables[0].position.x, 1);
+    ASSERT_EQ(tables[0].position.y, 2);
+    ASSERT_EQ(tables[0].position.level, 3);
+    ASSERT_EQ(tables[0].seats, 4);
+    ASSERT_EQ(tables[1].position.x, 5);
+    ASSERT_EQ(tables[1].position.y, 6);
+    ASSERT_EQ(tables[1].position.level, 7);
+    ASSERT_EQ(tables[1].seats, 8);
 }
