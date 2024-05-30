@@ -11,25 +11,25 @@ class Restaurant
     MemoryHandler memoryHandler;
     ServerHandler serverHandler;
     Menu menu;
-    std::vector<Waiter> waiters;
-    std::vector<Table> tables;
+    const std::vector<Waiter> waiters;
+    const std::vector<Table> tables;
 
     std::vector<LocalOrder> localOrders;
     std::vector<RemoteOrder> remoteOrders;
 
-    Waiter *currentWaiter;
+    const Waiter *currentWaiter;
 
 public:
     Restaurant();
-    void closeRestaurant(); // returns true if operation successful
+    void closeRestaurant();
 
     void changeCurrentWaiter(Waiter *waiter);
-    Waiter const *getCurrentWaiter();
+    Waiter const *getCurrentWaiter() const;
 
     RemoteOrder *newRemoteOrder(Destination *destination);
     LocalOrder *newLocalOrder(Table *table);
 
-    std::vector<Waiter> const &getWaiters();
-    std::vector<Table> const &getTables();
-    Menu const &getMenu();
+    std::vector<Waiter> const &getWaiters() const;
+    std::vector<Table> const &getTables() const;
+    Menu const &getMenu() const;
 };
