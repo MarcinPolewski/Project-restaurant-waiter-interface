@@ -42,8 +42,3 @@ void Waiter::closeOrder(Order *order)
         remoteOrders.erase(it);
     }
 }
-
-bool Waiter::hasOrders()
-{
-    return !(localOrders.empty() && remoteOrders.empty());
-}
