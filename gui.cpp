@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-// #include <restaurant.h>
+#include <restaurant.h>
 
 #define COLOR_NORMAL 1
 #define COLOR_SELECT 2
@@ -83,12 +83,60 @@ public:
     }
 };
 
-void drawTables(WINDOW *tableScreen)
+class UITable : public Table
 {
-    // ============ get dimensions
+    int width = 8, height = 4; // x,y are values provided by user, xPosition and yPosition are positions on screen
+    WINDOW *tableWindow;
 
-    // wprintw(tableScreen, "==")
-}
+    UITable(WINDOW *backgroundWindow, int x, int y, int lvl, int seats) : Table(Position(x, y, lvl), seats)
+    {
+        tableWindow = newwin(height, width, y + getbegy(backgroundWindow), x + getbegx(backgroundWindow));
+        box(tableWindow, 0, 0);
+        refresh();
+    }
+
+public:
+    void draw();
+    void activate();
+    void deactivate();
+    void pressed(); // ??
+    bool isCursoreIn(int yPos, int xPos);
+};
+
+class MainScreen
+{
+    WINDOW *window;
+
+public:
+    MainScreen(int height, int width, int positionY, int positionX)
+    {
+        window = newwin(height, width, positionY, positionX);
+        box(window, 0, 0);
+        refresh();
+        wrefresh(window);
+    }
+
+    // ======= getters that return corner values of x,y
+    int startX()
+    {
+        return getbegx(window);
+    }
+
+    int startY()
+    {
+        return getbegy(window);
+    }
+
+    int endX()
+    {
+        return getbegx(window) + getmaxx(window) - 1;
+    }
+
+    int endY()
+    {
+        return getbegy(window) + getmaxy(window) - 1;
+    }
+};
 
 int main(int argc, char **argv)
 {
@@ -112,11 +160,8 @@ int main(int argc, char **argv)
 
     // ============= initialize windows
     TopBar topbar(TOPBARHEIGHT, xMax, 0, 0);
+    MainScreen mainscreen(yMax - TOPBARHEIGHT, xMax, TOPBARHEIGHT, 0);
 
-    WINDOW *mainScreen = newwin(yMax - TOPBARHEIGHT, xMax, TOPBARHEIGHT, 0);
-    box(mainScreen, 0, 0);
-    refresh();
-    wrefresh(mainScreen);
     // =========== initialize tables
     // WINDOW *tableWindow = newwin(4, 8, getbegy(mainScreen) + 5, getbegx(mainScreen) + 5);
     // box(tableWindow, 0, 0);
@@ -136,7 +181,7 @@ int main(int argc, char **argv)
     {
         // ========== draw everything to screen
         topbar.draw();
-        drawTables(mainScreen);
+        // drawTables(mainScreen);
 
         refresh();
 
@@ -163,8 +208,8 @@ int main(int argc, char **argv)
                 // cursorY = getbegy(mainScreen) + 1;
                 // move(cursorY, 2); // zrobić zeby przeskakiwalo pod guzik !!!!!!!!!!!!!!!!!!
 
-                cursorX = getbegx(mainScreen) + 1;
-                cursorY = getbegy(mainScreen) + 1;
+                cursorX = mainscreen.startX() + 1; // getbegx(mainScreen) + 1;
+                cursorY = mainscreen.startY() + 1; // getbegy(mainScreen) + 1;
                 move(cursorY, cursorX);
                 curs_set(1);
                 break;
@@ -180,28 +225,28 @@ int main(int argc, char **argv)
             case KEY_RIGHT:
                 //++cursorX;
                 cursorX += CURSORSPEED * 2;
-                if (cursorX >= getbegx(mainScreen) + getmaxx(mainScreen) - 1)
-                    cursorX = getbegx(mainScreen) + 1;
+                if (cursorX >= mainscreen.endX())
+                    cursorX = mainscreen.startX() + 1;
                 move(cursorY, cursorX);
                 break;
             case KEY_LEFT:
                 //--cursorX;
                 cursorX -= CURSORSPEED * 2;
-                if (cursorX <= getbegx(mainScreen))
-                    cursorX = getbegx(mainScreen) + getmaxx(mainScreen) - 2;
+                if (cursorX <= mainscreen.startX())
+                    cursorX = mainscreen.endX() - 1;
                 move(cursorY, cursorX);
                 break;
             case KEY_DOWN:
                 //++cursorY;
                 cursorY += CURSORSPEED;
-                if (cursorY >= getbegy(mainScreen) + getmaxy(mainScreen) - 1)
-                    cursorY = getbegy(mainScreen) + 1;
+                if (cursorY >= mainscreen.endY())
+                    cursorY = mainscreen.startY() + 1;
                 move(cursorY, cursorX);
                 break;
             case KEY_UP:
                 //--cursorY;
                 cursorY -= CURSORSPEED;
-                if (cursorY <= getbegy(mainScreen))
+                if (cursorY <= mainscreen.startY())
                 {
                     // cursorY = getbegy(mainScreen) + getmaxy(mainScreen) - 2;
                     topbar.activate();
