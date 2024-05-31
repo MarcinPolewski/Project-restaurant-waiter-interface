@@ -6,6 +6,7 @@
 #include "orderitem.h"
 #include "menu.h"
 #include "serverhandler.h"
+#include "order.h"
 #include "memoryhandler.h"
 
 TEST(AddressTest, create_typical)
@@ -488,6 +489,150 @@ TEST(WaiterOrderItemTest, interface_methods)
     ASSERT_EQ(order.getStatus(), ItemStatus::canceled);
 }
 
+TEST(OrderTest, create_LocalOrder)
+{
+    Table tbl(Table::Position(3, 5, 0), 4);
+    LocalOrder lo(tbl);
+
+    ASSERT_EQ(lo.table.position.x, 3);
+    ASSERT_EQ(lo.table.position.y, 5);
+    ASSERT_EQ(lo.table.position.level, 0);
+    ASSERT_EQ(lo.table.seats, 4);
+}
+
+TEST(OrderTest, create_RemoteOrder)
+{
+    Remote rmt("Andrzej Kowal", "111111111", Address("Olsztyn", "00-000", "Kaliny", "5"));
+    RemoteOrder ro(rmt);
+
+    ASSERT_EQ(ro.remote.name, "Andrzej Kowal");
+    ASSERT_EQ(ro.remote.phoneNumber, "111111111");
+    ASSERT_EQ(ro.remote.address.city, "Olsztyn");
+    ASSERT_EQ(ro.remote.address.postalCode, "00-000");
+    ASSERT_EQ(ro.remote.address.street, "Kaliny");
+    ASSERT_EQ(ro.remote.address.number, "5");
+}
+
+TEST(OrderTest, getDestinatin_LocalOrder)
+{
+    Table tbl(Table::Position(3, 5, 0), 4);
+    LocalOrder lo(tbl);
+
+    Order& o = dynamic_cast<Order&>(lo);
+
+    const Table& tbl_ref = dynamic_cast<const Table&>(o.getDestination());
+
+    ASSERT_EQ(tbl_ref.seats, 4);
+}
+
+TEST(OrderTest, getDestination_RemoteOrder)
+{
+    Remote rmt("Andrzej Kowal", "111111111", Address("Olsztyn", "00-000", "Kaliny", "5"));
+    RemoteOrder ro(rmt);
+
+    Order& o = dynamic_cast<Order&>(ro);
+
+    const Remote& rmt_ref = dynamic_cast<const Remote&>(o.getDestination());
+
+    ASSERT_EQ(rmt_ref.name, "Andrzej Kowal");
+}
+
+TEST(OrderTest, addOrderItem)
+{
+    Table tbl(Table::Position(3, 5, 0), 4);
+    LocalOrder lo(tbl);
+
+    const Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+
+    OrderItem& ordit = lo.addOrderItem(pierogi, 5);
+    ASSERT_EQ(ordit.getPrice(), 9995);
+}
+
+TEST(OrderTest, getOrderItem_typical)
+{
+    Table tbl(Table::Position(3, 5, 0), 4);
+    LocalOrder lo(tbl);
+    Order& ord = lo;
+
+    const Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    ord.addOrderItem(pierogi, 3);
+
+    OrderItem& ordit = ord.getOrderItem(0);
+    ASSERT_EQ(ordit.quantity, 3);
+    ASSERT_EQ(ordit.menuItem.name, "Pierogi");
+}
+
+TEST(OrderTest, getOrderItem_out_of_range)
+{
+    Table tbl(Table::Position(3, 5, 0), 4);
+    LocalOrder lo(tbl);
+    Order& ord = lo;
+
+    const Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    ord.addOrderItem(pierogi, 3);
+
+    EXPECT_THROW(ord.getOrderItem(2), std::invalid_argument);
+}
+
+TEST(OrderTest, getStatus_typical)
+{
+    Table tbl(Table::Position(3, 5, 0), 4);
+    LocalOrder lo(tbl);
+    Order& ord = lo;
+
+    ASSERT_EQ(ord.getStatus(), OrderStatus::inProgress);
+}
+
+TEST(OrderTest, getOrderTime)
+{
+    Table tbl(Table::Position(3, 5, 0), 4);
+    LocalOrder lo(tbl);
+    Order& ord = lo;
+
+    ASSERT_EQ(ord.orderTime, time(NULL));
+    ASSERT_EQ(ord.getOrderTime(), time(NULL));
+}
+
+TEST(OrderTest, getWaitingTime_typical)
+{
+    Table tbl(Table::Position(3, 5, 0), 4);
+    LocalOrder lo(tbl);
+    Order& ord = lo;
+
+    sleep(3);
+    ASSERT_EQ(ord.getWaitingTime(), 3);
+    sleep(1);
+    ASSERT_EQ(ord.getWaitingTime(), 4);
+}
+
+TEST(OrderTest, resetWaitingTime_typical)
+{
+    Table tbl(Table::Position(3, 5, 0), 4);
+    LocalOrder lo(tbl);
+    Order& ord = lo;
+
+    sleep(2);
+    ASSERT_EQ(ord.getWaitingTime(), 2);
+    ord.resetWaitingTime();
+    sleep(1);
+    ASSERT_EQ(ord.getWaitingTime(), 1);
+}
+
+TEST(OrderTest, getTotalPrice)
+{
+    Table tbl(Table::Position(3, 5, 0), 4);
+    LocalOrder lo(tbl);
+    Order& ord = lo;
+
+    const Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    const Beverage cola("Cola", "Niezdrowy napoj", MenuItem::CATEGORY::coldBeverage, 800, 0, 500);
+
+    ord.addOrderItem(pierogi, 5);
+    ord.addOrderItem(cola, 4);
+
+    ASSERT_EQ(lo.getTotalPrice(), 13195);
+}
+
 TEST(MemoryHandlerTest, initialization_readConfig_and_path_getters)
 {
     std::string folderName = "memoryHandlerTestFiles";
@@ -642,7 +787,8 @@ TEST(Waiter, getLocalOrders_addOrder_closeOrder)
 
     Waiter e(id, name, surname);
 
-    LocalOrder order;
+    Table tbl(Table::Position(3, 5, 0), 4);
+    LocalOrder order(tbl);
 
     e.addOrder(&order);
 
@@ -663,7 +809,8 @@ TEST(Waiter, getRemoteOrders_addOrder_closeOrder)
 
     Waiter e(id, name, surname);
 
-    RemoteOrder order;
+    Remote rmt("Andrzej Kowal", "111111111", Address("Olsztyn", "00-000", "Kaliny", "5"));
+    RemoteOrder order(rmt);
 
     e.addOrder(&order);
 
@@ -684,8 +831,14 @@ TEST(Waiter, multiple_addOrder_and_closeOrder)
 
     Waiter e(id, name, surname);
 
-    RemoteOrder r1, r2;
-    LocalOrder l1, l2;
+    Remote rmt("Andrzej Nowak", "222222222", Address("Wolsztyn", "11-111", "Barbary", "6"));
+    Remote rmt2("Andrzej Kowal", "111111111", Address("Olsztyn", "00-000", "Kaliny", "5"));
+
+    Table tbl(Table::Position(3, 5, 0), 4);
+    Table tbl2(Table::Position(0, 0, 1), 2);
+
+    RemoteOrder r1(rmt), r2(rmt2);
+    LocalOrder l1(tbl), l2(tbl2);
 
     // adding order
     e.addOrder(&r1);

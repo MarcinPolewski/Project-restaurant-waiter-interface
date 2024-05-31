@@ -15,15 +15,15 @@ Restaurant::Restaurant()
     currentWaiter = &waiters[0];
 }
 
-RemoteOrder *Restaurant::newRemoteOrder(Destination *destination)
+RemoteOrder *Restaurant::newRemoteOrder(Remote *remote)
 {
-    remoteOrders.push_back(RemoteOrder());
+    remoteOrders.push_back(RemoteOrder(*remote));
     return &remoteOrders.back();
 }
 
 LocalOrder *Restaurant::newLocalOrder(Table *table)
 {
-    localOrders.push_back(LocalOrder());
+    localOrders.push_back(LocalOrder(*table));
     return &localOrders.back();
 }
 

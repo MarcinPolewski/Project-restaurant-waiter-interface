@@ -26,7 +26,7 @@ public:
     void changeCurrentWaiter(Waiter *waiter);
     Waiter const *getCurrentWaiter() const;
 
-    RemoteOrder *newRemoteOrder(Destination *destination);
+    RemoteOrder *newRemoteOrder(Remote *remote);
     LocalOrder *newLocalOrder(Table *table);
 
     std::vector<Waiter> const &getWaiters() const;
