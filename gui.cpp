@@ -85,17 +85,17 @@ public:
 
 class UITable : public Table
 {
-    int width = 8, height = 4; // x,y are values provided by user, xPosition and yPosition are positions on screen
+    int width = 14, height = 7; // x,y are values provided by user, xPosition and yPosition are positions on screen
     WINDOW *tableWindow;
 
-    UITable(WINDOW *backgroundWindow, int x, int y, int lvl, int seats) : Table(Position(x, y, lvl), seats)
+public:
+    UITable(WINDOW *backgroundWindow, Position const &pos, int seats) : Table(pos, seats)
     {
-        tableWindow = newwin(height, width, y + getbegy(backgroundWindow), x + getbegx(backgroundWindow));
+        tableWindow = newwin(height, width, pos.y + getbegy(backgroundWindow), pos.x + getbegx(backgroundWindow));
         box(tableWindow, 0, 0);
         refresh();
+        wrefresh(tableWindow);
     }
-
-public:
     void draw();
     void activate();
     void deactivate();
@@ -106,6 +106,7 @@ public:
 class MainScreen
 {
     WINDOW *window;
+    std::vector<UITable> tables;
 
 public:
     MainScreen(int height, int width, int positionY, int positionX)
@@ -136,6 +137,22 @@ public:
     {
         return getbegy(window) + getmaxy(window) - 1;
     }
+
+    void addTables(std::vector<Table> const &tables)
+    {
+        for (auto &it : tables)
+        {
+            this->tables.push_back(UITable(window, it.position, it.seats));
+        }
+    }
+
+    void draw()
+    {
+        for (auto &it : tables)
+        {
+            it.draw();
+        }
+    }
 };
 
 int main(int argc, char **argv)
@@ -158,9 +175,12 @@ int main(int argc, char **argv)
     int yMax, xMax;
     getmaxyx(stdscr, yMax, xMax);
 
+    Restaurant restaurant;
+
     // ============= initialize windows
     TopBar topbar(TOPBARHEIGHT, xMax, 0, 0);
     MainScreen mainscreen(yMax - TOPBARHEIGHT, xMax, TOPBARHEIGHT, 0);
+    mainscreen.addTables(restaurant.getTables());
 
     // =========== initialize tables
     // WINDOW *tableWindow = newwin(4, 8, getbegy(mainScreen) + 5, getbegx(mainScreen) + 5);
@@ -174,14 +194,14 @@ int main(int argc, char **argv)
     // ============= main program loop
     bool runLoop = true;
     int userInput;
-    int topBarSelection = 0;
     int cursorX, cursorY;
     aplicationState state = aplicationState::topBar;
     do
     {
         // ========== draw everything to screen
         topbar.draw();
-        // drawTables(mainScreen);
+        // mainscreen.draw();
+        //  drawTables(mainScreen);
 
         refresh();
 
