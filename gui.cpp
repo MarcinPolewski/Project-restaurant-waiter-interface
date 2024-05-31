@@ -13,7 +13,7 @@ enum class aplicationState
     topBar
 };
 
-void drawTopBar(WINDOW *topBarWindow, std::vector<std::string> buttons, int selection)
+void drawTopBar(WINDOW *topBarWindow, std::vector<std::string> buttons, int selection, bool active)
 {
     // if (selection >= buttons.size() || selection < 0)
     //     throw ::std::runtime_error("unable to draw selection, out of range");
@@ -32,7 +32,7 @@ void drawTopBar(WINDOW *topBarWindow, std::vector<std::string> buttons, int sele
         // calculate button position offset from the left
         int offset = (widthPerButton - buttons[i].size()) / 2;
 
-        if (i == selection) // print menu as selected if neccessary
+        if (active && i == selection) // print menu as selected if neccessary
             wattr_on(topBarWindow, A_REVERSE, nullptr);
         mvwprintw(topBarWindow, cursorY, cursorX + offset, buttons[i].c_str());
 
@@ -94,7 +94,7 @@ int main(int argc, char **argv)
     do
     {
         // ========== draw everything to screen
-        drawTopBar(topBarWindow, buttons, topBarSelection);
+        drawTopBar(topBarWindow, buttons, topBarSelection, state == aplicationState::topBar);
         // drawTables(mainScreen);
 
         refresh();
@@ -159,7 +159,11 @@ int main(int argc, char **argv)
             case KEY_UP:
                 --cursorY;
                 if (cursorY <= getbegy(mainScreen))
-                    cursorY = getbegy(mainScreen) + getmaxy(mainScreen) - 2;
+                {
+                    // cursorY = getbegy(mainScreen) + getmaxy(mainScreen) - 2;
+                    curs_set(0);
+                    state = aplicationState::topBar;
+                }
                 move(cursorY, cursorX);
                 break;
             }
