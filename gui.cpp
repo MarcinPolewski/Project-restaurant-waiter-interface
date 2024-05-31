@@ -3,9 +3,12 @@
 #include <string>
 #include <vector>
 
+// #include <restaurant.h>
+
 #define COLOR_NORMAL 1
 #define COLOR_SELECT 2
 #define TOPBARHEIGHT 3
+#define CURSORSPEED 5
 
 enum class aplicationState
 {
@@ -13,40 +16,77 @@ enum class aplicationState
     topBar
 };
 
-void drawTopBar(WINDOW *topBarWindow, std::vector<std::string> buttons, int selection, bool active)
+class TopBar
 {
-    // if (selection >= buttons.size() || selection < 0)
-    //     throw ::std::runtime_error("unable to draw selection, out of range");
+    WINDOW *window;
+    int selection = 0; // inx to currently pointed button
+    std::vector<std::string> buttons;
+    bool active = true;
 
-    // ============= get dimensions
-    int width = getmaxx(topBarWindow);
-    int widthPerButton = width / buttons.size();
-
-    // ============== draw buttons to window
-    int cursorX = 1;
-    int cursorY = 1;
-
-    for (int i = 0; i < buttons.size(); i++)
+public:
+    TopBar(int height, int width, int positionY, int positionX)
     {
-
-        // calculate button position offset from the left
-        int offset = (widthPerButton - buttons[i].size()) / 2;
-
-        if (active && i == selection) // print menu as selected if neccessary
-            wattr_on(topBarWindow, A_REVERSE, nullptr);
-        mvwprintw(topBarWindow, cursorY, cursorX + offset, buttons[i].c_str());
-
-        wattr_off(topBarWindow, A_REVERSE, nullptr);
-        cursorX += widthPerButton;
-        if (i != buttons.size() - 1)
-            mvwprintw(topBarWindow, cursorY, cursorX - 1, "|");
+        window = newwin(height, width, positionY, positionX);
+        box(window, 0, 0);
+        buttons = {"Change Waiter", "Menu", "Remote Orders", "Local Orders", "Close Restarurant"};
+        draw();
     }
-    wrefresh(topBarWindow);
-}
 
-void drawTables(WINDOW *tableScren)
+    void draw()
+    {
+        int width = getmaxx(window);
+        int widthPerButton = width / buttons.size();
+
+        // ============== draw buttons to window
+        int cursorX = 1;
+        int cursorY = 1;
+
+        for (int i = 0; i < (int)buttons.size(); i++)
+        {
+
+            // calculate button position offset from the left
+            int offset = (widthPerButton - buttons[i].size()) / 2;
+
+            if (active && i == selection) // print menu as selected if neccessary
+                wattr_on(window, A_REVERSE, nullptr);
+            mvwprintw(window, cursorY, cursorX + offset, buttons[i].c_str());
+
+            wattr_off(window, A_REVERSE, nullptr);
+            cursorX += widthPerButton;
+            if (i != (int)buttons.size() - 1)
+                mvwprintw(window, cursorY, cursorX - 1, "|");
+        }
+        wrefresh(window);
+    }
+    void activate()
+    {
+        active = true;
+    }
+    void deactivate()
+    {
+        active = false;
+    }
+    void moveLeft()
+    {
+        if (selection == 0)
+            selection = buttons.size() - 1;
+        else
+            --selection;
+    }
+    void moveRight()
+    {
+        if (selection == (int)buttons.size() - 1)
+            selection = 0;
+        else
+            ++selection;
+    }
+};
+
+void drawTables(WINDOW *tableScreen)
 {
     // ============ get dimensions
+
+    // wprintw(tableScreen, "==")
 }
 
 int main(int argc, char **argv)
@@ -57,6 +97,7 @@ int main(int argc, char **argv)
     cbreak();    // exit on cntr+c
     curs_set(0); // make cursor invisible (1-normal ; 2-highly visible )
     start_color();
+    // raw();
 
     // ============= colors configuration
     // init_pair(COLOR_SELECT, COLOR_WHITE, COLOR_BLACK);
@@ -69,20 +110,19 @@ int main(int argc, char **argv)
     getmaxyx(stdscr, yMax, xMax);
 
     // ============= initialize windows
-    WINDOW *topBarWindow = newwin(TOPBARHEIGHT, xMax, 0, 0);
-    box(topBarWindow, 0, 0);
-    refresh();
-    wrefresh(topBarWindow);
+    TopBar topbar(TOPBARHEIGHT, xMax, 0, 0);
 
     WINDOW *mainScreen = newwin(yMax - TOPBARHEIGHT, xMax, TOPBARHEIGHT, 0);
     box(mainScreen, 0, 0);
     refresh();
     wrefresh(mainScreen);
+    // =========== initialize tables
+    // WINDOW *tableWindow = newwin(4, 8, getbegy(mainScreen) + 5, getbegx(mainScreen) + 5);
+    // box(tableWindow, 0, 0);
+    // refresh();
+    // wrefresh(tableWindow);
+    // ============= initialize buttons
 
-    std::vector<std::string> buttons = {"Change Waiter", "Menu", "Remote Orders", "Local Orders", "Close Restarurant"};
-
-    // keypad(mainScreen, true); // turn on, now we can use KEY_UP, KEY_DOWNn .. ; must be before wgetch()
-    // keypad(topBarWindow, true);
     keypad(stdscr, true);
 
     // ============= main program loop
@@ -94,8 +134,8 @@ int main(int argc, char **argv)
     do
     {
         // ========== draw everything to screen
-        drawTopBar(topBarWindow, buttons, topBarSelection, state == aplicationState::topBar);
-        // drawTables(mainScreen);
+        topbar.draw();
+        drawTables(mainScreen);
 
         refresh();
 
@@ -110,14 +150,10 @@ int main(int argc, char **argv)
             switch (userInput)
             {
             case KEY_RIGHT:
-                topBarSelection++;
-                if (topBarSelection == buttons.size())
-                    topBarSelection = 0;
+                topbar.moveRight();
                 break;
             case KEY_LEFT:
-                topBarSelection--;
-                if (topBarSelection == -1)
-                    topBarSelection = buttons.size() - 1;
+                topbar.moveLeft();
                 break;
             case KEY_DOWN:
                 state = aplicationState::mainScreen;
@@ -139,25 +175,29 @@ int main(int argc, char **argv)
             switch (userInput)
             {
             case KEY_RIGHT:
-                ++cursorX;
+                //++cursorX;
+                cursorX += CURSORSPEED * 2;
                 if (cursorX >= getbegx(mainScreen) + getmaxx(mainScreen) - 1)
                     cursorX = getbegx(mainScreen) + 1;
                 move(cursorY, cursorX);
                 break;
             case KEY_LEFT:
-                --cursorX;
+                //--cursorX;
+                cursorX -= CURSORSPEED * 2;
                 if (cursorX <= getbegx(mainScreen))
                     cursorX = getbegx(mainScreen) + getmaxx(mainScreen) - 2;
                 move(cursorY, cursorX);
                 break;
             case KEY_DOWN:
-                ++cursorY;
+                //++cursorY;
+                cursorY += CURSORSPEED;
                 if (cursorY >= getbegy(mainScreen) + getmaxy(mainScreen) - 1)
                     cursorY = getbegy(mainScreen) + 1;
                 move(cursorY, cursorX);
                 break;
             case KEY_UP:
-                --cursorY;
+                //--cursorY;
+                cursorY -= CURSORSPEED;
                 if (cursorY <= getbegy(mainScreen))
                 {
                     // cursorY = getbegy(mainScreen) + getmaxy(mainScreen) - 2;
