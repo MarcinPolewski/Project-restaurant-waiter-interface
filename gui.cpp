@@ -28,6 +28,7 @@ public:
     {
         window = newwin(height, width, positionY, positionX);
         box(window, 0, 0);
+        refresh();
         buttons = {"Change Waiter", "Menu", "Remote Orders", "Local Orders", "Close Restarurant"};
         draw();
     }
@@ -157,9 +158,11 @@ int main(int argc, char **argv)
                 break;
             case KEY_DOWN:
                 state = aplicationState::mainScreen;
+                topbar.deactivate();
                 // getyx(stdscr, cursorY, cursorX);
                 // cursorY = getbegy(mainScreen) + 1;
                 // move(cursorY, 2); // zrobić zeby przeskakiwalo pod guzik !!!!!!!!!!!!!!!!!!
+
                 cursorX = getbegx(mainScreen) + 1;
                 cursorY = getbegy(mainScreen) + 1;
                 move(cursorY, cursorX);
@@ -201,6 +204,7 @@ int main(int argc, char **argv)
                 if (cursorY <= getbegy(mainScreen))
                 {
                     // cursorY = getbegy(mainScreen) + getmaxy(mainScreen) - 2;
+                    topbar.activate();
                     curs_set(0);
                     state = aplicationState::topBar;
                 }
