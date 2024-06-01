@@ -256,28 +256,30 @@ int main(int argc, char **argv)
         {
             switch (userInput)
             {
-            case KEY_RIGHT:
-                //++cursorX;
+            case KEY_RIGHT: // OK
                 cursorX += CURSORSPEED * 2;
                 if (cursorX >= mainscreen.endX())
-                    cursorX = mainscreen.startX() + 1;
+                    cursorX = mainscreen.startX() + CURSORSPEED * WIDTH_TO_RAW_RATIO;
                 move(cursorY, cursorX);
                 break;
-            case KEY_LEFT:
-                //--cursorX;
+            case KEY_LEFT: // NIE OK
                 cursorX -= CURSORSPEED * 2;
                 if (cursorX <= mainscreen.startX())
-                    cursorX = mainscreen.endX() - 1;
+                {
+                    // x must be a multiple of CURSORSPEED
+                    cursorX = mainscreen.endX() - CURSORSPEED * WIDTH_TO_RAW_RATIO;
+                    cursorX -= cursorX % (CURSORSPEED * WIDTH_TO_RAW_RATIO);
+                }
                 move(cursorY, cursorX);
                 break;
             case KEY_DOWN:
                 //++cursorY;
                 cursorY += CURSORSPEED;
                 if (cursorY >= mainscreen.endY())
-                    cursorY = mainscreen.startY() + 1;
+                    cursorY = mainscreen.startY() + CURSORSPEED;
                 move(cursorY, cursorX);
                 break;
-            case KEY_UP:
+            case KEY_UP: // OK
                 //--cursorY;
                 cursorY -= CURSORSPEED;
                 if (cursorY <= mainscreen.startY())
