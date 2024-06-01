@@ -77,6 +77,7 @@ public:
     TopBar(int height, int width, int positionY, int positionX) : TerminalUIObject(height, width, positionY, positionX)
     {
         buttons = {"Change Waiter", "Menu", "Remote Orders", "Local Orders", "Close Restarurant"};
+        draw();
     }
 
     void draw() override
@@ -365,8 +366,6 @@ public:
         if (currentPopUp == nullptr)
             throw std::invalid_argument("no popup is displayed");
         currentPopUp->moveUp();
-        // find current popUpMenu
-        // find
     }
 
     void moveDown()
@@ -432,8 +431,7 @@ int main()
     do
     {
         // ========== draw everything to screen
-        topbar.draw();
-        popUpHandler.draw(); // jak to się właczy to przestaje się wyświtlać !!!!
+        // jak to się właczy to przestaje się wyświtlać !!!!
         //  refresh();
         //   refresh();
         //     drawTables(mainScreen);
@@ -470,6 +468,7 @@ int main()
 
                 break;
             }
+            topbar.draw();
         }
         else if (state == aplicationState::mainScreen)
         {
@@ -546,6 +545,8 @@ int main()
                 curs_set(1);
                 break;
             }
+
+            popUpHandler.draw();
         }
     } while (runLoop);
 
