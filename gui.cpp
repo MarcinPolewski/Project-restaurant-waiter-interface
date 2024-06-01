@@ -6,8 +6,11 @@
 #include <restaurant.h>
 
 #define TOPBARHEIGHT 3
-#define CURSORSPEED 9 // must be an odd number !!!!
-#define COLUMN_TO_WIDTH_RATION 2
+#define BUTTON_HEIGHT 3
+#define BUTTON_SIDE_OFFSET 2 // how many columns from the edge of menu, should the button be
+#define BUTTON_TOP_OFFSET 2
+#define CURSORSPEED 9            // must be an odd number !!!!
+#define COLUMN_TO_WIDTH_RATION 2 // ration between column and height - approximately one row is the same amount of pixels as two columns
 
 enum class aplicationState
 {
@@ -64,41 +67,6 @@ public:
     virtual ~TerminalUIObject() = default;
 };
 
-class PopUpMenu : public TerminalUIObject
-{
-
-public:
-    PopUpMenu(int height, int width, int yPosition, int xPosition) : TerminalUIObject(height, width, yPosition, xPosition)
-    {
-    }
-
-    // PopUpMenu(WINDOW *background, int verticalOffset = 1, int horizontalOffset = 1 * COLUMN_TO_WIDTH_RATION)
-    // {
-    //     int height = getmaxy(background) - 2 * verticalOffset;
-    //     int width = getmaxx(background) - 2 * horizontalOffset;
-
-    //     PopUpMenu(height, width, verticalOffset + getbegy(background), horizontalOffset + getbegx(background));
-    // }
-
-    PopUpMenu(WINDOW *background, int height = 40, int width = 60)
-    {
-        // calculate offset
-        int topLeftCornerX = getbegx(background) + ((getmaxx(background) - width) / 2);
-        int topLeftCornerY = getbegy(background) + ((getmaxy(background) - height) / 2);
-
-        PopUpMenu(height, width, topLeftCornerY, topLeftCornerX);
-    }
-
-    void draw() override
-    {
-    }
-};
-
-class TablePopUpMenu : public PopUpMenu
-{
-    using PopUpMenu::PopUpMenu;
-};
-
 class TopBar : public TerminalUIObject
 {
     int selection = 0; // inx to currently pointed button
@@ -109,12 +77,6 @@ public:
     TopBar(int height, int width, int positionY, int positionX) : TerminalUIObject(height, width, positionY, positionX)
     {
         buttons = {"Change Waiter", "Menu", "Remote Orders", "Local Orders", "Close Restarurant"};
-        // draw();
-    }
-
-    WINDOW *getWindow()
-    {
-        return window;
     }
 
     void draw() override
@@ -196,10 +158,6 @@ public:
     }
     void activate();
     void deactivate();
-    bool pressed(int yPos, int xPos)
-    {
-        return true;
-    }
 };
 
 class MainScreen : public TerminalUIObject
@@ -252,6 +210,129 @@ public:
     }
 };
 
+class MenuButton : public TerminalUIObject
+{
+protected:
+    std::string title;
+    bool selected = false;
+
+public:
+    MenuButton(int height, int width, int yPosition, int xPosition, std::string title, bool selected = false) // not passed by reference due to nature of initialization of buttons
+        : TerminalUIObject(height, width, yPosition, xPosition), title(title), selected(selected)
+    {
+        draw();
+    }
+    void draw() override
+    {
+        box(window, 0, 0);
+        if (selected)
+            wattr_on(window, A_REVERSE, nullptr);
+        mvwprintw(window, 1, 1, title.c_str());
+        wattr_off(window, A_REVERSE, nullptr);
+
+        wrefresh(window);
+    }
+    void activate()
+    {
+        selected = true;
+    }
+
+    void deactivate()
+    {
+        selected = false;
+    }
+
+    virtual void pressed() = 0;
+};
+
+class CloseButton : public MenuButton
+{
+public:
+    CloseButton(int height, int width, int yPosition, int xPosition, bool selected = false)
+        : MenuButton(height, width, yPosition, xPosition, std::string("Close"), selected) {}
+
+    void pressed() override
+    {
+        printw("babsababa");
+    }
+};
+
+class PopUpMenu : public TerminalUIObject
+{
+protected:
+    std::vector<std::unique_ptr<MenuButton>> buttons;
+    int selected = 0;
+
+public:
+    PopUpMenu(int height, int width, int yPosition, int xPosition) : TerminalUIObject(height, width, yPosition, xPosition)
+    {
+    }
+
+    // this constructor turned out ugly, because it's the only way to call another constructor
+    PopUpMenu(WINDOW *background, int height = 40, int width = 60)
+        : PopUpMenu(height, width,
+                    getbegy(background) + ((getmaxy(background) - height) / 2),
+                    getbegx(background) + ((getmaxx(background) - width) / 2))
+    {
+    }
+
+    void draw() override
+    {
+        box(window, 0, 0);
+        for (auto &it : buttons)
+        {
+            it->draw();
+        }
+        // wrefresh(window);
+    }
+
+    void moveUp()
+    {
+        buttons[selected]->deactivate();
+        if (selected == 0)
+            selected = buttons.size() - 1;
+        else
+            --selected;
+        buttons[selected]->activate();
+    }
+
+    void moveDown()
+    {
+        buttons[selected]->deactivate();
+        if (selected == (int)buttons.size() - 1)
+            selected = 0;
+        else
+            ++selected;
+        buttons[selected]->activate();
+    }
+
+    void buttonPressed()
+    {
+        buttons[selected]->pressed();
+    }
+};
+
+class TablePopUpMenu : public PopUpMenu
+{
+    // using PopUpMenu::PopUpMenu;
+    UITable table;
+
+public:
+    TablePopUpMenu(WINDOW *background, UITable &table, int height = 40, int width = 60) : PopUpMenu(background, height, width), table(table)
+    {
+        // initialize buttons
+
+        int buttonX = startX() + BUTTON_SIDE_OFFSET;
+        int buttonY = getbegy(window) + BUTTON_TOP_OFFSET;
+
+        buttons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, width - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, true));
+        buttonY += BUTTON_HEIGHT;
+        buttons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, width - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX));
+        buttonY += BUTTON_HEIGHT;
+        buttons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, width - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX));
+    }
+};
+
 class PopUpHandler
 {
     WINDOW *backgroundWindow;
@@ -259,20 +340,53 @@ class PopUpHandler
 
     // ========= pointers to popUps
     std::unique_ptr<TablePopUpMenu> tablePopUpMenu;
+    PopUpMenu *currentPopUp;
 
 public:
-    PopUpHandler(WINDOW *background, Restaurant *restaurant) : backgroundWindow(background), restaurant(restaurant)
+    PopUpHandler(WINDOW *background, Restaurant *restaurant)
+        : backgroundWindow(background), restaurant(restaurant)
     {
     }
 
     TablePopUpMenu *newTablePopUpMenu(UITable &table)
     {
-        tablePopUpMenu.reset(new TablePopUpMenu(backgroundWindow));
+        tablePopUpMenu.reset(new TablePopUpMenu(backgroundWindow, table));
+        currentPopUp = tablePopUpMenu.get();
         return tablePopUpMenu.get();
     }
     void closeTablePopUpMenu()
     {
+        currentPopUp = nullptr;
         tablePopUpMenu.reset();
+    }
+
+    void moveUp()
+    {
+        if (currentPopUp == nullptr)
+            throw std::invalid_argument("no popup is displayed");
+        currentPopUp->moveUp();
+        // find current popUpMenu
+        // find
+    }
+
+    void moveDown()
+    {
+        if (currentPopUp == nullptr)
+            throw std::invalid_argument("no popup is displayed");
+        currentPopUp->moveDown();
+    }
+
+    void draw()
+    {
+        if (currentPopUp != nullptr)
+            currentPopUp->draw();
+    }
+
+    void buttonPressed()
+    {
+        if (currentPopUp == nullptr)
+            throw std::invalid_argument("no popup is displayed");
+        currentPopUp->buttonPressed();
     }
 };
 
@@ -305,6 +419,7 @@ int main()
     MainScreen mainscreen(yMax - TOPBARHEIGHT, xMax, TOPBARHEIGHT, 0);
     mainscreen.addTables(restaurant.getTables());
     PopUpHandler popUpHandler(mainscreen.getWindow(), &restaurant);
+
     keypad(stdscr, true);
 
     // ============= main program loop
@@ -313,13 +428,15 @@ int main()
     int cursorX, cursorY;
     aplicationState state = aplicationState::topBar;
     aplicationState previousState;
+
     do
     {
         // ========== draw everything to screen
         topbar.draw();
-        // mainscreen.draw();
+        popUpHandler.draw(); // jak to się właczy to przestaje się wyświtlać !!!!
         //  refresh();
-        //    drawTables(mainScreen);
+        //   refresh();
+        //     drawTables(mainScreen);
 
         // refresh();
 
@@ -331,6 +448,7 @@ int main()
 
         if (state == aplicationState::topBar)
         {
+
             switch (userInput)
             {
             case KEY_RIGHT:
@@ -342,9 +460,6 @@ int main()
             case KEY_DOWN:
                 state = aplicationState::mainScreen;
                 topbar.deactivate();
-                // getyx(stdscr, cursorY, cursorX);
-                // cursorY = getbegy(mainScreen) + 1;
-                // move(cursorY, 2); // zrobić zeby przeskakiwalo pod guzik !!!!!!!!!!!!!!!!!!
 
                 cursorX = mainscreen.startX() + CURSORSPEED * COLUMN_TO_WIDTH_RATION; // getbegx(mainScreen) + 1;
                 cursorY = mainscreen.startY() + CURSORSPEED;                          // getbegy(mainScreen) + 1;
@@ -408,6 +523,17 @@ int main()
         {
             switch (userInput)
             {
+            case KEY_UP:
+                popUpHandler.moveUp();
+                break;
+            case KEY_DOWN:
+                popUpHandler.moveDown();
+                break;
+
+            case 10:
+                popUpHandler.buttonPressed();
+                break;
+
             case 'a':
                 // printw("jasflkjdsalfkjasdlk");
                 // exit menu
@@ -423,6 +549,7 @@ int main()
         }
     } while (runLoop);
 
+    getchar();
     // dealocate memory , deallocate memory
     endwin();
     return 0;
