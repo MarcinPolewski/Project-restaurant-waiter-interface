@@ -5,16 +5,15 @@
 
 #include <restaurant.h>
 
-#define COLOR_NORMAL 1
-#define COLOR_SELECT 2
 #define TOPBARHEIGHT 3
-#define CURSORSPEED 9 // must be even number ???
-#define WIDTH_TO_RAW_RATIO 2
+#define CURSORSPEED 9 // must be an odd number !!!!
+#define COLUMN_TO_WIDTH_RATION 2
 
 enum class aplicationState
 {
     mainScreen,
-    topBar
+    topBar,
+    tablePopUpWindow
 };
 
 class TopBar
@@ -32,6 +31,11 @@ public:
         refresh();
         buttons = {"Change Waiter", "Menu", "Remote Orders", "Local Orders", "Close Restarurant"};
         draw();
+    }
+
+    WINDOW *getWindow()
+    {
+        return window;
     }
 
     void draw()
@@ -84,12 +88,10 @@ public:
     }
 };
 
-// to do : -zmienić, tera UITable zawiera wskazanie na talbe - dodać układ siatkowy, skacząc wskaźnikiem zawsze lądujemy w środku kwadratu !!
-
 class UITable
 {
-    int height = CURSORSPEED, width = WIDTH_TO_RAW_RATIO * height - 1; // height and width mu
-    int rawCoordinate, columnCoordinate;                               // deteremine position of top left corner on the screen
+    int height = CURSORSPEED, width = COLUMN_TO_WIDTH_RATION * height - 1; // height and width mu
+    int rawCoordinate, columnCoordinate;                                   // deteremine position of top left corner on the screen
 
     // ==== each table is printed so, that cursor always lands in the middle
     int howManyColumnsFromCeneter = (width - 1) / 2;
@@ -102,13 +104,18 @@ public:
     UITable(WINDOW *backgroundWindow, Table &table) : table(table)
     {
         rawCoordinate = (table.position.y) * CURSORSPEED - howManyRowsFromCenter;
-        columnCoordinate = (table.position.x) * CURSORSPEED * WIDTH_TO_RAW_RATIO - howManyColumnsFromCeneter;
+        columnCoordinate = (table.position.x) * CURSORSPEED * COLUMN_TO_WIDTH_RATION - howManyColumnsFromCeneter;
 
         tableWindow = newwin(height, width, rawCoordinate + getbegy(backgroundWindow), columnCoordinate + getbegx(backgroundWindow));
         box(tableWindow, 0, 0);
         refresh();
         wrefresh(tableWindow);
     }
+    WINDOW *getWindow()
+    {
+        return tableWindow;
+    }
+
     void draw();
     void activate();
     void deactivate();
@@ -167,6 +174,53 @@ public:
             it.draw();
         }
     }
+
+    bool pressed(int cursorY, int cursorX) // checks if table was pressed, if so retur n true
+    {
+    }
+
+    WINDOW *getWindow()
+    {
+        return window;
+    }
+};
+
+class PopUpMenu
+{
+    WINDOW *window;
+
+public:
+    PopUpMenu(int height, int width, int yPosition, int xPosition)
+    {
+        window = newwin(height, width, yPosition, xPosition);
+        box(window, 0, 0);
+        // init_pair(1, COLOR_GREEN, COLOR_RED);
+        // wbkgd(window, COLOR_PAIR(1));
+        wrefresh(window);
+        refresh();
+    }
+
+    // PopUpMenu(WINDOW *background, int verticalOffset = 1, int horizontalOffset = 1 * COLUMN_TO_WIDTH_RATION)
+    // {
+    //     int height = getmaxy(background) - 2 * verticalOffset;
+    //     int width = getmaxx(background) - 2 * horizontalOffset;
+
+    //     PopUpMenu(height, width, verticalOffset + getbegy(background), horizontalOffset + getbegx(background));
+    // }
+
+    PopUpMenu(WINDOW *background, int height = 40, int width = 60)
+    {
+        // calculate offset
+        int topLeftCornerX = getbegx(background) + ((getmaxx(background) - width) / 2);
+        int topLeftCornerY = getbegy(background) + ((getmaxy(background) - height) / 2);
+
+        PopUpMenu(height, width, topLeftCornerY, topLeftCornerX);
+    }
+
+    WINDOW *getWindow()
+    {
+        return window;
+    }
 };
 
 int main(int argc, char **argv)
@@ -185,23 +239,18 @@ int main(int argc, char **argv)
 
     // attron(COLOR_PAIR(COLOR_NORMAL));
     // refresh();
-    // ============= get max dimensions of terminal
+    // ============= get max dimensions of terminal window
     int yMax, xMax;
     getmaxyx(stdscr, yMax, xMax);
 
+    // ============= initialize restaurant class
     Restaurant restaurant;
 
-    // ============= initialize windows
+    // ============= initialize screen elements
     TopBar topbar(TOPBARHEIGHT, xMax, 0, 0);
     MainScreen mainscreen(yMax - TOPBARHEIGHT, xMax, TOPBARHEIGHT, 0);
     mainscreen.addTables(restaurant.getTables());
-
-    // =========== initialize tables
-    // WINDOW *tableWindow = newwin(4, 8, getbegy(mainScreen) + 5, getbegx(mainScreen) + 5);
-    // box(tableWindow, 0, 0);
-    // refresh();
-    // wrefresh(tableWindow);
-    // ============= initialize buttons
+    // PopUpMenu(mainscreen.getWindow());
 
     keypad(stdscr, true);
 
@@ -220,9 +269,9 @@ int main(int argc, char **argv)
         refresh();
 
         userInput = getch();
-        // ======== handle user input
 
-        if (userInput == 10)
+        // ======== handle user input
+        if (userInput == 'q')
             runLoop = false;
 
         if (state == aplicationState::topBar)
@@ -242,13 +291,13 @@ int main(int argc, char **argv)
                 // cursorY = getbegy(mainScreen) + 1;
                 // move(cursorY, 2); // zrobić zeby przeskakiwalo pod guzik !!!!!!!!!!!!!!!!!!
 
-                cursorX = mainscreen.startX() + CURSORSPEED * WIDTH_TO_RAW_RATIO; // getbegx(mainScreen) + 1;
-                cursorY = mainscreen.startY() + CURSORSPEED;                      // getbegy(mainScreen) + 1;
+                cursorX = mainscreen.startX() + CURSORSPEED * COLUMN_TO_WIDTH_RATION; // getbegx(mainScreen) + 1;
+                cursorY = mainscreen.startY() + CURSORSPEED;                          // getbegy(mainScreen) + 1;
                 move(cursorY, cursorX);
                 curs_set(1);
                 break;
-            case 10:
-                runLoop = false;
+            case KEY_ENTER:
+
                 break;
             }
         }
@@ -259,7 +308,7 @@ int main(int argc, char **argv)
             case KEY_RIGHT: // OK
                 cursorX += CURSORSPEED * 2;
                 if (cursorX >= mainscreen.endX())
-                    cursorX = mainscreen.startX() + CURSORSPEED * WIDTH_TO_RAW_RATIO;
+                    cursorX = mainscreen.startX() + CURSORSPEED * COLUMN_TO_WIDTH_RATION;
                 move(cursorY, cursorX);
                 break;
             case KEY_LEFT: // NIE OK
@@ -267,8 +316,8 @@ int main(int argc, char **argv)
                 if (cursorX <= mainscreen.startX())
                 {
                     // x must be a multiple of CURSORSPEED
-                    cursorX = mainscreen.endX() - CURSORSPEED * WIDTH_TO_RAW_RATIO;
-                    cursorX -= cursorX % (CURSORSPEED * WIDTH_TO_RAW_RATIO);
+                    cursorX = mainscreen.endX() - CURSORSPEED * COLUMN_TO_WIDTH_RATION;
+                    cursorX -= cursorX % (CURSORSPEED * COLUMN_TO_WIDTH_RATION);
                 }
                 move(cursorY, cursorX);
                 break;
@@ -291,12 +340,14 @@ int main(int argc, char **argv)
                 }
                 move(cursorY, cursorX);
                 break;
+            case KEY_ENTER:
+                // check if cursor on table
+                // if so switch to tablePopUpWindow
+                // main screen handler initialization of if
             }
         }
     } while (runLoop);
 
-    // wait for user input
-    getch();
     // dealocate memory , deallocate memory
     endwin();
     return 0;
