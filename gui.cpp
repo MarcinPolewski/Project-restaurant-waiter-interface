@@ -8,7 +8,8 @@
 #define COLOR_NORMAL 1
 #define COLOR_SELECT 2
 #define TOPBARHEIGHT 3
-#define CURSORSPEED 5
+#define CURSORSPEED 9 // must be even number ???
+#define WIDTH_TO_RAW_RATIO 2
 
 enum class aplicationState
 {
@@ -83,15 +84,27 @@ public:
     }
 };
 
-class UITable : public Table
+// to do : -zmienić, tera UITable zawiera wskazanie na talbe - dodać układ siatkowy, skacząc wskaźnikiem zawsze lądujemy w środku kwadratu !!
+
+class UITable
 {
-    int width = 14, height = 7; // x,y are values provided by user, xPosition and yPosition are positions on screen
+    int height = CURSORSPEED, width = WIDTH_TO_RAW_RATIO * height - 1; // height and width mu
+    int rawCoordinate, columnCoordinate;                               // deteremine position of top left corner on the screen
+
+    // ==== each table is printed so, that cursor always lands in the middle
+    int howManyColumnsFromCeneter = (width - 1) / 2;
+    int howManyRowsFromCenter = (height - 1) / 2;
+
     WINDOW *tableWindow;
+    Table &table;
 
 public:
-    UITable(WINDOW *backgroundWindow, Position const &pos, int seats) : Table(pos, seats)
+    UITable(WINDOW *backgroundWindow, Table &table) : table(table)
     {
-        tableWindow = newwin(height, width, pos.y + getbegy(backgroundWindow), pos.x + getbegx(backgroundWindow));
+        rawCoordinate = (table.position.y) * CURSORSPEED - howManyRowsFromCenter;
+        columnCoordinate = (table.position.x) * CURSORSPEED * WIDTH_TO_RAW_RATIO - howManyColumnsFromCeneter;
+
+        tableWindow = newwin(height, width, rawCoordinate + getbegy(backgroundWindow), columnCoordinate + getbegx(backgroundWindow));
         box(tableWindow, 0, 0);
         refresh();
         wrefresh(tableWindow);
@@ -138,11 +151,12 @@ public:
         return getbegy(window) + getmaxy(window) - 1;
     }
 
-    void addTables(std::vector<Table> const &tables)
+    void addTables(std::vector<Table> &tables)
     {
+
         for (auto &it : tables)
         {
-            this->tables.push_back(UITable(window, it.position, it.seats));
+            this->tables.push_back(UITable(window, it));
         }
     }
 
@@ -228,8 +242,8 @@ int main(int argc, char **argv)
                 // cursorY = getbegy(mainScreen) + 1;
                 // move(cursorY, 2); // zrobić zeby przeskakiwalo pod guzik !!!!!!!!!!!!!!!!!!
 
-                cursorX = mainscreen.startX() + 1; // getbegx(mainScreen) + 1;
-                cursorY = mainscreen.startY() + 1; // getbegy(mainScreen) + 1;
+                cursorX = mainscreen.startX() + CURSORSPEED * WIDTH_TO_RAW_RATIO; // getbegx(mainScreen) + 1;
+                cursorY = mainscreen.startY() + CURSORSPEED;                      // getbegy(mainScreen) + 1;
                 move(cursorY, cursorX);
                 curs_set(1);
                 break;
