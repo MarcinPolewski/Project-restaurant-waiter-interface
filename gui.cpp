@@ -13,7 +13,7 @@ enum class aplicationState
 {
     mainScreen,
     topBar,
-    tablePopUpWindow
+    popUpMenu
 };
 
 class TerminalUIObject
@@ -27,7 +27,6 @@ public:
     {
         window = newwin(height, width, yPosition, xPosition);
         box(window, 0, 0);
-        refresh();
         wrefresh(window);
     }
 
@@ -187,12 +186,13 @@ public:
 
         window = newwin(height, width, rawCoordinate + getbegy(backgroundWindow), columnCoordinate + getbegx(backgroundWindow));
         box(window, 0, 0);
-        refresh();
         wrefresh(window);
     }
 
     void draw() override
     {
+        box(window, 0, 0);
+        wrefresh(window);
     }
     void activate();
     void deactivate();
@@ -205,19 +205,11 @@ public:
 class MainScreen : public TerminalUIObject
 {
 public:
-    enum class InternalState
-    {
-        cursorState,
-        popUpMenuState
-    };
-
 private:
-    std::unique_ptr<TablePopUpMenu> popUpMenu;
     std::vector<UITable> tables;
-    InternalState internalState;
 
 public:
-    MainScreen(int height, int width, int positionY, int positionX, InternalState internalState = InternalState::cursorState) : TerminalUIObject(height, width, positionY, positionX), internalState(internalState)
+    MainScreen(int height, int width, int positionY, int positionX) : TerminalUIObject(height, width, positionY, positionX)
     {
     }
 
@@ -233,35 +225,58 @@ public:
 
     void draw() override
     {
+        box(window, 0, 0);
+        wrefresh(window);
         for (auto &it : tables)
         {
             it.draw();
         }
+        wrefresh(window);
     }
 
-    bool pressed(int cursorY, int cursorX) // checks if table was pressed, if so retur n true
+    bool pressed(int cursorY, int cursorX, UITable *&pressedTable) // checks if table was pressed, if so retur n true
     {
+
         for (auto &it : tables)
         {
             if (it.isCursorInWindow(cursorY, cursorX))
             {
+                pressedTable = &it;
                 // 1. create new window
                 // popUpMenu.reset(new TablePopUpMenu(window));
-                popUpMenu = std::make_unique<TablePopUpMenu>(window);
-                internalState = InternalState::popUpMenuState;
+                // pointerToMenu.reset(new TablePopUpMenu(window));
                 return true;
             }
         }
         return false;
     }
+};
 
-    InternalState getInternalState()
+class PopUpHandler
+{
+    WINDOW *backgroundWindow;
+    Restaurant *restaurant;
+
+    // ========= pointers to popUps
+    std::unique_ptr<TablePopUpMenu> tablePopUpMenu;
+
+public:
+    PopUpHandler(WINDOW *background, Restaurant *restaurant) : backgroundWindow(background), restaurant(restaurant)
     {
-        return internalState;
+    }
+
+    TablePopUpMenu *newTablePopUpMenu(UITable &table)
+    {
+        tablePopUpMenu.reset(new TablePopUpMenu(backgroundWindow));
+        return tablePopUpMenu.get();
+    }
+    void closeTablePopUpMenu()
+    {
+        tablePopUpMenu.reset();
     }
 };
 
-int main(int argc, char **argv)
+int main()
 {
     // ============= initialize screen, set up memory and clear screen
     initscr();
@@ -285,11 +300,11 @@ int main(int argc, char **argv)
     Restaurant restaurant;
 
     // ============= initialize screen elements
+    refresh();
     TopBar topbar(TOPBARHEIGHT, xMax, 0, 0);
     MainScreen mainscreen(yMax - TOPBARHEIGHT, xMax, TOPBARHEIGHT, 0);
     mainscreen.addTables(restaurant.getTables());
-    // PopUpMenu(mainscreen.getWindow());
-
+    PopUpHandler popUpHandler(mainscreen.getWindow(), &restaurant);
     keypad(stdscr, true);
 
     // ============= main program loop
@@ -297,16 +312,16 @@ int main(int argc, char **argv)
     int userInput;
     int cursorX, cursorY;
     aplicationState state = aplicationState::topBar;
+    aplicationState previousState;
     do
     {
-        // clear();
-        // refresh();
         // ========== draw everything to screen
         topbar.draw();
         // mainscreen.draw();
-        //  drawTables(mainScreen);
+        //  refresh();
+        //    drawTables(mainScreen);
 
-        refresh();
+        // refresh();
 
         userInput = getch();
 
@@ -343,53 +358,67 @@ int main(int argc, char **argv)
         }
         else if (state == aplicationState::mainScreen)
         {
-            if (mainscreen.getInternalState() == MainScreen::InternalState::cursorState)
+            switch (userInput)
             {
-                switch (userInput)
+            case KEY_RIGHT:
+                cursorX += CURSORSPEED * 2;
+                if (cursorX >= mainscreen.endX())
+                    cursorX = mainscreen.startX() + CURSORSPEED * COLUMN_TO_WIDTH_RATION;
+                move(cursorY, cursorX);
+                break;
+            case KEY_LEFT:
+                cursorX -= CURSORSPEED * 2;
+                if (cursorX <= mainscreen.startX())
                 {
-                case KEY_RIGHT: // OK
-                    cursorX += CURSORSPEED * 2;
-                    if (cursorX >= mainscreen.endX())
-                        cursorX = mainscreen.startX() + CURSORSPEED * COLUMN_TO_WIDTH_RATION;
-                    move(cursorY, cursorX);
-                    break;
-                case KEY_LEFT: // NIE OK
-                    cursorX -= CURSORSPEED * 2;
-                    if (cursorX <= mainscreen.startX())
-                    {
-                        // x must be a multiple of CURSORSPEED
-                        cursorX = mainscreen.endX() - CURSORSPEED * COLUMN_TO_WIDTH_RATION;
-                        cursorX -= cursorX % (CURSORSPEED * COLUMN_TO_WIDTH_RATION);
-                    }
-                    move(cursorY, cursorX);
-                    break;
-                case KEY_DOWN:
-                    //++cursorY;
-                    cursorY += CURSORSPEED;
-                    if (cursorY >= mainscreen.endY())
-                        cursorY = mainscreen.startY() + CURSORSPEED;
-                    move(cursorY, cursorX);
-                    break;
-                case KEY_UP: // OK
-                    //--cursorY;
-                    cursorY -= CURSORSPEED;
-                    if (cursorY <= mainscreen.startY())
-                    {
-                        // cursorY = getbegy(mainScreen) + getmaxy(mainScreen) - 2;
-                        topbar.activate();
-                        curs_set(0);
-                        state = aplicationState::topBar;
-                    }
-                    move(cursorY, cursorX);
-                    break;
-                case 10:
-                    if (mainscreen.pressed(cursorY, cursorX)) // returns true if table was pressed
-                        curs_set(0);
-                    break;
+                    // x must be a multiple of CURSORSPEED
+                    cursorX = mainscreen.endX() - CURSORSPEED * COLUMN_TO_WIDTH_RATION;
+                    cursorX -= cursorX % (CURSORSPEED * COLUMN_TO_WIDTH_RATION);
                 }
+                move(cursorY, cursorX);
+                break;
+            case KEY_DOWN:
+                cursorY += CURSORSPEED;
+                if (cursorY >= mainscreen.endY())
+                    cursorY = mainscreen.startY() + CURSORSPEED;
+                move(cursorY, cursorX);
+                break;
+            case KEY_UP:
+                cursorY -= CURSORSPEED;
+                if (cursorY <= mainscreen.startY())
+                {
+                    topbar.activate();
+                    curs_set(0);
+                    state = aplicationState::topBar;
+                }
+                move(cursorY, cursorX);
+                break;
+            case 10:
+                UITable *pressedTable;
+                if (mainscreen.pressed(cursorY, cursorX, pressedTable)) // returns true if table was pressed and returns table by reference
+                {
+                    curs_set(0);
+                    popUpHandler.newTablePopUpMenu(*pressedTable);
+                    previousState = state;
+                    state = aplicationState::popUpMenu;
+                }
+                break;
             }
-            else if (mainscreen.getInternalState() == MainScreen::InternalState::cursorState)
+        }
+        else if (state == aplicationState::popUpMenu)
+        {
+            switch (userInput)
             {
+            case 'a':
+                // printw("jasflkjdsalfkjasdlk");
+                // exit menu
+                popUpHandler.closeTablePopUpMenu();
+                state = previousState;
+                wclear(mainscreen.getWindow()); // czyścimy ekran tylko gdy menu znika !!!, ale potem trzeba
+                // wrefresh(mainscreen.getWindow());
+                mainscreen.draw();
+                move(cursorY, cursorX);
+                curs_set(1);
+                break;
             }
         }
     } while (runLoop);
@@ -398,3 +427,9 @@ int main(int argc, char **argv)
     endwin();
     return 0;
 }
+
+// refresh only updated elements after change
+// do not change elements that have not changed !!
+// if you getchar it will automatically refreesh
+// draw only window with focus !!!
+// refresh only things that have changed
