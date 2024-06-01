@@ -16,6 +16,49 @@ enum class aplicationState
     tablePopUpWindow
 };
 
+class PopUpMenu
+{
+    WINDOW *window;
+
+public:
+    PopUpMenu(int height, int width, int yPosition, int xPosition)
+    {
+        window = newwin(height, width, yPosition, xPosition);
+        box(window, 0, 0);
+        // init_pair(1, COLOR_GREEN, COLOR_RED);
+        // wbkgd(window, COLOR_PAIR(1));
+        wrefresh(window);
+        refresh();
+    }
+
+    // PopUpMenu(WINDOW *background, int verticalOffset = 1, int horizontalOffset = 1 * COLUMN_TO_WIDTH_RATION)
+    // {
+    //     int height = getmaxy(background) - 2 * verticalOffset;
+    //     int width = getmaxx(background) - 2 * horizontalOffset;
+
+    //     PopUpMenu(height, width, verticalOffset + getbegy(background), horizontalOffset + getbegx(background));
+    // }
+
+    PopUpMenu(WINDOW *background, int height = 40, int width = 60)
+    {
+        // calculate offset
+        int topLeftCornerX = getbegx(background) + ((getmaxx(background) - width) / 2);
+        int topLeftCornerY = getbegy(background) + ((getmaxy(background) - height) / 2);
+
+        PopUpMenu(height, width, topLeftCornerY, topLeftCornerX);
+    }
+
+    WINDOW *getWindow()
+    {
+        return window;
+    }
+};
+
+class TablePopUpMenu : public PopUpMenu
+{
+    using PopUpMenu::PopUpMenu;
+};
+
 class TopBar
 {
     WINDOW *window;
@@ -119,17 +162,30 @@ public:
     void draw();
     void activate();
     void deactivate();
-    void pressed(); // ??
+    bool pressed(int yPos, int xPos)
+    {
+        return true;
+    }
     bool isCursoreIn(int yPos, int xPos);
 };
 
 class MainScreen
 {
+public:
+    enum class InternalState
+    {
+        cursorState,
+        popUpMenuState
+    };
+
+private:
     WINDOW *window;
+    std::unique_ptr<TablePopUpMenu> popUpMenu;
     std::vector<UITable> tables;
+    InternalState internalState;
 
 public:
-    MainScreen(int height, int width, int positionY, int positionX)
+    MainScreen(int height, int width, int positionY, int positionX, InternalState internalState = InternalState::cursorState) : internalState(internalState)
     {
         window = newwin(height, width, positionY, positionX);
         box(window, 0, 0);
@@ -177,49 +233,28 @@ public:
 
     bool pressed(int cursorY, int cursorX) // checks if table was pressed, if so retur n true
     {
+        for (auto &it : tables)
+        {
+            if (it.pressed(cursorY, cursorX))
+            {
+                // 1. create new window
+                // popUpMenu.reset(new TablePopUpMenu(window));
+                popUpMenu = std::make_unique<TablePopUpMenu>(window);
+                internalState = InternalState::popUpMenuState;
+                return true;
+            }
+        }
+        return false;
     }
 
     WINDOW *getWindow()
     {
         return window;
     }
-};
 
-class PopUpMenu
-{
-    WINDOW *window;
-
-public:
-    PopUpMenu(int height, int width, int yPosition, int xPosition)
+    InternalState getInternalState()
     {
-        window = newwin(height, width, yPosition, xPosition);
-        box(window, 0, 0);
-        // init_pair(1, COLOR_GREEN, COLOR_RED);
-        // wbkgd(window, COLOR_PAIR(1));
-        wrefresh(window);
-        refresh();
-    }
-
-    // PopUpMenu(WINDOW *background, int verticalOffset = 1, int horizontalOffset = 1 * COLUMN_TO_WIDTH_RATION)
-    // {
-    //     int height = getmaxy(background) - 2 * verticalOffset;
-    //     int width = getmaxx(background) - 2 * horizontalOffset;
-
-    //     PopUpMenu(height, width, verticalOffset + getbegy(background), horizontalOffset + getbegx(background));
-    // }
-
-    PopUpMenu(WINDOW *background, int height = 40, int width = 60)
-    {
-        // calculate offset
-        int topLeftCornerX = getbegx(background) + ((getmaxx(background) - width) / 2);
-        int topLeftCornerY = getbegy(background) + ((getmaxy(background) - height) / 2);
-
-        PopUpMenu(height, width, topLeftCornerY, topLeftCornerX);
-    }
-
-    WINDOW *getWindow()
-    {
-        return window;
+        return internalState;
     }
 };
 
@@ -296,54 +331,60 @@ int main(int argc, char **argv)
                 move(cursorY, cursorX);
                 curs_set(1);
                 break;
-            case KEY_ENTER:
+            case 10:
 
                 break;
             }
         }
         else if (state == aplicationState::mainScreen)
         {
-            switch (userInput)
+            if (mainscreen.getInternalState() == MainScreen::InternalState::cursorState)
             {
-            case KEY_RIGHT: // OK
-                cursorX += CURSORSPEED * 2;
-                if (cursorX >= mainscreen.endX())
-                    cursorX = mainscreen.startX() + CURSORSPEED * COLUMN_TO_WIDTH_RATION;
-                move(cursorY, cursorX);
-                break;
-            case KEY_LEFT: // NIE OK
-                cursorX -= CURSORSPEED * 2;
-                if (cursorX <= mainscreen.startX())
+                switch (userInput)
                 {
-                    // x must be a multiple of CURSORSPEED
-                    cursorX = mainscreen.endX() - CURSORSPEED * COLUMN_TO_WIDTH_RATION;
-                    cursorX -= cursorX % (CURSORSPEED * COLUMN_TO_WIDTH_RATION);
+                case KEY_RIGHT: // OK
+                    cursorX += CURSORSPEED * 2;
+                    if (cursorX >= mainscreen.endX())
+                        cursorX = mainscreen.startX() + CURSORSPEED * COLUMN_TO_WIDTH_RATION;
+                    move(cursorY, cursorX);
+                    break;
+                case KEY_LEFT: // NIE OK
+                    cursorX -= CURSORSPEED * 2;
+                    if (cursorX <= mainscreen.startX())
+                    {
+                        // x must be a multiple of CURSORSPEED
+                        cursorX = mainscreen.endX() - CURSORSPEED * COLUMN_TO_WIDTH_RATION;
+                        cursorX -= cursorX % (CURSORSPEED * COLUMN_TO_WIDTH_RATION);
+                    }
+                    move(cursorY, cursorX);
+                    break;
+                case KEY_DOWN:
+                    //++cursorY;
+                    cursorY += CURSORSPEED;
+                    if (cursorY >= mainscreen.endY())
+                        cursorY = mainscreen.startY() + CURSORSPEED;
+                    move(cursorY, cursorX);
+                    break;
+                case KEY_UP: // OK
+                    //--cursorY;
+                    cursorY -= CURSORSPEED;
+                    if (cursorY <= mainscreen.startY())
+                    {
+                        // cursorY = getbegy(mainScreen) + getmaxy(mainScreen) - 2;
+                        topbar.activate();
+                        curs_set(0);
+                        state = aplicationState::topBar;
+                    }
+                    move(cursorY, cursorX);
+                    break;
+                case 10:
+                    if (mainscreen.pressed(cursorY, cursorX)) // returns true if table was pressed
+                        curs_set(0);
+                    break;
                 }
-                move(cursorY, cursorX);
-                break;
-            case KEY_DOWN:
-                //++cursorY;
-                cursorY += CURSORSPEED;
-                if (cursorY >= mainscreen.endY())
-                    cursorY = mainscreen.startY() + CURSORSPEED;
-                move(cursorY, cursorX);
-                break;
-            case KEY_UP: // OK
-                //--cursorY;
-                cursorY -= CURSORSPEED;
-                if (cursorY <= mainscreen.startY())
-                {
-                    // cursorY = getbegy(mainScreen) + getmaxy(mainScreen) - 2;
-                    topbar.activate();
-                    curs_set(0);
-                    state = aplicationState::topBar;
-                }
-                move(cursorY, cursorX);
-                break;
-            case KEY_ENTER:
-                // check if cursor on table
-                // if so switch to tablePopUpWindow
-                // main screen handler initialization of if
+            }
+            else if (mainscreen.getInternalState() == MainScreen::InternalState::cursorState)
+            {
             }
         }
     } while (runLoop);
