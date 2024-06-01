@@ -547,6 +547,23 @@ TEST(OrderTest, addOrderItem)
     ASSERT_EQ(ordit.getPrice(), 9995);
 }
 
+TEST(OrderTest, iterator_typical)
+{
+    Table tbl(Table::Position(3, 5, 0), 4);
+    LocalOrder lo(tbl);
+
+    const Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    Beverage woda("Woda", "Woda mineralna niegazowana", Beverage::CATEGORY::coldBeverage, 299, 0, 500);
+
+    lo.addOrderItem(pierogi, 5);
+    lo.addOrderItem(woda, 2);
+
+    Order::iterator it = lo.begin();
+    ASSERT_EQ((*it).menuItem.name, "Pierogi");
+    ASSERT_EQ((*++it).menuItem.name, "Woda");
+    ASSERT_EQ(++it != lo.end(), false);
+}
+
 TEST(OrderTest, getOrderItem_typical)
 {
     Table tbl(Table::Position(3, 5, 0), 4);
@@ -556,7 +573,7 @@ TEST(OrderTest, getOrderItem_typical)
     const Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
     ord.addOrderItem(pierogi, 3);
 
-    OrderItem& ordit = ord.getOrderItem(0);
+    OrderItem& ordit = ord[0];
     ASSERT_EQ(ordit.quantity, 3);
     ASSERT_EQ(ordit.menuItem.name, "Pierogi");
 }
@@ -570,7 +587,7 @@ TEST(OrderTest, getOrderItem_out_of_range)
     const Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
     ord.addOrderItem(pierogi, 3);
 
-    EXPECT_THROW(ord.getOrderItem(2), std::invalid_argument);
+    EXPECT_THROW(ord[2], std::invalid_argument);
 }
 
 TEST(OrderTest, getStatus_typical)

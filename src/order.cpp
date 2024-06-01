@@ -9,7 +9,7 @@ OrderItem& Order::addOrderItem(const MenuItem& menu_item, unsigned int count,
     return this->orderItems.back();
 }
 
-OrderItem& Order::getOrderItem(unsigned int index)
+OrderItem& Order::operator[](unsigned int index)
 {
     if (index >= this->orderItems.size())
         throw (std::invalid_argument("Index out of range."));
@@ -24,4 +24,10 @@ unsigned int Order::getTotalPrice() const
         total_price += order_item.getPrice();
 
     return total_price;
+}
+
+Order::iterator& Order::iterator::operator++()
+{
+    this->it++;
+    return *this;
 }
