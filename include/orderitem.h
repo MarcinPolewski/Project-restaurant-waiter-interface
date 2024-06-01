@@ -17,6 +17,8 @@ enum class ItemStatus
 class WaiterOrderItem
 {
 public:
+    virtual ~WaiterOrderItem() = default;
+
     virtual void addComment(const std::string&) = 0;
     virtual void addComment(std::string&&) = 0;
     virtual const std::string& getComment() const = 0;

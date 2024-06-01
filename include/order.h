@@ -19,7 +19,7 @@ class WaiterOrder
 {
     virtual WaiterOrderItem& addOrderItem(const MenuItem& menu_item, unsigned int count,
         const std::string& com = "", unsigned int discnt = 0) = 0;
-    virtual WaiterOrderItem& getOrderItem(unsigned int index) = 0;
+    virtual WaiterOrderItem& operator[](unsigned int idx) = 0;
     // virtual void removeOrderItem(unsigned int index) = 0;
     virtual const Destination& getDestination() const = 0;
     virtual OrderStatus getStatus() const = 0;
@@ -30,9 +30,6 @@ class WaiterOrder
     virtual void resetWaitingTime() = 0;
     virtual unsigned int getTotalPrice() const = 0;
 };
-
-// iterator i const_iterator
-// destination
 
 class Order : WaiterOrder
 {
@@ -48,7 +45,24 @@ public:
     OrderItem& addOrderItem(const MenuItem& menu_item, unsigned int count,
         const std::string& com = "", unsigned int discnt = 0) override;
 
-    OrderItem& getOrderItem(unsigned int index) override;
+    class iterator
+    {
+    private:
+        std::vector<OrderItem>::iterator it;
+
+        iterator(std::vector<OrderItem>::iterator iter)
+            : it(iter) {}
+
+        friend class Order;
+    public:
+        iterator& operator++();
+        OrderItem& operator*() {return *it;}
+        bool operator!=(iterator it2) const {return this->it != it2.it;}
+    };
+    iterator begin() {return iterator(orderItems.begin());}
+    iterator end() {return iterator(orderItems.end());}
+
+    OrderItem& operator[](unsigned int index) override;
 
     virtual const Destination& getDestination() const override = 0;
 
