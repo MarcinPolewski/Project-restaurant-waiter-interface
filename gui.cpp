@@ -16,19 +16,61 @@ enum class aplicationState
     tablePopUpWindow
 };
 
-class PopUpMenu
+class TerminalUIObject
 {
+protected:
     WINDOW *window;
 
 public:
-    PopUpMenu(int height, int width, int yPosition, int xPosition)
+    TerminalUIObject() = default;
+    TerminalUIObject(int height, int width, int yPosition, int xPosition)
     {
         window = newwin(height, width, yPosition, xPosition);
         box(window, 0, 0);
-        // init_pair(1, COLOR_GREEN, COLOR_RED);
-        // wbkgd(window, COLOR_PAIR(1));
-        wrefresh(window);
         refresh();
+        wrefresh(window);
+    }
+
+    int startX()
+    {
+        return getbegx(window);
+    }
+
+    int startY()
+    {
+        return getbegy(window);
+    }
+
+    int endX()
+    {
+        return getbegx(window) + getmaxx(window) - 1;
+    }
+
+    int endY()
+    {
+        return getbegy(window) + getmaxy(window) - 1;
+    }
+
+    bool isCursorInWindow(int CursorY, int CursorX) // borders do not cound as window
+    {
+        return (CursorX > startX() && CursorX < endX() && CursorY > startY() && CursorY < endY());
+    }
+    WINDOW *getWindow()
+    {
+        return window;
+    }
+
+    virtual void draw() = 0;
+
+    virtual ~TerminalUIObject() = default;
+};
+
+class PopUpMenu : public TerminalUIObject
+{
+
+public:
+    PopUpMenu(int height, int width, int yPosition, int xPosition) : TerminalUIObject(height, width, yPosition, xPosition)
+    {
     }
 
     // PopUpMenu(WINDOW *background, int verticalOffset = 1, int horizontalOffset = 1 * COLUMN_TO_WIDTH_RATION)
@@ -48,9 +90,8 @@ public:
         PopUpMenu(height, width, topLeftCornerY, topLeftCornerX);
     }
 
-    WINDOW *getWindow()
+    void draw() override
     {
-        return window;
     }
 };
 
@@ -59,21 +100,17 @@ class TablePopUpMenu : public PopUpMenu
     using PopUpMenu::PopUpMenu;
 };
 
-class TopBar
+class TopBar : public TerminalUIObject
 {
-    WINDOW *window;
     int selection = 0; // inx to currently pointed button
     std::vector<std::string> buttons;
     bool active = true;
 
 public:
-    TopBar(int height, int width, int positionY, int positionX)
+    TopBar(int height, int width, int positionY, int positionX) : TerminalUIObject(height, width, positionY, positionX)
     {
-        window = newwin(height, width, positionY, positionX);
-        box(window, 0, 0);
-        refresh();
         buttons = {"Change Waiter", "Menu", "Remote Orders", "Local Orders", "Close Restarurant"};
-        draw();
+        // draw();
     }
 
     WINDOW *getWindow()
@@ -81,7 +118,7 @@ public:
         return window;
     }
 
-    void draw()
+    void draw() override
     {
         int width = getmaxx(window);
         int widthPerButton = width / buttons.size();
@@ -131,7 +168,7 @@ public:
     }
 };
 
-class UITable
+class UITable : public TerminalUIObject
 {
     int height = CURSORSPEED, width = COLUMN_TO_WIDTH_RATION * height - 1; // height and width mu
     int rawCoordinate, columnCoordinate;                                   // deteremine position of top left corner on the screen
@@ -140,7 +177,6 @@ class UITable
     int howManyColumnsFromCeneter = (width - 1) / 2;
     int howManyRowsFromCenter = (height - 1) / 2;
 
-    WINDOW *tableWindow;
     Table &table;
 
 public:
@@ -149,27 +185,24 @@ public:
         rawCoordinate = (table.position.y) * CURSORSPEED - howManyRowsFromCenter;
         columnCoordinate = (table.position.x) * CURSORSPEED * COLUMN_TO_WIDTH_RATION - howManyColumnsFromCeneter;
 
-        tableWindow = newwin(height, width, rawCoordinate + getbegy(backgroundWindow), columnCoordinate + getbegx(backgroundWindow));
-        box(tableWindow, 0, 0);
+        window = newwin(height, width, rawCoordinate + getbegy(backgroundWindow), columnCoordinate + getbegx(backgroundWindow));
+        box(window, 0, 0);
         refresh();
-        wrefresh(tableWindow);
-    }
-    WINDOW *getWindow()
-    {
-        return tableWindow;
+        wrefresh(window);
     }
 
-    void draw();
+    void draw() override
+    {
+    }
     void activate();
     void deactivate();
     bool pressed(int yPos, int xPos)
     {
         return true;
     }
-    bool isCursoreIn(int yPos, int xPos);
 };
 
-class MainScreen
+class MainScreen : public TerminalUIObject
 {
 public:
     enum class InternalState
@@ -179,41 +212,16 @@ public:
     };
 
 private:
-    WINDOW *window;
     std::unique_ptr<TablePopUpMenu> popUpMenu;
     std::vector<UITable> tables;
     InternalState internalState;
 
 public:
-    MainScreen(int height, int width, int positionY, int positionX, InternalState internalState = InternalState::cursorState) : internalState(internalState)
+    MainScreen(int height, int width, int positionY, int positionX, InternalState internalState = InternalState::cursorState) : TerminalUIObject(height, width, positionY, positionX), internalState(internalState)
     {
-        window = newwin(height, width, positionY, positionX);
-        box(window, 0, 0);
-        refresh();
-        wrefresh(window);
     }
 
     // ======= getters that return corner values of x,y
-    int startX()
-    {
-        return getbegx(window);
-    }
-
-    int startY()
-    {
-        return getbegy(window);
-    }
-
-    int endX()
-    {
-        return getbegx(window) + getmaxx(window) - 1;
-    }
-
-    int endY()
-    {
-        return getbegy(window) + getmaxy(window) - 1;
-    }
-
     void addTables(std::vector<Table> &tables)
     {
 
@@ -223,7 +231,7 @@ public:
         }
     }
 
-    void draw()
+    void draw() override
     {
         for (auto &it : tables)
         {
@@ -235,7 +243,7 @@ public:
     {
         for (auto &it : tables)
         {
-            if (it.pressed(cursorY, cursorX))
+            if (it.isCursorInWindow(cursorY, cursorX))
             {
                 // 1. create new window
                 // popUpMenu.reset(new TablePopUpMenu(window));
@@ -245,11 +253,6 @@ public:
             }
         }
         return false;
-    }
-
-    WINDOW *getWindow()
-    {
-        return window;
     }
 
     InternalState getInternalState()
@@ -296,6 +299,8 @@ int main(int argc, char **argv)
     aplicationState state = aplicationState::topBar;
     do
     {
+        // clear();
+        // refresh();
         // ========== draw everything to screen
         topbar.draw();
         // mainscreen.draw();
