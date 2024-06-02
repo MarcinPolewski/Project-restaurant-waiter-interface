@@ -278,6 +278,20 @@ TEST(OrderItemTest, changeStatus_typical)
     ASSERT_EQ(orderit.getStatus(), ItemStatus::delivered);
 }
 
+TEST(OrderItemTest, changeStatus_delivered_canceled)
+{
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    OrderItem orderit(pierogi, 1);
+
+    orderit.changeStatus(ItemStatus::delivered);
+    ASSERT_EQ(orderit.getStatus(), ItemStatus::delivered);
+    EXPECT_THROW(orderit.changeStatus(ItemStatus::canceled), std::runtime_error);
+
+    OrderItem orderit2(pierogi, 1);
+    orderit2.changeStatus(ItemStatus::canceled);
+    EXPECT_THROW(orderit.changeStatus(ItemStatus::delivered), std::runtime_error);
+}
+
 TEST(OrderItemTest, changeStatus_decrease)
 {
     Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
@@ -543,8 +557,8 @@ TEST(OrderTest, addOrderItem)
 
     const Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
 
-    OrderItem& ordit = lo.addOrderItem(pierogi, 5);
-    ASSERT_EQ(ordit.getPrice(), 9995);
+    lo.addOrderItem(pierogi, 5);
+    ASSERT_EQ(lo[0].getPrice(), 9995);
 }
 
 TEST(OrderTest, iterator_typical)
@@ -599,6 +613,61 @@ TEST(OrderTest, getStatus_typical)
     ASSERT_EQ(ord.getStatus(), OrderStatus::inProgress);
 }
 
+TEST(OrderTest, setClosed_typical)
+{
+    Table tbl(Table::Position(3, 5, 0), 4);
+    LocalOrder lo(tbl);
+    Order& ord = dynamic_cast<Order&>(lo);
+
+    const Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    const Beverage woda("Woda", "Woda mineralna niegazowana", Beverage::CATEGORY::coldBeverage, 299, 0, 500);
+
+    ord.addOrderItem(pierogi, 3);
+    ord.addOrderItem(woda, 2);
+
+    ord[0].changeStatus(ItemStatus::delivered);
+    ord[1].changeStatus(ItemStatus::canceled);
+
+    ord.setClosed();
+    ASSERT_EQ(ord.getStatus(), OrderStatus::closed);
+}
+
+TEST(OrderTest, setClosed_empty)
+{
+    Table tbl(Table::Position(3, 5, 0), 4);
+    LocalOrder lo(tbl);
+    Order& ord = dynamic_cast<Order&>(lo);
+
+    ASSERT_EQ(ord.getStatus(), OrderStatus::inProgress);
+    ord.setClosed();
+    ASSERT_EQ(ord.getStatus(), OrderStatus::closed);
+}
+
+TEST(OrderTest, setClosed_double)
+{
+    Table tbl(Table::Position(3, 5, 0), 4);
+    LocalOrder lo(tbl);
+    Order& ord = dynamic_cast<Order&>(lo);
+
+    ord.setClosed();
+    ASSERT_EQ(ord.getStatus(), OrderStatus::closed);
+    EXPECT_THROW(ord.setClosed(), std::runtime_error);
+}
+
+TEST(OrderTest, setClosed_changing_data)
+{
+    Table tbl(Table::Position(3, 5, 0), 4);
+    LocalOrder lo(tbl);
+    Order& ord = dynamic_cast<Order&>(lo);
+
+    const Beverage woda("Woda", "Woda mineralna niegazowana", Beverage::CATEGORY::coldBeverage, 299, 0, 500);
+
+    ord.setClosed();
+    EXPECT_THROW(ord.addOrderItem(woda, 5), std::runtime_error);
+    EXPECT_THROW(ord.getWaitingTime(), std::runtime_error);
+    EXPECT_THROW(ord.resetWaitingTime(), std::runtime_error);
+}
+
 TEST(OrderTest, getOrderTime)
 {
     Table tbl(Table::Position(3, 5, 0), 4);
@@ -647,4 +716,22 @@ TEST(OrderTest, getTotalPrice)
     ord.addOrderItem(cola, 4);
 
     ASSERT_EQ(lo.getTotalPrice(), 13195);
+}
+
+TEST(OrderTest, getTotalPrice_caneled_items)
+{
+    Table tbl(Table::Position(3, 5, 0), 4);
+    LocalOrder lo(tbl);
+    Order& ord = lo;
+
+    const Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    const Beverage cola("Cola", "Niezdrowy napoj", MenuItem::CATEGORY::coldBeverage, 800, 0, 500);
+
+    ord.addOrderItem(pierogi, 5);
+    ord.addOrderItem(cola, 4);
+    ord.addOrderItem(cola, 3);
+
+    ord[1].changeStatus(ItemStatus::canceled);
+
+    ASSERT_EQ(lo.getTotalPrice(), 12395);
 }
