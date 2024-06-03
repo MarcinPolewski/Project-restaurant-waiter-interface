@@ -15,10 +15,10 @@ Restaurant::Restaurant()
     currentWaiter = &waiters[0];
 }
 
-RemoteOrder *Restaurant::newRemoteOrder(Remote *remote)
+RemoteOrder& Restaurant::newRemoteOrder(Remote& remote)
 {
-    remoteOrders.push_back(RemoteOrder(*remote));
-    return &remoteOrders.back();
+    remoteOrders.push_back(std::make_unique<RemoteOrder>(remote));
+    return *remoteOrders.back().get();
 }
 
 LocalOrder& Restaurant::newLocalOrder(Table& table)
