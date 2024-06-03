@@ -11,14 +11,13 @@ class Restaurant
     MemoryHandler memoryHandler;
     ServerHandler serverHandler;
     Menu menu;
-    const std::vector<Waiter> waiters;
-    const std::vector<Table> tables;
+    std::vector<Waiter> waiters;
+    std::vector<Table> tables;
 
     std::vector<std::unique_ptr<LocalOrder>> localOrders;
     std::vector<std::unique_ptr<RemoteOrder>> remoteOrders;
 
-    const Waiter *currentWaiter;
-
+    Waiter *currentWaiter;
 public:
     Restaurant();
     void closeRestaurant();
