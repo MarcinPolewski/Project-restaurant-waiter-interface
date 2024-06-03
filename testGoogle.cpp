@@ -1,13 +1,6 @@
 #include <gtest/gtest.h>
 #include <unistd.h>
-#include "address.h"
-#include "destination.h"
-#include "menuitem.h"
-#include "orderitem.h"
-#include "menu.h"
-#include "serverhandler.h"
-#include "order.h"
-#include "memoryhandler.h"
+#include "restaurant.h"
 
 TEST(AddressTest, create_typical)
 {
@@ -28,15 +21,12 @@ TEST(TableTest, create_typical)
     ASSERT_EQ(tbl.position.y, 5);
     ASSERT_EQ(tbl.position.level, 0);
     ASSERT_EQ(tbl.seats, 4);
-    ASSERT_EQ(tbl.occupied, false);
 }
 
 TEST(TableTest, occupy)
 {
     Table tbl(Table::Position(3, 5, 0), 4);
-    ASSERT_EQ(tbl.occupied, false);
-    tbl.occupied = true;
-    ASSERT_EQ(tbl.occupied, true);
+    ASSERT_EQ(tbl.isOccupied(), false);
 }
 
 TEST(TableTest, get_typical)
@@ -968,4 +958,21 @@ TEST(Waiter, multiple_addOrder_and_closeOrder)
     e.closeOrder(&l2);
     ASSERT_EQ(e.getLocalOrders()[0], &l1);
     ASSERT_EQ(e.getLocalOrders().size(), 1);
+}
+
+TEST(RestaurantTest, newLocalOrder_typical)
+{
+    Restaurant restaurant;
+    Table tbl1(Table::Position(0, 0, 0), 4);
+    Table tbl2(Table::Position(5, 5, 0), 6);
+    auto &lo = restaurant.newLocalOrder(tbl1);
+    auto &lo2 = restaurant.newLocalOrder(tbl2);
+    ASSERT_EQ(lo.getStatus(), OrderStatus::inProgress);
+    ASSERT_EQ(lo.table.seats, 4);
+    ASSERT_EQ(lo2.table.seats, 6);
+    ASSERT_EQ(tbl1.isOccupied(), true);
+    ASSERT_EQ(tbl2.isOccupied(), true);
+    ASSERT_EQ(tbl1.getOrder().getStatus(), OrderStatus::inProgress);
+    lo.setClosed();
+    ASSERT_EQ(tbl1.getOrder().getStatus(), OrderStatus::closed);
 }

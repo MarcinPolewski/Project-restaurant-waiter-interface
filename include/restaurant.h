@@ -3,6 +3,7 @@
 #include "serverhandler.h"
 #include "memoryhandler.h"
 #include "waiter.h"
+#include "destination.h"
 
 #include <stdexcept>
 
@@ -14,7 +15,7 @@ class Restaurant
     const std::vector<Waiter> waiters;
     const std::vector<Table> tables;
 
-    std::vector<LocalOrder> localOrders;
+    std::vector<std::unique_ptr<LocalOrder>> localOrders;
     std::vector<RemoteOrder> remoteOrders;
 
     const Waiter *currentWaiter;
@@ -27,7 +28,7 @@ public:
     Waiter const *getCurrentWaiter() const;
 
     RemoteOrder *newRemoteOrder(Remote *remote);
-    LocalOrder *newLocalOrder(Table *table);
+    LocalOrder& newLocalOrder(Table& table);
 
     std::vector<Waiter> const &getWaiters() const;
     std::vector<Table> const &getTables() const;
