@@ -3,19 +3,22 @@
 #include <string>
 
 #include "consoleuiobject.h"
+#include "waiter.h"
 // #include "popuphandler.h"
 
 class PopUpHandler;
+class Restaurant;
 
 class MenuButton : public TerminalUIObject
 {
 protected:
     std::string title;
     bool selected = false;
+    PopUpHandler *popUpHandler;
 
 public:
-    MenuButton(int height, int width, int yPosition, int xPosition, std::string title, bool selected = false) // not passed by reference due to nature of initialization of buttons
-        : TerminalUIObject(height, width, yPosition, xPosition), title(title), selected(selected)
+    MenuButton(int height, int width, int yPosition, int xPosition, std::string title, PopUpHandler *popUpHandler, bool selected = false) // not passed by reference due to nature of initialization of buttons
+        : TerminalUIObject(height, width, yPosition, xPosition), title(title), selected(selected), popUpHandler(popUpHandler)
     {
         draw();
     }
@@ -44,15 +47,25 @@ public:
 
 class CloseButton : public MenuButton
 {
-    PopUpHandler *popUpHandler;
-
 public:
     CloseButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, bool selected = false)
-        : MenuButton(height, width, yPosition, xPosition, std::string("Close"), selected),
-          popUpHandler(popUpHandler) {}
+        : MenuButton(height, width, yPosition, xPosition, std::string("Close"), popUpHandler, selected)
+    {
+    }
 
     void pressed() override;
-    // {
-    //     popUpHandler->closePopUpMenu();
-    // }
+};
+
+class ChangeWaiterButton : public MenuButton
+{
+    Waiter *waiter;
+    Restaurant *restaurant;
+
+public:
+    ChangeWaiterButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, Restaurant *restaurant, Waiter *waiter, bool selected = false)
+        : MenuButton(height, width, yPosition, xPosition, waiter->toString(), popUpHandler, selected), waiter(waiter), restaurant(restaurant)
+    {
+    }
+
+    void pressed() override;
 };
