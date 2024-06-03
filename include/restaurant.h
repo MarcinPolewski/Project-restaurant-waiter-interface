@@ -3,7 +3,6 @@
 #include "serverhandler.h"
 #include "memoryhandler.h"
 #include "waiter.h"
-#include "destination.h"
 
 #include <stdexcept>
 
