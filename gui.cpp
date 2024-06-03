@@ -157,14 +157,18 @@ int main()
                 {
                     state = previousState;
                     if (state == aplicationState::mainScreen)
+                    {
+                        mainscreen.draw();
                         curs_set(1);
+                        move(cursorY, cursorX);
+                    }
                 }
                 break;
 
             case 'a':
                 // printw("jasflkjdsalfkjasdlk");
                 // exit menu
-                popUpHandler.closeTablePopUpMenu();
+                popUpHandler.closePopUpMenu();
                 state = previousState;
                 wclear(mainscreen.getWindow()); // czyścimy ekran tylko gdy menu znika !!!, ale potem trzeba
                 // wrefresh(mainscreen.getWindow());

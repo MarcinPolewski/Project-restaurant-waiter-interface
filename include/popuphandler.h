@@ -54,10 +54,6 @@ public:
         }
     }
 
-    void closeTablePopUpMenu()
-    {
-    }
-
     void moveUp()
     {
         if (currentPopUp == nullptr)

@@ -51,8 +51,8 @@ public:
         : MenuButton(height, width, yPosition, xPosition, std::string("Close"), selected),
           popUpHandler(popUpHandler) {}
 
-    void pressed() override
-    {
-        printw("babsababa");
-    }
+    void pressed() override;
+    // {
+    //     popUpHandler->closePopUpMenu();
+    // }
 };
