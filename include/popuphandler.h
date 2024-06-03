@@ -18,8 +18,6 @@ class PopUpHandler
     // ========= pointers to popUps
     std::unique_ptr<TablePopUpMenu> tablePopUpMenu;
 
-    PopUpMenu *currentPopUp;
-
 public:
     PopUpHandler(WINDOW *background, Restaurant *restaurant)
         : backgroundWindow(background), restaurant(restaurant)
@@ -29,8 +27,7 @@ public:
     TablePopUpMenu *newTablePopUpMenu(UITable &table)
     {
         tablePopUpMenu.reset(new TablePopUpMenu(backgroundWindow, this, table));
-        currentPopUp = tablePopUpMenu.get();
-        windowStack.push(currentPopUp);
+        windowStack.push(tablePopUpMenu.get());
         return tablePopUpMenu.get();
     }
 
@@ -39,7 +36,6 @@ public:
         if (windowStack.size() == 1)
         {
             windowStack.pop();
-            currentPopUp = nullptr;
             tablePopUpMenu.reset();
             return true;
         }
@@ -47,38 +43,38 @@ public:
         {
             PopUpMenu *windowToDelete = windowStack.top();
             windowStack.pop();
-            currentPopUp = windowStack.top();
 
             if (dynamic_cast<TablePopUpMenu *>(windowToDelete))
                 tablePopUpMenu.reset();
         }
+        return false;
     }
 
     void moveUp()
     {
-        if (currentPopUp == nullptr)
+        if (windowStack.empty())
             throw std::invalid_argument("no popup is displayed");
-        currentPopUp->moveUp();
+        windowStack.top()->moveUp();
     }
 
     void moveDown()
     {
-        if (currentPopUp == nullptr)
+        if (windowStack.empty())
             throw std::invalid_argument("no popup is displayed");
-        currentPopUp->moveDown();
+        windowStack.top()->moveDown();
     }
 
     void draw()
     {
-        if (currentPopUp != nullptr)
-            currentPopUp->draw();
+        if (!windowStack.empty())
+            windowStack.top()->draw();
     }
 
     bool buttonPressed()
     {
-        if (currentPopUp == nullptr)
+        if (windowStack.empty())
             throw std::invalid_argument("no popup is displayed");
-        currentPopUp->buttonPressed();
+        windowStack.top()->buttonPressed();
 
         // figure out which menu it is
         // get input
