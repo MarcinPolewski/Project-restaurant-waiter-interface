@@ -40,7 +40,9 @@ void TopBar::update()
 
 void TopBar::draw()
 {
+    wclear(window);
     update();
+    box(window, 0, 0);
     int width = getmaxx(window);
     int widthPerButton = width / buttons.size();
 
@@ -57,7 +59,6 @@ void TopBar::draw()
         if (active && i == selection) // print menu as selected if neccessary
             wattr_on(window, A_REVERSE, nullptr);
         mvwprintw(window, cursorY, cursorX + offset, buttons[i]->toString().c_str());
-
         wattr_off(window, A_REVERSE, nullptr);
         cursorX += widthPerButton;
         if (i != (int)buttons.size() - 1)
