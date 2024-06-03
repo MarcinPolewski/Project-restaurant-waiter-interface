@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <stack>
 
 #include <restaurant.h>
 
@@ -18,6 +19,8 @@ enum class aplicationState
     topBar,
     popUpMenu
 };
+
+class PopUpHandler;
 
 class TerminalUIObject
 {
@@ -76,7 +79,7 @@ class TopBar : public TerminalUIObject
 public:
     TopBar(int height, int width, int positionY, int positionX) : TerminalUIObject(height, width, positionY, positionX)
     {
-        buttons = {"Change Waiter", "Menu", "Remote Orders", "Local Orders", "Close Restarurant"};
+        buttons = {"Change Waiter", "Menu", "Remote Orders", "Local Orders", "Close Restarurant", "flaskdjflaksdj"};
         draw();
     }
 
@@ -248,9 +251,12 @@ public:
 
 class CloseButton : public MenuButton
 {
+    PopUpHandler *popUpHandler;
+
 public:
-    CloseButton(int height, int width, int yPosition, int xPosition, bool selected = false)
-        : MenuButton(height, width, yPosition, xPosition, std::string("Close"), selected) {}
+    CloseButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, bool selected = false)
+        : MenuButton(height, width, yPosition, xPosition, std::string("Close"), selected),
+          popUpHandler(popUpHandler) {}
 
     void pressed() override
     {
@@ -263,17 +269,20 @@ class PopUpMenu : public TerminalUIObject
 protected:
     std::vector<std::unique_ptr<MenuButton>> buttons;
     int selected = 0;
+    PopUpHandler *popUpHandler;
 
 public:
-    PopUpMenu(int height, int width, int yPosition, int xPosition) : TerminalUIObject(height, width, yPosition, xPosition)
+    PopUpMenu(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler)
+        : TerminalUIObject(height, width, yPosition, xPosition), popUpHandler(popUpHandler)
     {
     }
 
     // this constructor turned out ugly, because it's the only way to call another constructor
-    PopUpMenu(WINDOW *background, int height = 40, int width = 60)
+    PopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, int height = 40, int width = 60)
         : PopUpMenu(height, width,
                     getbegy(background) + ((getmaxy(background) - height) / 2),
-                    getbegx(background) + ((getmaxx(background) - width) / 2))
+                    getbegx(background) + ((getmaxx(background) - width) / 2),
+                    popUpHandler)
     {
     }
 
@@ -284,7 +293,6 @@ public:
         {
             it->draw();
         }
-        // wrefresh(window);
     }
 
     void moveUp()
@@ -319,18 +327,19 @@ class TablePopUpMenu : public PopUpMenu
     UITable table;
 
 public:
-    TablePopUpMenu(WINDOW *background, UITable &table, int height = 40, int width = 60) : PopUpMenu(background, height, width), table(table)
+    TablePopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, UITable &table, int height = 40, int width = 60)
+        : PopUpMenu(background, popUpHandler, height, width), table(table)
     {
         // initialize buttons
 
         int buttonX = startX() + BUTTON_SIDE_OFFSET;
         int buttonY = getbegy(window) + BUTTON_TOP_OFFSET;
 
-        buttons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, width - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, true));
+        buttons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, width - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler, true));
         buttonY += BUTTON_HEIGHT;
-        buttons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, width - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX));
+        buttons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, width - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler));
         buttonY += BUTTON_HEIGHT;
-        buttons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, width - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX));
+        buttons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, width - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler));
     }
 };
 
@@ -338,9 +347,11 @@ class PopUpHandler
 {
     WINDOW *backgroundWindow;
     Restaurant *restaurant;
+    std::stack<PopUpMenu *> windowStack;
 
     // ========= pointers to popUps
     std::unique_ptr<TablePopUpMenu> tablePopUpMenu;
+
     PopUpMenu *currentPopUp;
 
 public:
@@ -351,14 +362,34 @@ public:
 
     TablePopUpMenu *newTablePopUpMenu(UITable &table)
     {
-        tablePopUpMenu.reset(new TablePopUpMenu(backgroundWindow, table));
+        tablePopUpMenu.reset(new TablePopUpMenu(backgroundWindow, this, table));
         currentPopUp = tablePopUpMenu.get();
+        windowStack.push(currentPopUp);
         return tablePopUpMenu.get();
     }
+
+    bool closePopUpMenu()
+    {
+        if (windowStack.size() == 1)
+        {
+            windowStack.pop();
+            currentPopUp = nullptr;
+            tablePopUpMenu.reset();
+            return true;
+        }
+        else
+        {
+            PopUpMenu *windowToDelete = windowStack.top();
+            windowStack.pop();
+            currentPopUp = windowStack.top();
+
+            if (dynamic_cast<TablePopUpMenu *>(windowToDelete))
+                tablePopUpMenu.reset();
+        }
+    }
+
     void closeTablePopUpMenu()
     {
-        currentPopUp = nullptr;
-        tablePopUpMenu.reset();
     }
 
     void moveUp()
@@ -381,11 +412,23 @@ public:
             currentPopUp->draw();
     }
 
-    void buttonPressed()
+    bool buttonPressed()
     {
         if (currentPopUp == nullptr)
             throw std::invalid_argument("no popup is displayed");
         currentPopUp->buttonPressed();
+
+        // figure out which menu it is
+        // get input
+
+        if (windowStack.empty())
+            return true;
+        return false;
+        // gdybysmy tutaj mieli to, co zostalo wcisniete, to
+        // mozna duzo z tym zrobic, wywolac nowe okno co cos zwraca
+        // mozna porobic dynamic casty, zeby wiedziec jakie to menu i jakie ma guziki
+        // how to interact with mainLoop ??
+        // necessary when closing, switching modes(the same as close)
     }
 };
 
@@ -530,7 +573,12 @@ int main()
                 break;
 
             case 10:
-                popUpHandler.buttonPressed();
+                if (popUpHandler.buttonPressed())
+                {
+                    state = previousState;
+                    if (state == aplicationState::mainScreen)
+                        curs_set(1);
+                }
                 break;
 
             case 'a':
