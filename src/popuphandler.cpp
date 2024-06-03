@@ -21,6 +21,13 @@ ChangeWaiterPopUpMenu *PopUpHandler::newChangeWaiterPopUpMenu()
     return changeWaiterPopUpMenu.get();
 }
 
+LocalOrdersPopUpMenu *PopUpHandler::newLocalOrdersPopUpMenu()
+{
+    localOrdersPopUpMenu.reset(new LocalOrdersPopUpMenu(backgroundWindow, this, restaurant));
+    windowStack.push(localOrdersPopUpMenu.get());
+    return localOrdersPopUpMenu.get();
+}
+
 bool PopUpHandler::closePopUpMenu()
 {
     if (windowStack.size() == 1)

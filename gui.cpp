@@ -53,13 +53,6 @@ int main()
 
     do
     {
-        // ========== draw everything to screen
-        // jak to się właczy to przestaje się wyświtlać !!!!
-        //  refresh();
-        //   refresh();
-        //     drawTables(mainScreen);
-
-        // refresh();
 
         userInput = getch();
 
@@ -177,25 +170,12 @@ int main()
                     state = previousState;
                 }
                 break;
-
-            case 'a':
-                // printw("jasflkjdsalfkjasdlk");
-                // exit menu
-                popUpHandler.closePopUpMenu();
-                state = previousState;
-                wclear(mainscreen.getWindow()); // czyścimy ekran tylko gdy menu znika !!!, ale potem trzeba
-                // wrefresh(mainscreen.getWindow());
-                mainscreen.draw();
-                move(cursorY, cursorX);
-                curs_set(1);
-                break;
             }
 
             popUpHandler.draw();
         }
     } while (runLoop);
 
-    getchar();
     // dealocate memory , deallocate memory
     endwin();
     return 0;

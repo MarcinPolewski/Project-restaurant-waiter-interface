@@ -11,7 +11,8 @@ TopBarButton::TopBarButton(std::string name, PopUpHandler *popUpHandler) // stri
 }
 
 ChangeWaiterTopBarButton::ChangeWaiterTopBarButton(PopUpHandler *popUpHandler, Restaurant *restaurant)
-    : TopBarButton(std::string("Change Waiter (" + restaurant->getCurrentWaiter()->toString() + ")"), popUpHandler), restaurant(restaurant) {}
+    : TopBarButton(std::string("Change Waiter (" + restaurant->getCurrentWaiter()->toString() + ")"), popUpHandler),
+      restaurant(restaurant) {}
 bool ChangeWaiterTopBarButton::pressed()
 {
     popUpHandler->newChangeWaiterPopUpMenu();
@@ -20,15 +21,28 @@ bool ChangeWaiterTopBarButton::pressed()
 
 void ChangeWaiterTopBarButton::update()
 {
-    // restaurant->getWaiters();
-    //  restaurant->getCurrentWaiter();
     name = "Change Waiter (" + restaurant->getCurrentWaiter()->toString() + ")";
+}
+
+RemoteOrderTopBarButton::RemoteOrderTopBarButton(PopUpHandler *popUpHandler, Restaurant *restaurant)
+    : TopBarButton(std::string("Remote Orders (" + std::to_string(restaurant->remoteOrdersCount()) + ")"), popUpHandler),
+      restaurant(restaurant) {}
+
+bool RemoteOrderTopBarButton::pressed()
+{
+    popUpHandler->newLocalOrdersPopUpMenu();
+    return true;
+}
+void RemoteOrderTopBarButton::update()
+{
+    name = "Remote Orders (" + std::to_string(restaurant->remoteOrdersCount()) + ")";
 }
 
 TopBar::TopBar(int height, int width, int positionY, int positionX, PopUpHandler *popUpHandler, Restaurant *restaurant)
     : TerminalUIObject(height, width, positionY, positionX), popUpHandler(popUpHandler), restaurant(restaurant)
 {
     buttons.push_back(std::make_unique<ChangeWaiterTopBarButton>(popUpHandler, restaurant));
+    buttons.push_back(std::make_unique<RemoteOrderTopBarButton>(popUpHandler, restaurant));
     draw();
 }
 

@@ -96,4 +96,13 @@ public:
     ChangeWaiterPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Restaurant *rest, int height = 40, int width = 60);
 };
 
-///     std::vector<Waiter>  &getWaiters() ;
+class LocalOrdersPopUpMenu : public PopUpMenu
+{
+    Restaurant *restaurant;
+
+public:
+    LocalOrdersPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Restaurant *restaurant, int height = 40, int width = 60)
+        : PopUpMenu(background, popUpHandler, height, width), restaurant(restaurant)
+    {
+    }
+};
