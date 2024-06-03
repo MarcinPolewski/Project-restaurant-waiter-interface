@@ -29,4 +29,4 @@ add_executable(gui gui.cpp)
 
 add_definitions(-DCMAKE_EXPORT_COMPILE_COMMANDS=ON)
 target_link_libraries(testGoogle PUBLIC gtest_main restaurant)
-target_link_libraries(gui ${CURSES_LIBRARIES})
+target_link_libraries(gui ${CURSES_LIBRARIES} restaurant)

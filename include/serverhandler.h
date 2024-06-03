@@ -42,5 +42,6 @@ public:
     }
     void sendOrderItem(OrderItem *order) override // sends this message to server
     {
+        requestedOrders.push_back(order);
     }
 };

@@ -4,6 +4,14 @@
 #include "memoryhandler.h"
 #include "waiter.h"
 
+#include "topbar.h"
+#include "mainscreen.h"
+#include "popuphandler.h"
+#include "consoleuiobject.h"
+#include "constants.h"
+#include "menuitem.h"
+#include "popupmenu.h"
+
 #include <stdexcept>
 
 class Restaurant
@@ -12,7 +20,7 @@ class Restaurant
     ServerHandler serverHandler;
     Menu menu;
     const std::vector<Waiter> waiters;
-    const std::vector<Table> tables;
+    std::vector<Table> tables;
 
     std::vector<LocalOrder> localOrders;
     std::vector<RemoteOrder> remoteOrders;
@@ -30,6 +38,6 @@ public:
     LocalOrder *newLocalOrder(Table *table);
 
     std::vector<Waiter> const &getWaiters() const;
-    std::vector<Table> const &getTables() const;
+    std::vector<Table> &getTables();
     Menu const &getMenu() const;
 };
