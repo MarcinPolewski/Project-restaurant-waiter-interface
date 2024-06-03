@@ -1,7 +1,8 @@
 #pragma once
 
 #include "orderitem.h"
-#include "destination.h"
+#include "table.h"
+#include "remote.h"
 
 #include <time.h>
 #include <vector>
@@ -77,8 +78,9 @@ class LocalOrder : public Order
 public:
     const Table& table;
 
-    LocalOrder(Table& tbl)
-        : table(tbl) {}
+    LocalOrder(Table& tbl);
+
+    void setClosed() override;
 
     const Table& getDestination() const override {return table;}
 };
