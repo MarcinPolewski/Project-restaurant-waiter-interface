@@ -502,6 +502,24 @@ TEST(OrderTest, create_LocalOrder)
     ASSERT_EQ(lo.table.position.y, 5);
     ASSERT_EQ(lo.table.position.level, 0);
     ASSERT_EQ(lo.table.seats, 4);
+    ASSERT_EQ(tbl.isOccupied(), true);
+}
+
+TEST(OrderTest, create_LocalOrder_occupied_table)
+{
+    Table tbl(Table::Position(3, 5, 0), 4);
+    LocalOrder lo(tbl);
+    ASSERT_EQ(tbl.isOccupied(), true);
+    EXPECT_THROW(LocalOrder lo2(tbl), std::runtime_error);
+}
+
+TEST(OrderTest, create_LocalOrder_free_table)
+{
+    Table tbl(Table::Position(3, 5, 0), 4);
+    LocalOrder lo(tbl);
+    ASSERT_EQ(tbl.isOccupied(), true);
+    lo.setClosed();
+    ASSERT_EQ(tbl.isOccupied(), false);
 }
 
 TEST(OrderTest, create_RemoteOrder)
@@ -974,5 +992,6 @@ TEST(RestaurantTest, newLocalOrder_typical)
     ASSERT_EQ(tbl2.isOccupied(), true);
     ASSERT_EQ(tbl1.getOrder().getStatus(), OrderStatus::inProgress);
     lo.setClosed();
-    ASSERT_EQ(tbl1.getOrder().getStatus(), OrderStatus::closed);
+    ASSERT_EQ(tbl1.isOccupied(), false);
+    EXPECT_THROW(tbl1.getOrder(), std::runtime_error);
 }

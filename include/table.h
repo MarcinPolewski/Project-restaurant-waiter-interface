@@ -2,14 +2,16 @@
 
 #include "destination.h"
 
-class Order;
+#include <iostream>
+
+class LocalOrder;
 
 class Table : public Destination
 {
 private:
-    Order* order = nullptr;
+    friend class LocalOrder;
 
-    friend class Restaurant;
+    LocalOrder* order = nullptr;
 public:
     struct Position
     {
@@ -26,7 +28,7 @@ public:
     Table(const Position& pos, unsigned int sts)
         : position(pos), seats(sts) {}
 
-    Order& getOrder() const {return *this->order;}
+    LocalOrder& getOrder() const;
 
     Table& get() override {return *this;}
 

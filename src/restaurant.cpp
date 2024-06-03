@@ -24,7 +24,6 @@ RemoteOrder *Restaurant::newRemoteOrder(Remote *remote)
 LocalOrder& Restaurant::newLocalOrder(Table& table)
 {
     localOrders.push_back(std::make_unique<LocalOrder>(table));
-    table.order = localOrders.back().get();
     return *localOrders.back().get();
 }
 
