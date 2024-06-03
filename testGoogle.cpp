@@ -27,6 +27,12 @@ TEST(TableTest, occupy)
 {
     Table tbl(Table::Position(3, 5, 0), 4);
     ASSERT_EQ(tbl.isOccupied(), false);
+
+    LocalOrder lo(tbl);
+    ASSERT_EQ(tbl.isOccupied(), true);
+
+    lo.setClosed();
+    ASSERT_EQ(tbl.isOccupied(), false);
 }
 
 TEST(TableTest, get_typical)
