@@ -59,3 +59,17 @@ Order::iterator& Order::iterator::operator++()
     this->it++;
     return *this;
 }
+
+LocalOrder::LocalOrder(Table& tbl)
+    : table(tbl)
+{
+    if (tbl.isOccupied())
+        throw (std::runtime_error("Cannot create order - table is occupied."));
+    tbl.order = this;
+}
+
+void LocalOrder::setClosed()
+{
+    Order::setClosed();
+    const_cast<Table&>(this->table).order = nullptr;
+}

@@ -21,10 +21,10 @@ RemoteOrder *Restaurant::newRemoteOrder(Remote *remote)
     return &remoteOrders.back();
 }
 
-LocalOrder *Restaurant::newLocalOrder(Table *table)
+LocalOrder& Restaurant::newLocalOrder(Table& table)
 {
-    localOrders.push_back(LocalOrder(*table));
-    return &localOrders.back();
+    localOrders.push_back(std::make_unique<LocalOrder>(table));
+    return *localOrders.back().get();
 }
 
 void Restaurant::closeRestaurant()
