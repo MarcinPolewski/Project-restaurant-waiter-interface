@@ -15,7 +15,7 @@ class Restaurant
     const std::vector<Table> tables;
 
     std::vector<std::unique_ptr<LocalOrder>> localOrders;
-    std::vector<RemoteOrder> remoteOrders;
+    std::vector<std::unique_ptr<RemoteOrder>> remoteOrders;
 
     const Waiter *currentWaiter;
 
@@ -26,7 +26,7 @@ public:
     void changeCurrentWaiter(Waiter *waiter);
     Waiter const *getCurrentWaiter() const;
 
-    RemoteOrder *newRemoteOrder(Remote *remote);
+    RemoteOrder& newRemoteOrder(Remote& remote);
     LocalOrder& newLocalOrder(Table& table);
 
     std::vector<Waiter> const &getWaiters() const;

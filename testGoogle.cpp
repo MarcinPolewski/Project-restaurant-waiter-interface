@@ -1001,3 +1001,14 @@ TEST(RestaurantTest, newLocalOrder_typical)
     ASSERT_EQ(tbl1.isOccupied(), false);
     EXPECT_THROW(tbl1.getOrder(), std::runtime_error);
 }
+
+TEST(RestaurantTest, newRemoteOrder_typical)
+{
+    Restaurant restaurant;
+    Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
+    Remote remote("Elzbieta Kopyto", "123456789", adr);
+    auto &ro = restaurant.newRemoteOrder(remote);
+    ASSERT_EQ(ro.getStatus(), OrderStatus::inProgress);
+    ro.setClosed();
+    ASSERT_EQ(ro.getStatus(), OrderStatus::closed);
+}
