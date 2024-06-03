@@ -27,6 +27,8 @@ class Restaurant
 
     Waiter *currentWaiter;
 
+    bool closed = false;
+
 public:
     Restaurant();
     void closeRestaurant();
@@ -34,10 +36,17 @@ public:
     void changeCurrentWaiter(Waiter *waiter);
     Waiter *getCurrentWaiter();
 
+    int remoteOrdersCount();
+    int localOrdersCount();
+
     RemoteOrder *newRemoteOrder(Remote *remote);
     LocalOrder *newLocalOrder(Table *table);
 
     std::vector<Waiter> &getWaiters();
     std::vector<Table> &getTables();
     Menu const &getMenu() const;
+
+    bool canBeClosed();
+    bool isClosed();
+    void close();
 };

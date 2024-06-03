@@ -37,12 +37,34 @@ public:
     void update();
 };
 
-struct RemoteOrderTopBarButton : public TopBarButton
+class RemoteOrderTopBarButton : public TopBarButton
 {
     Restaurant *restaurant;
 
 public:
     RemoteOrderTopBarButton(PopUpHandler *popUpHandler, Restaurant *restaurant);
+
+    bool pressed();
+    void update();
+};
+
+class LocalOrderTopBarButton : public TopBarButton
+{
+    Restaurant *restaurant;
+
+public:
+    LocalOrderTopBarButton(PopUpHandler *popUpHandler, Restaurant *restaurant);
+
+    bool pressed();
+    void update();
+};
+
+class CloseOrderTopBarButton : public TopBarButton
+{
+    Restaurant *restaurant;
+
+public:
+    CloseOrderTopBarButton(PopUpHandler *popUpHandler, Restaurant *restaurant);
 
     bool pressed();
     void update();

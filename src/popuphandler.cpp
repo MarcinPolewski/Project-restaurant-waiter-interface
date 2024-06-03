@@ -28,6 +28,20 @@ LocalOrdersPopUpMenu *PopUpHandler::newLocalOrdersPopUpMenu()
     return localOrdersPopUpMenu.get();
 }
 
+RemoteOrdersPopUpMenu *PopUpHandler::newRemoteOrdersPopUpMenu()
+{
+    remoteOrdersPopUpMenu.reset(new RemoteOrdersPopUpMenu(backgroundWindow, this, restaurant));
+    windowStack.push(remoteOrdersPopUpMenu.get());
+    return remoteOrdersPopUpMenu.get();
+}
+
+ErrorPrompt *PopUpHandler::newErrorPrompt(std::string message)
+{
+    errorPrompt.reset(new ErrorPrompt(backgroundWindow, this, message, 6, std::max(10, (int)message.size() + 2)));
+    windowStack.push(errorPrompt.get());
+    return errorPrompt.get();
+}
+
 bool PopUpHandler::closePopUpMenu()
 {
     if (windowStack.size() == 1)

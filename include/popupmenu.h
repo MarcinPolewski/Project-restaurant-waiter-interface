@@ -88,6 +88,12 @@ public:
     }
 };
 
+class ErrorPrompt : public PopUpMenu
+{
+public:
+    ErrorPrompt(WINDOW *background, PopUpHandler *popUpHandler, std::string message, int height = 5, int width = 60);
+};
+
 class ChangeWaiterPopUpMenu : public PopUpMenu
 {
     Restaurant *restaurant;
@@ -101,8 +107,13 @@ class LocalOrdersPopUpMenu : public PopUpMenu
     Restaurant *restaurant;
 
 public:
-    LocalOrdersPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Restaurant *restaurant, int height = 40, int width = 60)
-        : PopUpMenu(background, popUpHandler, height, width), restaurant(restaurant)
-    {
-    }
+    LocalOrdersPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Restaurant *restaurant, int height = 40, int width = 60);
+};
+
+class RemoteOrdersPopUpMenu : public PopUpMenu
+{
+    Restaurant *restaurant;
+
+public:
+    RemoteOrdersPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Restaurant *restaurant, int height = 40, int width = 60);
 };

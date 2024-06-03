@@ -174,7 +174,7 @@ int main()
 
             popUpHandler.draw();
         }
-    } while (runLoop);
+    } while (!restaurant.isClosed());
 
     // dealocate memory , deallocate memory
     endwin();

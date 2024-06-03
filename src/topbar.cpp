@@ -30,7 +30,7 @@ RemoteOrderTopBarButton::RemoteOrderTopBarButton(PopUpHandler *popUpHandler, Res
 
 bool RemoteOrderTopBarButton::pressed()
 {
-    popUpHandler->newLocalOrdersPopUpMenu();
+    popUpHandler->newRemoteOrdersPopUpMenu();
     return true;
 }
 void RemoteOrderTopBarButton::update()
@@ -38,11 +38,47 @@ void RemoteOrderTopBarButton::update()
     name = "Remote Orders (" + std::to_string(restaurant->remoteOrdersCount()) + ")";
 }
 
+LocalOrderTopBarButton::LocalOrderTopBarButton(PopUpHandler *popUpHandler, Restaurant *restaurant)
+    : TopBarButton(std::string("Local Orders (" + std::to_string(restaurant->localOrdersCount()) + ")"), popUpHandler),
+      restaurant(restaurant) {}
+
+bool LocalOrderTopBarButton::pressed()
+{
+    popUpHandler->newLocalOrdersPopUpMenu();
+    return true;
+}
+void LocalOrderTopBarButton::update()
+{
+    name = "Local Orders (" + std::to_string(restaurant->localOrdersCount()) + ")";
+}
+
+CloseOrderTopBarButton::CloseOrderTopBarButton(PopUpHandler *popUpHandler, Restaurant *restaurant)
+    : TopBarButton(std::string("Close Restaurant"), popUpHandler),
+      restaurant(restaurant) {}
+
+bool CloseOrderTopBarButton::pressed()
+{
+    // check if can be closed
+    if (restaurant->canBeClosed())
+        restaurant->close();
+    else
+        popUpHandler->newErrorPrompt(std::string("Cannot close restaurant, orders are still in progress."));
+    return true;
+}
+
+void CloseOrderTopBarButton::update()
+{
+    // do nothin
+}
+
 TopBar::TopBar(int height, int width, int positionY, int positionX, PopUpHandler *popUpHandler, Restaurant *restaurant)
     : TerminalUIObject(height, width, positionY, positionX), popUpHandler(popUpHandler), restaurant(restaurant)
 {
     buttons.push_back(std::make_unique<ChangeWaiterTopBarButton>(popUpHandler, restaurant));
     buttons.push_back(std::make_unique<RemoteOrderTopBarButton>(popUpHandler, restaurant));
+    buttons.push_back(std::make_unique<LocalOrderTopBarButton>(popUpHandler, restaurant));
+    buttons.push_back(std::make_unique<CloseOrderTopBarButton>(popUpHandler, restaurant));
+
     draw();
 }
 
