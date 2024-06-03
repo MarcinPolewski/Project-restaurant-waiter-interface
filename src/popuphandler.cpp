@@ -14,6 +14,13 @@ TablePopUpMenu *PopUpHandler::newTablePopUpMenu(UITable &table)
     return tablePopUpMenu.get();
 }
 
+ChangeWaiterPopUpMenu *PopUpHandler::newChangeWaiterPopUpMenu()
+{
+    changeWaiterPopUpMenu.reset(new ChangeWaiterPopUpMenu(backgroundWindow, this, restaurant));
+    windowStack.push(changeWaiterPopUpMenu.get());
+    return changeWaiterPopUpMenu.get();
+}
+
 bool PopUpHandler::closePopUpMenu()
 {
     if (windowStack.size() == 1)
@@ -29,6 +36,8 @@ bool PopUpHandler::closePopUpMenu()
 
         if (dynamic_cast<TablePopUpMenu *>(windowToDelete))
             tablePopUpMenu.reset();
+        else if (dynamic_cast<ChangeWaiterPopUpMenu *>(windowToDelete))
+            changeWaiterPopUpMenu.reset();
     }
     return false;
 }

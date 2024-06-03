@@ -37,10 +37,10 @@ int main()
 
     // ============= initialize screen elements
     refresh();
-    TopBar topbar(TOPBARHEIGHT, xMax, 0, 0);
     MainScreen mainscreen(yMax - TOPBARHEIGHT, xMax, TOPBARHEIGHT, 0);
-    mainscreen.addTables(restaurant.getTables());
     PopUpHandler popUpHandler(mainscreen.getWindow(), &restaurant);
+    TopBar topbar(TOPBARHEIGHT, xMax, 0, 0, &popUpHandler, &restaurant);
+    mainscreen.addTables(restaurant.getTables());
 
     keypad(stdscr, true);
 
@@ -88,6 +88,13 @@ int main()
                 curs_set(1);
                 break;
             case 10:
+                if (topbar.pressed())
+                {
+                    previousState = state;
+                    topbar.deactivate();
+
+                    state = aplicationState::popUpMenu;
+                }
 
                 break;
             }
@@ -126,6 +133,7 @@ int main()
                     topbar.activate();
                     curs_set(0);
                     state = aplicationState::topBar;
+                    topbar.draw();
                 }
                 move(cursorY, cursorX);
                 break;
@@ -155,13 +163,18 @@ int main()
             case 10:
                 if (popUpHandler.buttonPressed())
                 {
-                    state = previousState;
-                    if (state == aplicationState::mainScreen)
+                    mainscreen.draw();
+                    if (previousState == aplicationState::topBar)
                     {
-                        mainscreen.draw();
+                        topbar.activate();
+                        topbar.draw();
+                    }
+                    else if (previousState == aplicationState::mainScreen)
+                    {
                         curs_set(1);
                         move(cursorY, cursorX);
                     }
+                    state = previousState;
                 }
                 break;
 

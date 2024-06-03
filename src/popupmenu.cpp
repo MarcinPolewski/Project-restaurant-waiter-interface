@@ -11,6 +11,12 @@ ChangeWaiterPopUpMenu::ChangeWaiterPopUpMenu(WINDOW *background, PopUpHandler *p
     std::vector<Waiter> &waiters = restaurant->getWaiters();
     for (auto &it : waiters)
     {
-        buttons.push_back(std::make_unique<ChangeWaiterButton>(BUTTON_HEIGHT, width - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler, restaurant, &it, true));
+        buttons.push_back(std::make_unique<ChangeWaiterButton>(BUTTON_HEIGHT, width - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler, restaurant, &it));
+        buttonY += BUTTON_HEIGHT;
     }
+
+    buttons[0]->activate();
+    buttons[0]->draw();
+
+    buttons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, width - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler));
 }

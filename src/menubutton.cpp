@@ -11,4 +11,5 @@ void CloseButton::pressed()
 void ChangeWaiterButton::pressed()
 {
     restaurant->changeCurrentWaiter(waiter);
+    popUpHandler->closePopUpMenu();
 }

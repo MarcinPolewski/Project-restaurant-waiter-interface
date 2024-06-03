@@ -88,7 +88,7 @@ public:
     }
 };
 
-class ChangeWaiterPopUpMenu : PopUpMenu
+class ChangeWaiterPopUpMenu : public PopUpMenu
 {
     Restaurant *restaurant;
 
