@@ -5,8 +5,7 @@ void Order::addOrderItem(const MenuItem& menu_item, unsigned int count,
 {
     if (this->orderStatus == OrderStatus::closed)
         throw (std::runtime_error("Cannot add order item - order is closed."));
-    OrderItem order_item(menu_item, count, com, discnt);
-    this->orderItems.push_back(order_item);
+    this->orderItems.push_back(std::make_unique<OrderItem>(menu_item, count, com, discnt));
 }
 
 OrderItem& Order::operator[](unsigned int index)
@@ -14,17 +13,17 @@ OrderItem& Order::operator[](unsigned int index)
     if (index >= this->orderItems.size())
         throw (std::invalid_argument("Index out of range."));
 
-    return this->orderItems[index];
+    return *this->orderItems[index].get();
 }
 
 void Order::setClosed()
 {
     if (this->orderStatus == OrderStatus::closed)
         throw (std::runtime_error("Cannot close order - order is already closed."));
-    for (auto orderit : orderItems)
+    for (auto& orderit : orderItems)
     {
-        if (orderit.getStatus() != ItemStatus::delivered
-            && orderit.getStatus() != ItemStatus::canceled)
+        if (orderit->getStatus() != ItemStatus::delivered
+            && orderit->getStatus() != ItemStatus::canceled)
             throw(std::runtime_error("Cannot close order - unclosed order items."));
     }
     this->orderStatus = OrderStatus::closed;
@@ -47,9 +46,9 @@ void Order::resetWaitingTime()
 unsigned int Order::getTotalPrice() const
 {
     unsigned int total_price = 0;
-    for (auto order_item : this->orderItems)
-        if (order_item.getStatus() != ItemStatus::canceled)
-            total_price += order_item.getPrice();
+    for (auto& order_item : this->orderItems)
+        if (order_item->getStatus() != ItemStatus::canceled)
+            total_price += order_item->getPrice();
 
     return total_price;
 }

@@ -18,7 +18,7 @@ class Order
 private:
     OrderStatus orderStatus = OrderStatus::inProgress;
     time_t waitingTimeStamp = time(NULL);
-    std::vector<OrderItem> orderItems;
+    std::vector<std::unique_ptr<OrderItem>> orderItems;
 public:
     const time_t orderTime = this->waitingTimeStamp;
 
@@ -43,15 +43,15 @@ public:
     class iterator
     {
     private:
-        std::vector<OrderItem>::iterator it;
+        std::vector<std::unique_ptr<OrderItem>>::iterator it;
 
-        iterator(std::vector<OrderItem>::iterator iter)
+        iterator(std::vector<std::unique_ptr<OrderItem>>::iterator iter)
             : it(iter) {}
 
         friend class Order;
     public:
         iterator& operator++();
-        OrderItem& operator*() {return *it;}
+        OrderItem& operator*() {return *it->get();}
         bool operator!=(iterator it2) const {return this->it != it2.it;}
     };
     iterator begin() {return iterator(orderItems.begin());}
