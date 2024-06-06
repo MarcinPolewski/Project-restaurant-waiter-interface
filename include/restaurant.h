@@ -14,8 +14,7 @@ class Restaurant
     const std::vector<Waiter> waiters;
     const std::vector<Table> tables;
 
-    std::vector<std::unique_ptr<LocalOrder>> localOrders;
-    std::vector<std::unique_ptr<RemoteOrder>> remoteOrders;
+    std::vector<std::unique_ptr<Order>> orders;
 
     const Waiter *currentWaiter;
 

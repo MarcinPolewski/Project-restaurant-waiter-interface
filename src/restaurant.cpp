@@ -17,19 +17,19 @@ Restaurant::Restaurant()
 
 RemoteOrder& Restaurant::newRemoteOrder(Remote& remote)
 {
-    remoteOrders.push_back(std::make_unique<RemoteOrder>(remote));
-    return *remoteOrders.back().get();
+    orders.push_back(std::make_unique<RemoteOrder>(remote));
+    return dynamic_cast<RemoteOrder&>(*orders.back().get());
 }
 
 LocalOrder& Restaurant::newLocalOrder(Table& table)
 {
-    localOrders.push_back(std::make_unique<LocalOrder>(table));
-    return *localOrders.back().get();
+    orders.push_back(std::make_unique<LocalOrder>(table));
+    return dynamic_cast<LocalOrder&>(*orders.back().get());
 }
 
 void Restaurant::closeRestaurant()
 {
-    if (!localOrders.empty() || !remoteOrders.empty())
+    if (!orders.empty())
         throw std::runtime_error("cannot close restaurant, when some orders are still in progress");
 }
 
