@@ -31,10 +31,10 @@ public:
 
     virtual const Destination& getDestination() const = 0;
 
-    OrderStatus getStatus() const {return orderStatus;}
+    OrderStatus getStatus() const;
     virtual void setClosed();
 
-    time_t getOrderTime() const {return this->orderTime;}
+    time_t getOrderTime() const;
     time_t getWaitingTime() const;
     void resetWaitingTime();
 
@@ -51,11 +51,12 @@ public:
         friend class Order;
     public:
         iterator& operator++();
-        OrderItem& operator*() {return *it->get();}
-        bool operator!=(iterator it2) const {return this->it != it2.it;}
+        OrderItem& operator*();
+        bool operator!=(iterator it2) const;
     };
-    iterator begin() {return iterator(orderItems.begin());}
-    iterator end() {return iterator(orderItems.end());}
+
+    iterator begin();
+    iterator end();
 
 };
 

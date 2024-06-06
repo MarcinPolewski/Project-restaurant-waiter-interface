@@ -16,6 +16,11 @@ OrderItem& Order::operator[](unsigned int index)
     return *this->orderItems[index].get();
 }
 
+OrderStatus Order::getStatus() const
+{
+    return orderStatus;
+}
+
 void Order::setClosed()
 {
     if (this->orderStatus == OrderStatus::closed)
@@ -27,6 +32,11 @@ void Order::setClosed()
             throw(std::runtime_error("Cannot close order - unclosed order items."));
     }
     this->orderStatus = OrderStatus::closed;
+}
+
+time_t Order::getOrderTime() const
+{
+    return this->orderTime;
 }
 
 time_t Order::getWaitingTime() const
@@ -57,6 +67,26 @@ Order::iterator& Order::iterator::operator++()
 {
     this->it++;
     return *this;
+}
+
+OrderItem& Order::iterator::operator*()
+{
+    return *it->get();
+}
+
+bool Order::iterator::operator!=(iterator it2) const
+{
+    return this->it != it2.it;
+}
+
+Order::iterator Order::begin()
+{
+    return iterator(orderItems.begin());
+}
+
+Order::iterator Order::end()
+{
+    return iterator(orderItems.end());
 }
 
 LocalOrder::LocalOrder(Table& tbl)
