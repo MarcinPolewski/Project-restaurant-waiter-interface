@@ -472,33 +472,6 @@ TEST(OrderItemTest, getWaitingTime_typical)
     ASSERT_EQ(orderit1.getWaitingTime(), 5);
 }
 
-TEST(WaiterOrderItemTest, interface_methods)
-{
-    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
-    OrderItem orderit1(pierogi, 3);
-
-    WaiterOrderItem &order = orderit1;
-
-    ASSERT_EQ(order.getComment(), "");
-    order.addComment("Bez posypki.");
-    ASSERT_EQ(order.getComment(), "Bez posypki.");
-
-    ASSERT_EQ(order.getPrice(), 5997);
-
-    ASSERT_EQ(order.getDiscount(), 0);
-    order.setDiscount(5);
-    ASSERT_EQ(order.getDiscount(), 5);
-
-    ASSERT_EQ(order.getPrice(), 5697);
-
-    sleep(1);
-    ASSERT_EQ(order.getWaitingTime(), 1);
-
-    ASSERT_EQ(order.getStatus(), ItemStatus::created);
-    order.setCancelled();
-    ASSERT_EQ(order.getStatus(), ItemStatus::canceled);
-}
-
 TEST(OrderTest, create_LocalOrder)
 {
     Table tbl(Table::Position(3, 5, 0), 4);

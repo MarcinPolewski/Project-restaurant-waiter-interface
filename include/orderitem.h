@@ -14,25 +14,7 @@ enum class ItemStatus
     canceled,
 };
 
-class WaiterOrderItem
-{
-public:
-    virtual ~WaiterOrderItem() = default;
-
-    virtual void addComment(const std::string&) = 0;
-    virtual void addComment(std::string&&) = 0;
-    virtual const std::string& getComment() const = 0;
-    virtual void setDiscount(unsigned int) = 0;
-    virtual unsigned int getDiscount() const = 0;
-    virtual void setOrdered() = 0;
-    virtual void setDelivered() = 0;
-    virtual void setCancelled() = 0;
-    virtual ItemStatus getStatus() const = 0;
-    virtual unsigned int getPrice() const = 0;
-    virtual time_t getWaitingTime() const = 0;
-};
-
-class OrderItem : public WaiterOrderItem
+class OrderItem
 {
 private:
 
@@ -47,19 +29,18 @@ public:
     OrderItem(const MenuItem& menu_item, unsigned int count,
         const std::string& com = "", unsigned int discnt = 0);
 
-    void addComment(const std::string& new_comment) override;
-    void addComment(std::string&& new_comment) override;
-    const std::string& getComment() const override {return this->comment;}
+    void addComment(const std::string& new_comment);
+    const std::string& getComment() const {return this->comment;}
 
-    void setDiscount(unsigned int new_discount) override;
-    unsigned int getDiscount() const override {return this->discount;}
+    void setDiscount(unsigned int new_discount);
+    unsigned int getDiscount() const {return this->discount;}
 
     void changeStatus(ItemStatus new_status);
-    void setOrdered() override;
-    void setDelivered() override;
-    void setCancelled() override;
-    ItemStatus getStatus() const override {return this->itemStatus;}
+    void setOrdered();
+    void setDelivered();
+    void setCancelled();
+    ItemStatus getStatus() const{return this->itemStatus;}
 
-    unsigned int getPrice() const override;
-    time_t getWaitingTime() const override {return time(NULL) - orderTime;}
+    unsigned int getPrice() const;
+    time_t getWaitingTime() const {return time(NULL) - orderTime;}
 };

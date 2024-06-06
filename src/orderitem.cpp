@@ -19,13 +19,6 @@ void OrderItem::addComment(const std::string& new_comment)
     this->comment = new_comment;
 }
 
-void OrderItem::addComment(std::string&& new_comment)
-{
-    if (new_comment.size() > 255)
-        throw (std::invalid_argument("Comment cannot be longer than 255 characters."));
-    this->comment = std::move(new_comment);
-}
-
 void OrderItem::setDiscount(unsigned int new_discount)
 {
     if (new_discount > 100)
