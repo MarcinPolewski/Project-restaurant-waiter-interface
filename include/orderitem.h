@@ -30,17 +30,18 @@ public:
         const std::string& com = "", unsigned int discnt = 0);
 
     void addComment(const std::string& new_comment);
-    const std::string& getComment() const {return this->comment;}
+    const std::string& getComment() const;
 
     void setDiscount(unsigned int new_discount);
-    unsigned int getDiscount() const {return this->discount;}
+    unsigned int getDiscount() const;
 
     void changeStatus(ItemStatus new_status);
     void setOrdered();
     void setDelivered();
     void setCancelled();
-    ItemStatus getStatus() const{return this->itemStatus;}
+    ItemStatus getStatus() const;
 
     unsigned int getPrice() const;
-    time_t getWaitingTime() const {return time(NULL) - orderTime;}
+
+    time_t getWaitingTime() const;
 };

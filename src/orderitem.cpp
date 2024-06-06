@@ -19,11 +19,21 @@ void OrderItem::addComment(const std::string& new_comment)
     this->comment = new_comment;
 }
 
+const std::string& OrderItem::getComment() const
+{
+    return this->comment;
+}
+
 void OrderItem::setDiscount(unsigned int new_discount)
 {
     if (new_discount > 100)
         throw (std::invalid_argument("Discount must be in range 0..100 (%)."));
     this->discount = new_discount;
+}
+
+unsigned int OrderItem::getDiscount() const
+{
+    return this->discount;
 }
 
 void OrderItem::changeStatus(ItemStatus new_status)
@@ -57,6 +67,11 @@ void OrderItem::setCancelled()
         throw (std::runtime_error("Unable to cancel, item is already in preparation."));
 }
 
+ItemStatus OrderItem::getStatus() const
+{
+    return this->itemStatus;
+}
+
 unsigned int OrderItem::getPrice() const
 {
     unsigned int full_price = quantity * this->menuItem.price;
@@ -68,4 +83,9 @@ unsigned int OrderItem::getPrice() const
     else
         discnt = discnt / 100;
     return full_price - discnt;
+}
+
+time_t OrderItem::getWaitingTime() const
+{
+    return time(NULL) - orderTime;
 }
