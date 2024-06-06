@@ -985,3 +985,25 @@ TEST(RestaurantTest, newRemoteOrder_typical)
     ro.setClosed();
     ASSERT_EQ(ro.getStatus(), OrderStatus::closed);
 }
+
+TEST(RestaurantTest, iteration_over_LocalOrders)
+{
+    Restaurant restaurant;
+
+    Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
+    Remote rmt1("Elzbieta Kopyto", "123456789", adr);
+    Remote rmt2("Barbara Nara", "987654321", adr);
+    Table tbl1(Table::Position(0, 0, 0), 4);
+    Table tbl2(Table::Position(5, 5, 0), 6);
+
+    restaurant.newLocalOrder(tbl1);
+    restaurant.newRemoteOrder(rmt1);
+    restaurant.newLocalOrder(tbl2);
+    restaurant.newRemoteOrder(rmt1);
+
+    auto loit = restaurant.lobegin();
+
+    ASSERT_EQ((*loit).table.seats, 4);
+    ASSERT_EQ((*++loit).table.seats, 6);
+    ASSERT_EQ(++loit != restaurant.loend(), false);
+}

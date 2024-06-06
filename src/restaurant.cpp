@@ -55,3 +55,39 @@ Menu const &Restaurant::getMenu() const
 {
     return menu;
 }
+
+Restaurant::LOiterator::LOiterator(u_order_iterator start_it, u_order_iterator end_it)
+    : current_it(start_it), end_it(end_it)
+{
+    if (this->current_it != this->end_it)
+        this->current_it = std::find_if(this->current_it, this->end_it,
+            [](const std::unique_ptr<Order>& ord){return dynamic_cast<LocalOrder*>(ord.get());});
+}
+
+Restaurant::LOiterator& Restaurant::LOiterator::operator++()
+{
+    if (this->current_it != this->end_it)
+    this->current_it = std::find_if(++this->current_it, this->end_it,
+        [](const std::unique_ptr<Order>& ord){return dynamic_cast<LocalOrder*>(ord.get());});
+    return *this;
+}
+
+LocalOrder& Restaurant::LOiterator::operator*()
+{
+    return dynamic_cast<LocalOrder&>(*(*current_it).get());
+}
+
+bool Restaurant::LOiterator::operator!=(const LOiterator& it2) const
+{
+    return this->current_it != it2.current_it;
+}
+
+Restaurant::LOiterator Restaurant::lobegin()
+{
+    return LOiterator(this->orders.begin(), this->orders.end());
+}
+
+Restaurant::LOiterator Restaurant::loend()
+{
+    return LOiterator(this->orders.end(), this->orders.end());
+}

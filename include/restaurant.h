@@ -18,6 +18,7 @@ class Restaurant
 
     const Waiter *currentWaiter;
 
+    typedef std::vector<std::unique_ptr<Order>>::iterator u_order_iterator;
 public:
     Restaurant();
     void closeRestaurant();
@@ -31,4 +32,22 @@ public:
     std::vector<Waiter> const &getWaiters() const;
     std::vector<Table> const &getTables() const;
     Menu const &getMenu() const;
+
+    class LOiterator
+    {
+    private:
+        u_order_iterator current_it;
+        u_order_iterator end_it;
+
+        LOiterator(u_order_iterator start_it, u_order_iterator end_it);
+
+        friend class Restaurant;
+    public:
+        LOiterator& operator++();
+        LocalOrder& operator*();
+        bool operator!=(const LOiterator& it2) const;
+    };
+
+    LOiterator lobegin();
+    LOiterator loend();
 };
