@@ -16,7 +16,7 @@ class ErrorPrompt;
 class UITable;
 class LocalOrder;
 class RemoteOrder;
-struct Table;
+class Table;
 
 class PopUpHandler
 {

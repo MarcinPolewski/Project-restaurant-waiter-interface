@@ -1,64 +1,63 @@
 #pragma once
 
 #include "orderitem.h"
-#include "destination.h"
+#include "table.h"
+#include "remote.h"
 
 #include <time.h>
 #include <vector>
 
-class Waiter;
-
 enum class OrderStatus
 {
     inProgress,
-    closed,
-    canceled
+    closed
 };
 
-class WaiterOrder
-{
-    virtual WaiterOrderItem& addOrderItem(const MenuItem& menu_item, unsigned int count,
-        const std::string& com = "", unsigned int discnt = 0) = 0;
-    virtual WaiterOrderItem& getOrderItem(unsigned int index) = 0;
-    // virtual void removeOrderItem(unsigned int index) = 0;
-    virtual const Destination& getDestination() const = 0;
-    virtual OrderStatus getStatus() const = 0;
-    // virtual void setClosed() = 0;
-    // virtual void setCanceled() = 0;
-    virtual time_t getOrderTime() const = 0;
-    virtual time_t getWaitingTime() const = 0;
-    virtual void resetWaitingTime() = 0;
-    virtual unsigned int getTotalPrice() const = 0;
-};
-
-// iterator i const_iterator
-// destination
-
-class Order : WaiterOrder
+class Order
 {
 private:
     OrderStatus orderStatus = OrderStatus::inProgress;
     time_t waitingTimeStamp = time(NULL);
-    std::vector<OrderItem> orderItems;
+    std::vector<std::unique_ptr<OrderItem>> orderItems;
 public:
     const time_t orderTime = this->waitingTimeStamp;
 
     virtual ~Order() = default;
 
-    OrderItem& addOrderItem(const MenuItem& menu_item, unsigned int count,
-        const std::string& com = "", unsigned int discnt = 0) override;
+    void addOrderItem(const MenuItem& menu_item, unsigned int count,
+        const std::string& com = "", unsigned int discnt = 0);
 
-    OrderItem& getOrderItem(unsigned int index) override;
+    OrderItem& operator[](unsigned int index);
 
-    virtual const Destination& getDestination() const override = 0;
+    virtual const Destination& getDestination() const = 0;
 
-    OrderStatus getStatus() const override {return orderStatus;}
+    OrderStatus getStatus() const;
+    virtual void setClosed();
 
-    time_t getOrderTime() const override {return this->orderTime;}
-    time_t getWaitingTime() const override {return time(NULL) - this->waitingTimeStamp;}
-    void resetWaitingTime() override {this->waitingTimeStamp = time(NULL);}
+    time_t getOrderTime() const;
+    time_t getWaitingTime() const;
+    void resetWaitingTime();
 
-    unsigned int getTotalPrice() const override;
+    unsigned int getTotalPrice() const;
+
+    class iterator
+    {
+    private:
+        std::vector<std::unique_ptr<OrderItem>>::iterator it;
+
+        iterator(std::vector<std::unique_ptr<OrderItem>>::iterator iter)
+            : it(iter) {}
+
+        friend class Order;
+    public:
+        iterator& operator++();
+        OrderItem& operator*();
+        bool operator!=(iterator it2) const;
+    };
+
+    iterator begin();
+    iterator end();
+
 };
 
 class LocalOrder : public Order
@@ -66,8 +65,9 @@ class LocalOrder : public Order
 public:
     const Table& table;
 
-    LocalOrder(Table& tbl)
-        : table(tbl) {}
+    LocalOrder(Table& tbl);
+
+    void setClosed() override;
 
     const Table& getDestination() const override {return table;}
 };

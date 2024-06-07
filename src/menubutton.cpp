@@ -10,7 +10,7 @@ void CloseButton::pressed()
 
 void NewLocalOrderButton::pressed()
 {
-    restaurant->newLocalOrder(table);
+    restaurant->newLocalOrder(*table);
     // popUpHandler->newLocalOrdersPopUpMenu(table->order);
 }
 
