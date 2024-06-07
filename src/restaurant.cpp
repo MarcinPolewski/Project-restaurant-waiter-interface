@@ -91,3 +91,39 @@ Restaurant::LOiterator Restaurant::loend()
 {
     return LOiterator(this->orders.end(), this->orders.end());
 }
+
+Restaurant::RTiterator::RTiterator(u_order_iterator start_it, u_order_iterator end_it)
+    : current_it(start_it), end_it(end_it)
+{
+    if (this->current_it != this->end_it)
+        this->current_it = std::find_if(this->current_it, this->end_it,
+            [](const std::unique_ptr<Order>& ord){return dynamic_cast<RemoteOrder*>(ord.get());});
+}
+
+Restaurant::RTiterator& Restaurant::RTiterator::operator++()
+{
+     if (this->current_it != this->end_it)
+        this->current_it = std::find_if(++this->current_it, this->end_it,
+            [](const std::unique_ptr<Order>& ord){return dynamic_cast<RemoteOrder*>(ord.get());});
+    return *this;
+}
+
+RemoteOrder& Restaurant::RTiterator::operator*()
+{
+    return dynamic_cast<RemoteOrder&>(*(*this->current_it).get());
+}
+
+bool Restaurant::RTiterator::operator!=(const RTiterator& it2) const
+{
+    return this->current_it != it2.current_it;
+}
+
+Restaurant::RTiterator Restaurant::rtbegin()
+{
+    return RTiterator(this->orders.begin(), this->orders.end());
+}
+
+Restaurant::RTiterator Restaurant::rtend()
+{
+    return RTiterator(this->orders.end(), this->orders.end());
+}
