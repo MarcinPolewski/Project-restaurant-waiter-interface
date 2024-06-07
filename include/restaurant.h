@@ -29,8 +29,6 @@ class Restaurant
 
     typedef std::vector<std::unique_ptr<Order>>::iterator u_order_iterator;
 
-    typedef std::vector<std::unique_ptr<Order>>::iterator u_order_iterator;
-
 public:
     Restaurant();
     void closeRestaurant();
