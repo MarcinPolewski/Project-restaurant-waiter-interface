@@ -7,10 +7,9 @@ PopUpHandler::PopUpHandler(WINDOW *background, Restaurant *restaurant)
 {
 }
 
-void PopUpHandler::newTablePopUpMenu(UITable &table)
+void PopUpHandler::newTableNoOrderPopUpMenu(Table *table)
 {
-
-    windowStack.push(std::make_unique<TablePopUpMenu>(backgroundWindow, this, table));
+    windowStack.push(std::make_unique<NoOrderAssignedToTablePopUpMenu>(backgroundWindow, this, restaurant, table));
 }
 
 void PopUpHandler::newChangeWaiterPopUpMenu()

@@ -56,6 +56,20 @@ public:
     void pressed() override;
 };
 
+class NewLocalOrderButton : public MenuButton
+{
+    Restaurant *restaurant;
+    Table *table;
+
+public:
+    NewLocalOrderButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, Restaurant *restaurant, Table *table, bool selected = false)
+        : MenuButton(height, width, yPosition, xPosition, std::string("Crete new Local Order"), popUpHandler, selected), restaurant(restaurant), table(table)
+    {
+    }
+
+    void pressed() override;
+};
+
 class ChangeWaiterButton : public MenuButton
 {
     Waiter *waiter;

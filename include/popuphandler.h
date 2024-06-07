@@ -14,6 +14,9 @@ class LocalOrdersPopUpMenu;
 class RemoteOrdersPopUpMenu;
 class ErrorPrompt;
 class UITable;
+class LocalOrder;
+class RemoteOrder;
+struct Table;
 
 class PopUpHandler
 {
@@ -31,7 +34,10 @@ class PopUpHandler
 public:
     PopUpHandler(WINDOW *background, Restaurant *restaurant);
 
-    void newTablePopUpMenu(UITable &table);
+    // void newLocalOrderPopUpMenu(LocalOrder *order);
+    //  void newRemoteOrderPopUpMenu(RemoteOrder *order);
+    void newTableNoOrderPopUpMenu(Table *table);
+
     void newChangeWaiterPopUpMenu();
     void newLocalOrdersPopUpMenu();
     void newRemoteOrdersPopUpMenu();

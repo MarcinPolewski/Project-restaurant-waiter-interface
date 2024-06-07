@@ -134,7 +134,15 @@ int main()
                 if (mainscreen.pressed(cursorY, cursorX, pressedTable)) // returns true if table was pressed and returns table by reference
                 {
                     curs_set(0);
-                    popUpHandler.newTablePopUpMenu(*pressedTable);
+                    if (pressedTable->getTable()->isOccupied()) // there is order assigned to this table
+                    {
+                        continue;
+                        // popUpHandler.newLocalOrderPopUpMenu(pressedTable->table.order)
+                    }
+                    else
+                    {
+                        popUpHandler.newTableNoOrderPopUpMenu(pressedTable->getTable());
+                    }
                     previousState = state;
                     state = aplicationState::popUpMenu;
                 }

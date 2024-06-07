@@ -103,13 +103,13 @@ public:
     ChangeWaiterPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Restaurant *rest, int height = 40, int width = 60);
 };
 
-class OpenNewLocalOrderPopUpMenu : public PopUpMenu // used to signal to user, that this table does not have a order assigned
+class NoOrderAssignedToTablePopUpMenu : public PopUpMenu // used to signal to user, that this table does not have a order assigned
 {
     Restaurant *restaurant;
     Table *table;
 
 public:
-    OpenNewLocalOrderPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Restaurant *rest, Table *table, int height = 10, int width = strlen(NO_ORDER_ASSIGNED_MESS) + 2);
+    NoOrderAssignedToTablePopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Restaurant *rest, Table *table, int height = 9, int width = strlen(NO_ORDER_ASSIGNED_MESS) + 2);
 };
 
 class LocalOrdersPopUpMenu : public PopUpMenu // presents all local order

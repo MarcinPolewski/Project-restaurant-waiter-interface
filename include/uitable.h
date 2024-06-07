@@ -29,6 +29,11 @@ public:
         wrefresh(window);
     }
 
+    Table *getTable()
+    {
+        return &table;
+    }
+
     void draw() override
     {
         box(window, 0, 0);
