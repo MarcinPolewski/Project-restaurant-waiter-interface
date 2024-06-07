@@ -19,23 +19,23 @@ class PopUpHandler
 {
     WINDOW *backgroundWindow;
     Restaurant *restaurant;
-    std::stack<PopUpMenu *> windowStack;
+    std::stack<std::unique_ptr<PopUpMenu>> windowStack;
 
     // ========= pointers to popUps
-    std::unique_ptr<TablePopUpMenu> tablePopUpMenu;
-    std::unique_ptr<ChangeWaiterPopUpMenu> changeWaiterPopUpMenu;
-    std::unique_ptr<LocalOrdersPopUpMenu> localOrdersPopUpMenu;
-    std::unique_ptr<RemoteOrdersPopUpMenu> remoteOrdersPopUpMenu;
-    std::unique_ptr<ErrorPrompt> errorPrompt;
+    // std::unique_ptr<TablePopUpMenu> tablePopUpMenu;
+    // std::unique_ptr<ChangeWaiterPopUpMenu> changeWaiterPopUpMenu;
+    // std::unique_ptr<LocalOrdersPopUpMenu> localOrdersPopUpMenu;
+    // std::unique_ptr<RemoteOrdersPopUpMenu> remoteOrdersPopUpMenu;
+    // std::unique_ptr<ErrorPrompt> errorPrompt;
 
 public:
     PopUpHandler(WINDOW *background, Restaurant *restaurant);
 
-    TablePopUpMenu *newTablePopUpMenu(UITable &table);
-    ChangeWaiterPopUpMenu *newChangeWaiterPopUpMenu();
-    LocalOrdersPopUpMenu *newLocalOrdersPopUpMenu();
-    RemoteOrdersPopUpMenu *newRemoteOrdersPopUpMenu();
-    ErrorPrompt *newErrorPrompt(std::string message);
+    void newTablePopUpMenu(UITable &table);
+    void newChangeWaiterPopUpMenu();
+    void newLocalOrdersPopUpMenu();
+    void newRemoteOrdersPopUpMenu();
+    void newErrorPrompt(std::string message);
 
     bool closePopUpMenu();
 

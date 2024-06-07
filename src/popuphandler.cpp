@@ -7,60 +7,54 @@ PopUpHandler::PopUpHandler(WINDOW *background, Restaurant *restaurant)
 {
 }
 
-TablePopUpMenu *PopUpHandler::newTablePopUpMenu(UITable &table)
+void PopUpHandler::newTablePopUpMenu(UITable &table)
 {
-    tablePopUpMenu.reset(new TablePopUpMenu(backgroundWindow, this, table));
-    windowStack.push(tablePopUpMenu.get());
-    return tablePopUpMenu.get();
+
+    windowStack.push(std::make_unique<TablePopUpMenu>(backgroundWindow, this, table));
 }
 
-ChangeWaiterPopUpMenu *PopUpHandler::newChangeWaiterPopUpMenu()
+void PopUpHandler::newChangeWaiterPopUpMenu()
 {
-    changeWaiterPopUpMenu.reset(new ChangeWaiterPopUpMenu(backgroundWindow, this, restaurant));
-    windowStack.push(changeWaiterPopUpMenu.get());
-    return changeWaiterPopUpMenu.get();
+
+    windowStack.push(std::make_unique<ChangeWaiterPopUpMenu>(backgroundWindow, this, restaurant));
 }
 
-LocalOrdersPopUpMenu *PopUpHandler::newLocalOrdersPopUpMenu()
+void PopUpHandler::newLocalOrdersPopUpMenu()
 {
-    localOrdersPopUpMenu.reset(new LocalOrdersPopUpMenu(backgroundWindow, this, restaurant));
-    windowStack.push(localOrdersPopUpMenu.get());
-    return localOrdersPopUpMenu.get();
+    windowStack.push(std::make_unique<LocalOrdersPopUpMenu>(backgroundWindow, this, restaurant));
 }
 
-RemoteOrdersPopUpMenu *PopUpHandler::newRemoteOrdersPopUpMenu()
+void PopUpHandler::newRemoteOrdersPopUpMenu()
 {
-    remoteOrdersPopUpMenu.reset(new RemoteOrdersPopUpMenu(backgroundWindow, this, restaurant));
-    windowStack.push(remoteOrdersPopUpMenu.get());
-    return remoteOrdersPopUpMenu.get();
+    windowStack.push(std::make_unique<RemoteOrdersPopUpMenu>(backgroundWindow, this, restaurant));
 }
 
-ErrorPrompt *PopUpHandler::newErrorPrompt(std::string message)
+void PopUpHandler::newErrorPrompt(std::string message)
 {
-    errorPrompt.reset(new ErrorPrompt(backgroundWindow, this, message, 6, std::max(10, (int)message.size() + 2)));
-    windowStack.push(errorPrompt.get());
-    return errorPrompt.get();
+    windowStack.push(std::make_unique<ErrorPrompt>(backgroundWindow, this, message, 6, std::max(10, (int)message.size() + 2)));
 }
 
 bool PopUpHandler::closePopUpMenu()
 {
-    if (windowStack.size() == 1)
-    {
-        windowStack.pop();
-        tablePopUpMenu.reset();
-        return true;
-    }
-    else
-    {
-        PopUpMenu *windowToDelete = windowStack.top();
-        windowStack.pop();
+    windowStack.pop();
+    return windowStack.empty();
+    // if (windowStack.size() == 1)
+    // {
+    //     windowStack.pop();
+    //     tablePopUpMenu.reset();
+    //     return true;
+    // }
+    // else
+    // {
+    //     PopUpMenu *windowToDelete = windowStack.top();
+    //     windowStack.pop();
 
-        if (dynamic_cast<TablePopUpMenu *>(windowToDelete))
-            tablePopUpMenu.reset();
-        else if (dynamic_cast<ChangeWaiterPopUpMenu *>(windowToDelete))
-            changeWaiterPopUpMenu.reset();
-    }
-    return false;
+    //     if (dynamic_cast<TablePopUpMenu *>(windowToDelete))
+    //         tablePopUpMenu.reset();
+    //     else if (dynamic_cast<ChangeWaiterPopUpMenu *>(windowToDelete))
+    //         changeWaiterPopUpMenu.reset();
+    // }
+    // return false;
 }
 
 void PopUpHandler::moveUp()
