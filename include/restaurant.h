@@ -47,7 +47,23 @@ public:
         LocalOrder& operator*();
         bool operator!=(const LOiterator& it2) const;
     };
-
     LOiterator lobegin();
     LOiterator loend();
+
+    class RTiterator
+    {
+    private:
+        u_order_iterator current_it;
+        u_order_iterator end_it;
+
+        RTiterator(u_order_iterator start_it, u_order_iterator end_it);
+
+        friend class Restaurant;
+    public:
+        RTiterator& operator++();
+        RemoteOrder& operator*();
+        bool operator!=(const RTiterator& it2) const;
+    };
+    RTiterator rtbegin();
+    RTiterator rtend();
 };
