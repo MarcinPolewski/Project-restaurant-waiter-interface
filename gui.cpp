@@ -45,7 +45,6 @@ int main()
     keypad(stdscr, true);
 
     // ============= main program loop
-    bool runLoop = true;
     int userInput;
     int cursorX, cursorY;
     aplicationState state = aplicationState::topBar;
@@ -56,9 +55,9 @@ int main()
 
         userInput = getch();
 
-        // ======== handle user input
+        // ========== handle user input
         if (userInput == 'q')
-            runLoop = false;
+            break;
 
         if (state == aplicationState::topBar)
         {

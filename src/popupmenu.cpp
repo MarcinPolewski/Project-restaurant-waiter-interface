@@ -34,6 +34,19 @@ ErrorPrompt::ErrorPrompt(WINDOW *background, PopUpHandler *popUpHandler, std::st
 
     buttons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, width - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler, true));
 }
+OpenNewLocalOrderPopUpMenu::OpenNewLocalOrderPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Restaurant *rest, Table *table, int height, int width)
+
+    : PopUpMenu(background, popUpHandler, height, width), restaurant(rest), table(table)
+{
+    mvwprintw(window, 1, 1, NO_ORDER_ASSIGNED_MESS);
+    wrefresh(window);
+
+    int buttonX = startX() + BUTTON_SIDE_OFFSET;
+    int buttonY = getbegy(window) + BUTTON_TOP_OFFSET;
+
+    buttons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, width - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler, true));
+    // buttons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, width - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler, true))
+}
 
 LocalOrdersPopUpMenu::LocalOrdersPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Restaurant *restaurant, int height, int width)
     : PopUpMenu(background, popUpHandler, height, width), restaurant(restaurant)
