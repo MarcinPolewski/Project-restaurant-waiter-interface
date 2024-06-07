@@ -8,7 +8,6 @@
 // #include "restaurant.h"
 class Restaurant;
 class PopUpMenu;
-class TablePopUpMenu;
 class ChangeWaiterPopUpMenu;
 class LocalOrdersPopUpMenu;
 class RemoteOrdersPopUpMenu;
@@ -34,7 +33,7 @@ class PopUpHandler
 public:
     PopUpHandler(WINDOW *background, Restaurant *restaurant);
 
-    // void newLocalOrderPopUpMenu(LocalOrder *order);
+    void newLocalOrderPopUpMenu(LocalOrder *order);
     //  void newRemoteOrderPopUpMenu(RemoteOrder *order);
     void newTableNoOrderPopUpMenu(Table *table);
 

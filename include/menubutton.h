@@ -83,3 +83,16 @@ public:
 
     void pressed() override;
 };
+
+class OrderItemButton : public MenuButton
+{
+    OrderItem *orderItem;
+
+public:
+    OrderItemButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, OrderItem *orderItem, bool selected = false)
+        : MenuButton(height, width, yPosition, xPosition, orderItem->toString(), popUpHandler, selected), orderItem(orderItem)
+    {
+    }
+
+    void pressed() override;
+};

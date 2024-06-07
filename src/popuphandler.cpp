@@ -7,6 +7,11 @@ PopUpHandler::PopUpHandler(WINDOW *background, Restaurant *restaurant)
 {
 }
 
+void PopUpHandler::newLocalOrderPopUpMenu(LocalOrder *order)
+{
+    windowStack.push(std::make_unique<LocalOrderPopUpMenu>(backgroundWindow, this, restaurant, order));
+}
+
 void PopUpHandler::newTableNoOrderPopUpMenu(Table *table)
 {
     windowStack.push(std::make_unique<NoOrderAssignedToTablePopUpMenu>(backgroundWindow, this, restaurant, table));
@@ -37,23 +42,6 @@ bool PopUpHandler::closePopUpMenu()
 {
     windowStack.pop();
     return windowStack.empty();
-    // if (windowStack.size() == 1)
-    // {
-    //     windowStack.pop();
-    //     tablePopUpMenu.reset();
-    //     return true;
-    // }
-    // else
-    // {
-    //     PopUpMenu *windowToDelete = windowStack.top();
-    //     windowStack.pop();
-
-    //     if (dynamic_cast<TablePopUpMenu *>(windowToDelete))
-    //         tablePopUpMenu.reset();
-    //     else if (dynamic_cast<ChangeWaiterPopUpMenu *>(windowToDelete))
-    //         changeWaiterPopUpMenu.reset();
-    // }
-    // return false;
 }
 
 void PopUpHandler::moveUp()

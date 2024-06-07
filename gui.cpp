@@ -136,8 +136,7 @@ int main()
                     curs_set(0);
                     if (pressedTable->getTable()->isOccupied()) // there is order assigned to this table
                     {
-                        continue;
-                        // popUpHandler.newLocalOrderPopUpMenu(pressedTable->table.order)
+                        popUpHandler.newLocalOrderPopUpMenu(&(pressedTable->getTable()->getOrder()));
                     }
                     else
                     {

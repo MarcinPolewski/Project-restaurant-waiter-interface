@@ -66,29 +66,6 @@ public:
     }
 };
 
-class TablePopUpMenu : public PopUpMenu
-{
-    // using PopUpMenu::PopUpMenu;
-    UITable table;
-
-public:
-    TablePopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, UITable &table, int height = 40, int width = 60)
-        : PopUpMenu(background, popUpHandler, height, width), table(table)
-    {
-        // initialize buttons
-
-        int buttonX = startX() + BUTTON_SIDE_OFFSET;
-        int buttonY = getbegy(window) + BUTTON_TOP_OFFSET;
-
-        buttons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, width - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler, true));
-        buttonY += BUTTON_HEIGHT;
-        buttons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, width - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler));
-
-        buttonY += BUTTON_HEIGHT;
-        buttons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, width - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler, true));
-    }
-};
-
 class ErrorPrompt : public PopUpMenu // used when error occurs, to signal it to user
 {
 public:
@@ -110,6 +87,15 @@ class NoOrderAssignedToTablePopUpMenu : public PopUpMenu // used to signal to us
 
 public:
     NoOrderAssignedToTablePopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Restaurant *rest, Table *table, int height = 9, int width = strlen(NO_ORDER_ASSIGNED_MESS) + 2);
+};
+
+class LocalOrderPopUpMenu : public PopUpMenu
+{
+    Restaurant *restaurant;
+    Order *order;
+
+public:
+    LocalOrderPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Restaurant *rest, Order *order, int height = 40, int width = 60);
 };
 
 class LocalOrdersPopUpMenu : public PopUpMenu // presents all local order

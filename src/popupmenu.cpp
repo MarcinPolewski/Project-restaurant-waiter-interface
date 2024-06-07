@@ -21,6 +21,33 @@ ChangeWaiterPopUpMenu::ChangeWaiterPopUpMenu(WINDOW *background, PopUpHandler *p
     buttons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, width - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler));
 }
 
+LocalOrderPopUpMenu::LocalOrderPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Restaurant *rest, Order *order, int height, int width)
+    : PopUpMenu(background, popUpHandler, height, width), restaurant(rest), order(order)
+{
+
+    // information section =========
+    mvwprintw(window, 1, 1, "Order");
+    mvwprintw(window, 2, 1, "--------------------");
+    mvwprintw(window, 3, 1, ("Order time:   " + order->getOrderTimeStr()).c_str());
+    mvwprintw(window, 4, 1, ("Waiting time: " + order->getWaitingTimeStr()).c_str());
+    mvwprintw(window, 5, 1, ("Total price:  " + order->getTotalPriceStr()).c_str());
+    mvwprintw(window, 6, 1, "--------------------");
+
+    // order item srcoll section ==========
+    if (order->empty())
+        mvwprintw(window, 8, 1, "Order is empty");
+    else
+    {
+        }
+
+    wrefresh(window);
+    // action button section ======
+    int buttonX = startX() + BUTTON_SIDE_OFFSET;
+    int buttonY = getbegy(window) + 20;
+
+    buttons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, width - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler, true));
+}
+
 ErrorPrompt::ErrorPrompt(WINDOW *background, PopUpHandler *popUpHandler, std::string message, int height, int width)
     : PopUpMenu(background, popUpHandler, height, width)
 {
