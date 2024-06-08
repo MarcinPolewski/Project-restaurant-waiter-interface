@@ -19,7 +19,6 @@ class Restaurant
 
 public:
     Restaurant();
-    void closeRestaurant();
 
     const Menu &getMenu() const;
 
@@ -44,6 +43,8 @@ public:
     LOiterator lobegin();
     LOiterator loend();
 
+    LOiterator lobegin_inprogress();
+
     class RTiterator : public filtered_unique_iterator<Order>
     {
     public:
@@ -53,4 +54,12 @@ public:
     };
     RTiterator rtbegin();
     RTiterator rtend();
+
+    RTiterator rtbegin_inprogress();
+
+    unsigned int openLocalOrdersCount();
+    unsigned int openRemoteOrdersCount();
+    
+    bool canBeClosed();
+    void close();
 };

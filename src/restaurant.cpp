@@ -34,12 +34,6 @@ LocalOrder& Restaurant::newLocalOrder(Waiter& waiter, Table& table)
     return dynamic_cast<LocalOrder&>(*orders.back().get());
 }
 
-void Restaurant::closeRestaurant()
-{
-    if (!orders.empty())
-        throw std::runtime_error("cannot close restaurant, when some orders are still in progress");
-}
-
 const Menu& Restaurant::getMenu() const
 {
     return menu;
@@ -87,6 +81,13 @@ Restaurant::LOiterator Restaurant::loend()
     return LOiterator(this->orders.end(), this->orders.end(), nullptr);
 }
 
+Restaurant::LOiterator Restaurant::lobegin_inprogress()
+{
+    return LOiterator(this->orders.begin(), this->orders.end(),
+        [](const std::unique_ptr<Order>& ord){return dynamic_cast<LocalOrder*>(ord.get())
+            && ord.get()->getStatus() == OrderStatus::inProgress;});
+}
+
 Restaurant::RTiterator& Restaurant::RTiterator::operator++()
 {
     filtered_unique_iterator::operator++();
@@ -107,4 +108,38 @@ Restaurant::RTiterator Restaurant::rtbegin()
 Restaurant::RTiterator Restaurant::rtend()
 {
     return RTiterator(this->orders.end(), this->orders.end(), nullptr);
+}
+
+Restaurant::RTiterator Restaurant::rtbegin_inprogress()
+{
+    return RTiterator(this->orders.begin(), this->orders.end(),
+        [](const std::unique_ptr<Order>& ord){return dynamic_cast<RemoteOrder*>(ord.get())
+            && ord.get()->getStatus() == OrderStatus::inProgress;});
+}
+
+unsigned int Restaurant::openLocalOrdersCount()
+{
+    unsigned int counter = 0;
+    for (LOiterator it = this->lobegin_inprogress(); it != this->loend(); ++it)
+        counter++;
+    return counter;
+}
+
+unsigned int Restaurant::openRemoteOrdersCount()
+{
+    unsigned int counter = 0;
+    for (RTiterator it = this->rtbegin_inprogress(); it != this->loend(); ++it)
+        counter++;
+    return counter;
+}
+
+bool Restaurant::canBeClosed()
+{
+    return !(this->openLocalOrdersCount() || this->openRemoteOrdersCount());
+}
+
+void Restaurant::close()
+{
+    if (!this->canBeClosed())
+        throw std::runtime_error("Cannot close restaurant, some orders are still in progress");
 }
