@@ -73,6 +73,33 @@ Order::OIiterator Order::oiend()
     return OIiterator(orderItems.end(), orderItems.end());
 }
 
+std::string Order::getOrderTimeStr() const
+{
+    char buf[6];
+    strftime(buf, 6, "%H:%M", localtime(&this->orderTime));
+    return std::string(buf);
+}
+
+std::string Order::getWaitingTimeStr() const
+{
+    time_t waiting_time = this->getWaitingTime();
+
+    if (waiting_time / 60 == 0)
+        return "now";
+    else
+        return std::to_string(waiting_time / 60) + " m ago";
+}
+
+std::string Order::getTotalPriceStr() const
+{
+    unsigned int total_price = this->getTotalPrice();
+    std::string units = std::to_string(total_price / 100);
+    std::string fraction = std::to_string(total_price % 100);
+    if (fraction.length() != 2)
+        fraction = "0" + fraction;
+    return units + "," + fraction;
+}
+
 LocalOrder::LocalOrder(Table& tbl)
     : table(tbl)
 {

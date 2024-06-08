@@ -44,6 +44,10 @@ public:
     typedef filtered_unique_iterator<OrderItem> OIiterator;
     OIiterator oibegin();
     OIiterator oiend();
+
+    std::string getOrderTimeStr() const;
+    std::string getWaitingTimeStr() const;
+    std::string getTotalPriceStr() const;
 };
 
 class LocalOrder : public Order
