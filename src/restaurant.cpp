@@ -87,6 +87,13 @@ Restaurant::LOiterator Restaurant::loend()
     return LOiterator(this->orders.end(), this->orders.end(), nullptr);
 }
 
+Restaurant::LOiterator Restaurant::lobegin_inprogress()
+{
+    return LOiterator(this->orders.begin(), this->orders.end(),
+        [](const std::unique_ptr<Order>& ord){return dynamic_cast<LocalOrder*>(ord.get())
+            && ord.get()->getStatus() == OrderStatus::inProgress;});
+}
+
 Restaurant::RTiterator& Restaurant::RTiterator::operator++()
 {
     filtered_unique_iterator::operator++();
@@ -107,4 +114,11 @@ Restaurant::RTiterator Restaurant::rtbegin()
 Restaurant::RTiterator Restaurant::rtend()
 {
     return RTiterator(this->orders.end(), this->orders.end(), nullptr);
+}
+
+Restaurant::RTiterator Restaurant::rtbegin_inprogress()
+{
+    return RTiterator(this->orders.begin(), this->orders.end(),
+        [](const std::unique_ptr<Order>& ord){return dynamic_cast<RemoteOrder*>(ord.get())
+            && ord.get()->getStatus() == OrderStatus::inProgress;});
 }

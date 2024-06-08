@@ -44,6 +44,8 @@ public:
     LOiterator lobegin();
     LOiterator loend();
 
+    LOiterator lobegin_inprogress();
+
     class RTiterator : public filtered_unique_iterator<Order>
     {
     public:
@@ -53,4 +55,6 @@ public:
     };
     RTiterator rtbegin();
     RTiterator rtend();
+
+    RTiterator rtbegin_inprogress();
 };
