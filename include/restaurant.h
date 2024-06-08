@@ -19,7 +19,6 @@ class Restaurant
 
 public:
     Restaurant();
-    void closeRestaurant();
 
     const Menu &getMenu() const;
 
@@ -57,4 +56,10 @@ public:
     RTiterator rtend();
 
     RTiterator rtbegin_inprogress();
+
+    unsigned int openLocalOrdersCount();
+    unsigned int openRemoteOrdersCount();
+    
+    bool canBeClosed();
+    void close();
 };

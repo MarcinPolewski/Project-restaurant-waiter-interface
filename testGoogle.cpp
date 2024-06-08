@@ -1107,6 +1107,9 @@ TEST(RestaurantTest, iteration_over_LocalOrders_inprogress_typical)
     restaurant.newLocalOrder(wt1, tbl3);
 
     lo2.setClosed();
+
+    ASSERT_EQ(restaurant.openLocalOrdersCount(), 2);
+
     auto loit = restaurant.lobegin_inprogress();
 
     ASSERT_EQ((*loit).table.seats, 4);
@@ -1137,7 +1140,7 @@ TEST(RestaurantTest, iteration_over_RemoteOrders)
     ASSERT_EQ(++rtit != restaurant.rtend(), false);
 }
 
-TEST(RestaurantTest, iteration_over_RemoteOrders_inprogress)
+TEST(RestaurantTest, iteration_over_RemoteOrders_inprogress_and_count)
 {
     Restaurant restaurant;
 
@@ -1156,6 +1159,9 @@ TEST(RestaurantTest, iteration_over_RemoteOrders_inprogress)
     restaurant.newRemoteOrder(wt1, rmt3);
 
     ro.setClosed();
+
+    ASSERT_EQ(restaurant.openLocalOrdersCount(), 2);
+
     auto rtit = restaurant.rtbegin_inprogress();
 
     ASSERT_EQ((*rtit).getDestination().name, "Elzbieta Kopyto");
@@ -1203,6 +1209,28 @@ TEST(RestaurantTest, iteration_over_RemoteOrders_empty)
     auto rtit = restaurant.rtbegin();
 
     ASSERT_EQ(rtit != restaurant.rtend(), false);
+}
+
+TEST(RestaurantTest, close_typical)
+{
+    Restaurant restaurant;
+
+    Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
+    Remote rmt1("Elzbieta Kopyto", "123456789", adr);
+    Table tbl1(Table::Position(0, 0, 0), 4);
+    Waiter& wt1 = *restaurant.wtbegin();
+
+    auto& ro = restaurant.newRemoteOrder(wt1, rmt1);
+    auto& lo = restaurant.newLocalOrder(wt1, tbl1);
+
+    ASSERT_EQ(restaurant.canBeClosed(), false);
+    EXPECT_THROW(restaurant.close(), std::runtime_error);
+    ro.setClosed();
+    ASSERT_EQ(restaurant.canBeClosed(), false);
+    EXPECT_THROW(restaurant.close(), std::runtime_error);
+    lo.setClosed();
+    ASSERT_EQ(restaurant.canBeClosed(), true);
+    restaurant.close();
 }
 
 TEST(OrderTest, getWaitingTimeStr_one_min)
