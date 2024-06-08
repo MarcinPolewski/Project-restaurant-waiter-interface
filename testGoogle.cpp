@@ -145,7 +145,30 @@ TEST(MenuTest, initialization)
     items.push_back(std::make_unique<Dish>("Burger", "Burger with fries and vegetables", category3, 1299, "beef patty, cheese, lettuce, tomato, onion", 300));
 
     Menu menu(std::move(items));
-    ASSERT_EQ(menu.menuItems.size(), 4);
+    ASSERT_EQ(menu.size(), 4);
+}
+
+TEST(MenuTest, iteration_typical)
+{
+    std::vector<std::unique_ptr<MenuItem>> items;
+
+    MenuItem::CATEGORY category1 = MenuItem::CATEGORY::coldBeverage;
+    items.push_back(std::make_unique<Beverage>("Coca Cola", "Refreshing cola drink", category1, 199, 0, 330));
+    items.push_back(std::make_unique<Beverage>("Orange Juice", "Freshly squeezed orange juice", category1, 299, 0, 250));
+
+    MenuItem::CATEGORY category2 = MenuItem::CATEGORY::pizza;
+    MenuItem::CATEGORY category3 = MenuItem::CATEGORY::burger;
+    items.push_back(std::make_unique<Dish>("Pizza", "Pizza Neapoletana", category2, 1499, "dough, tomato sauce, cheese, toppings", 500));
+    items.push_back(std::make_unique<Dish>("Burger", "Burger with fries and vegetables", category3, 1299, "beef patty, cheese, lettuce, tomato, onion", 300));
+
+    Menu menu(std::move(items));
+
+    auto menu_it = menu.mibegin();
+    ASSERT_EQ((*menu_it).name, "Coca Cola");
+    ASSERT_EQ((*++menu_it).name, "Orange Juice");
+    ASSERT_EQ((*++menu_it).name, "Pizza");
+    ASSERT_EQ((*++menu_it).name, "Burger");
+    ASSERT_EQ(++menu_it != menu.miend(), false);
 }
 
 TEST(OrderItemTest, create_typical)

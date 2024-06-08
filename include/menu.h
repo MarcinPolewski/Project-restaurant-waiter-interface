@@ -1,6 +1,7 @@
 #pragma once
 
 #include "menuitem.h"
+#include "filtered_unique_iterator.h"
 
 #include <vector>
 #include <algorithm>
@@ -10,16 +11,13 @@ struct Menu
 {
     const std::vector<std::unique_ptr<MenuItem>> menuItems;
 
-    // intentionally it passed by value, because we this is the only place,
-    // where objects will be hold
     Menu() = default;
-    Menu(std::vector<std::unique_ptr<MenuItem>> sourceMenu) // contents of sourceMenu are moved to vector inside this classf
-        : menuItems(std::move(sourceMenu))
-    {
-    }
+    Menu(std::vector<std::unique_ptr<MenuItem>>&& sourceMenu);
 
-    bool empty()
-    {
-        return menuItems.empty();
-    }
+    typedef const_filtered_unique_iterator<MenuItem> MIiterator;
+    MIiterator mibegin() const;
+    MIiterator miend() const;
+
+    unsigned int size() const;
+    bool empty() const;
 };
