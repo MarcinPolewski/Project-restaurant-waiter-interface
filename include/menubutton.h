@@ -99,11 +99,11 @@ public:
 
 class MenuItemButton : public MenuButton
 {
-    MenuItem *menuItem;
+    MenuItem const &menuItem;
 
 public:
-    MenuItemButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, MenuItem *menuItem, bool selected = false)
-        : MenuButton(height, width, yPosition, xPosition, menuItem->name, popUpHandler, selected), menuItem(menuItem)
+    MenuItemButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, MenuItem const &menuItem, bool selected = false)
+        : MenuButton(height, width, yPosition, xPosition, menuItem.name, popUpHandler, selected), menuItem(menuItem)
     {
     }
 

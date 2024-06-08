@@ -77,7 +77,7 @@ MenuPopUpMenu::MenuPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Men
     }
 
     buttonY = endY() - BUTTON_HEIGHT - 1;
-    staticButtons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, buttonWidth, buttonY, buttonX, popUpHandler, true));
+    staticButtons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, buttonWidth, buttonY, buttonX, popUpHandler));
     auto_initialize();
 }
 
