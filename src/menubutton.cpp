@@ -18,6 +18,7 @@ void NewLocalOrderButton::pressed()
 
 void MenuItemButton::pressed()
 {
+    popUpHandler->newMenuItemView(menuItem);
 }
 
 void AddOrderItemButton::pressed()

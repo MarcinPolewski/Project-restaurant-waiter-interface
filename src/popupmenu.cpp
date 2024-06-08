@@ -226,3 +226,35 @@ RemoteOrdersPopUpMenu::RemoteOrdersPopUpMenu(WINDOW *background, PopUpHandler *p
     staticButtons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, DEFAULT_WIDTH - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler));
     auto_initialize();
 }
+
+MenuItemView::MenuItemView(WINDOW *background, PopUpHandler *popUpHandler, MenuItem const &menuItem)
+    : PopUpMenu(background, popUpHandler, MENU_ITEM_POP_UP_MENU_HEIGHT, MENU_ITEM_POP_UP_MENU_WIDTH), menuItem(menuItem)
+{
+
+    int buttonY = endY() - BUTTON_HEIGHT;
+    int buttonX = startX() + BUTTON_SIDE_OFFSET;
+    staticButtons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, MENU_ITEM_POP_UP_MENU_WIDTH - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler));
+    auto_initialize();
+}
+
+void MenuItemView::drawInformation()
+{
+
+    int maxTextWidth = MENU_ITEM_POP_UP_MENU_WIDTH - 2 * BUTTON_SIDE_OFFSET; // getmaxx(window) - 10; // Account for window borders
+    int yCoordinate = DEFAULT_TEXT_SECTION_START_Y;
+
+    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, ("name:   " + menuItem.name).c_str());
+    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, ("price:  " + menuItem.getPriceStr()).c_str());
+    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, ("volume: " + menuItem.getVolumeStr()).c_str());
+    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, "description: ");
+    // Split the product card into multiple lines if it exceeds the maximum width
+    int lineCounter = 0;
+    std::string description = menuItem.description;
+    while (lineCounter++ != 2 && description.length() > maxTextWidth)
+    {
+        std::string line = description.substr(0, maxTextWidth);
+        mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, line.c_str());
+        description = description.substr(maxTextWidth);
+    }
+    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, description.c_str());
+}

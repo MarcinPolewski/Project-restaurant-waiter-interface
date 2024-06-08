@@ -20,6 +20,11 @@ void PopUpHandler::newAddItemToOrderPopUpMenu(Order *order)
     windowStack.push(std::make_unique<AddItemToOrderPopUpMenu>(backgroundWindow, this, order, restaurant->getMenu()));
     windowStack.top()->draw();
 }
+void PopUpHandler::newMenuItemView(MenuItem const &menuItem)
+{
+    windowStack.push(std::make_unique<MenuItemView>(backgroundWindow, this, menuItem));
+    windowStack.top()->draw();
+}
 
 void PopUpHandler::newTableNoOrderPopUpMenu(Table *table)
 {

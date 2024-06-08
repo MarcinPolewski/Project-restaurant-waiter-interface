@@ -17,6 +17,7 @@ class LocalOrder;
 class RemoteOrder;
 class Table;
 class Order;
+struct MenuItem;
 
 class PopUpHandler
 {
@@ -31,6 +32,7 @@ public:
     //  void newRemoteOrderPopUpMenu(RemoteOrder *order);
     void newTableNoOrderPopUpMenu(Table *table);
     void newAddItemToOrderPopUpMenu(Order *order);
+    void newMenuItemView(MenuItem const &menuItem);
 
     void newMenuPopUpMenu();
     void newChangeWaiterPopUpMenu();

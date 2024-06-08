@@ -262,3 +262,12 @@ public:
     AddItemToOrderPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Order *order, Menu const &menu);
     void drawInformation() override;
 };
+
+class MenuItemView : public PopUpMenu
+{
+    MenuItem const &menuItem;
+
+public:
+    MenuItemView(WINDOW *background, PopUpHandler *popUpHandler, MenuItem const &menuItem);
+    void drawInformation() override;
+};
