@@ -63,30 +63,41 @@ unsigned int Order::getTotalPrice() const
     return total_price;
 }
 
-Order::iterator& Order::iterator::operator++()
+Order::OIiterator Order::oibegin()
 {
-    this->it++;
-    return *this;
+    return OIiterator(orderItems.begin(), orderItems.end());
 }
 
-OrderItem& Order::iterator::operator*()
+Order::OIiterator Order::oiend()
 {
-    return *it->get();
+    return OIiterator(orderItems.end(), orderItems.end());
 }
 
-bool Order::iterator::operator!=(iterator it2) const
+std::string Order::getOrderTimeStr() const
 {
-    return this->it != it2.it;
+    char buf[6];
+    strftime(buf, 6, "%H:%M", localtime(&this->orderTime));
+    return std::string(buf);
 }
 
-Order::iterator Order::begin()
+std::string Order::getWaitingTimeStr() const
 {
-    return iterator(orderItems.begin());
+    time_t waiting_time = this->getWaitingTime();
+
+    if (waiting_time / 60 == 0)
+        return "now";
+    else
+        return std::to_string(waiting_time / 60) + " m ago";
 }
 
-Order::iterator Order::end()
+std::string Order::getTotalPriceStr() const
 {
-    return iterator(orderItems.end());
+    unsigned int total_price = this->getTotalPrice();
+    std::string units = std::to_string(total_price / 100);
+    std::string fraction = std::to_string(total_price % 100);
+    if (fraction.length() != 2)
+        fraction = "0" + fraction;
+    return units + "," + fraction;
 }
 
 LocalOrder::LocalOrder(Table& tbl)

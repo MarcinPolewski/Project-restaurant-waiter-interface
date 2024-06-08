@@ -583,10 +583,10 @@ TEST(OrderTest, iterator_typical)
     lo.addOrderItem(pierogi, 5);
     lo.addOrderItem(woda, 2);
 
-    Order::iterator it = lo.begin();
+    auto it = lo.oibegin();
     ASSERT_EQ((*it).menuItem.name, "Pierogi");
     ASSERT_EQ((*++it).menuItem.name, "Woda");
-    ASSERT_EQ(++it != lo.end(), false);
+    ASSERT_EQ(++it != lo.oiend(), false);
 }
 
 TEST(OrderTest, getOrderItem_typical)
@@ -685,8 +685,21 @@ TEST(OrderTest, getOrderTime)
     LocalOrder lo(tbl);
     Order& ord = lo;
 
-    ASSERT_EQ(ord.orderTime, time(NULL));
     ASSERT_EQ(ord.getOrderTime(), time(NULL));
+}
+
+TEST(OrderTest, getOrderTimeStr_typical)
+{
+    Table tbl(Table::Position(3, 5, 0), 4);
+    LocalOrder lo(tbl);
+    Order& ord = lo;
+
+    char buf[6];
+    time_t now = time(NULL);
+    strftime(buf, 6, "%H:%M", localtime(&now));
+    std::string time_str(buf);
+
+    ASSERT_EQ(ord.getOrderTimeStr(), time_str);
 }
 
 TEST(OrderTest, getWaitingTime_typical)
@@ -699,6 +712,16 @@ TEST(OrderTest, getWaitingTime_typical)
     ASSERT_EQ(ord.getWaitingTime(), 3);
     sleep(1);
     ASSERT_EQ(ord.getWaitingTime(), 4);
+}
+
+TEST(OrderTest, getWaitingTimeStr_typical)
+{
+    Table tbl(Table::Position(3, 5, 0), 4);
+    LocalOrder lo(tbl);
+    Order& ord = lo;
+
+    sleep(1);
+    ASSERT_EQ(ord.getWaitingTimeStr(), "now");
 }
 
 TEST(OrderTest, resetWaitingTime_typical)
@@ -727,6 +750,42 @@ TEST(OrderTest, getTotalPrice)
     ord.addOrderItem(cola, 4);
 
     ASSERT_EQ(lo.getTotalPrice(), 13195);
+}
+
+TEST(OrderTest, getTotalPriceStr_typical)
+{
+    Table tbl(Table::Position(3, 5, 0), 4);
+    LocalOrder lo(tbl);
+    Order& ord = lo;
+
+    const Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    const Beverage cola("Cola", "Niezdrowy napoj", MenuItem::CATEGORY::coldBeverage, 800, 0, 500);
+
+    ord.addOrderItem(pierogi, 5);
+    ord.addOrderItem(cola, 4);
+
+    ASSERT_EQ(lo.getTotalPriceStr(), "131,95");
+}
+
+TEST(OrderTest, getTotalPriceStr_zero)
+{
+    Table tbl(Table::Position(3, 5, 0), 4);
+    LocalOrder lo(tbl);
+    Order& ord = lo;
+
+    ASSERT_EQ(ord.getTotalPriceStr(), "0,00");
+}
+
+TEST(OrderTest, getTotalPriceStr_less_than_10_fraction)
+{
+    Table tbl(Table::Position(3, 5, 0), 4);
+    LocalOrder lo(tbl);
+    Order& ord = lo;
+
+    const Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::CATEGORY::mainCourse, 1905, "mięso, mąka, woda, cebula, przyprawy", 300);
+    ord.addOrderItem(pierogi, 1);
+
+    ASSERT_EQ(lo.getTotalPriceStr(), "19,05");
 }
 
 TEST(OrderTest, getTotalPrice_caneled_items)
@@ -934,7 +993,7 @@ TEST(RestaurantTest, newLocalOrder_typical)
     lo.addOrderItem(woda, 1);
 
     LocalOrder& od = *wt.lobegin();
-    OrderItem& oi = *od.begin();
+    OrderItem& oi = *od.oibegin();
 
     ASSERT_EQ(oi.menuItem.name, "Woda");
     ASSERT_EQ(lo.getStatus(), OrderStatus::inProgress);
@@ -1092,4 +1151,14 @@ TEST(RestaurantTest, iteration_over_RemoteOrders_empty)
     auto rtit = restaurant.rtbegin();
 
     ASSERT_EQ(rtit != restaurant.rtend(), false);
+}
+
+TEST(OrderTest, getWaitingTimeStr_one_min)
+{
+    Table tbl(Table::Position(3, 5, 0), 4);
+    LocalOrder lo(tbl);
+    Order& ord = lo;
+
+    sleep(61);
+    ASSERT_EQ(ord.getWaitingTimeStr(), "1 m ago");
 }
