@@ -3,10 +3,10 @@
 Restaurant::Restaurant()
     : memoryHandler(),
       serverHandler(memoryHandler),
-      menu(memoryHandler.fetchMenu()),
-      tables(memoryHandler.fetchTables())
+      menu(memoryHandler.fetchMenu())
 {
     std::vector<Waiter> waiters_vec = memoryHandler.fetchWaiters();
+    std::vector<Table> tables_vec = memoryHandler.fetchTables();
 
     if (menu.empty())
         throw std::runtime_error("Menu cannot be empty");
@@ -15,6 +15,9 @@ Restaurant::Restaurant()
 
     for (auto&& waiter : waiters_vec)
         this->waiters.push_back(std::make_unique<Waiter>(waiter));
+
+    for (auto&& table: tables_vec)
+        this->tables.push_back(std::make_unique<Table>(table));
 }
 
 RemoteOrder& Restaurant::newRemoteOrder(Waiter& waiter, Remote& remote)
@@ -37,6 +40,11 @@ void Restaurant::closeRestaurant()
         throw std::runtime_error("cannot close restaurant, when some orders are still in progress");
 }
 
+const Menu& Restaurant::getMenu() const
+{
+    return menu;
+}
+
 Restaurant::WTiterator Restaurant::wtbegin()
 {
     return WTiterator(this->waiters.begin(), this->waiters.end());
@@ -47,13 +55,14 @@ Restaurant::WTiterator Restaurant::wtend()
     return WTiterator(this->waiters.end(), this->waiters.end());
 }
 
-std::vector<Table> const &Restaurant::getTables() const
+Restaurant::TBiterator Restaurant::tbbegin()
 {
-    return tables;
+    return TBiterator(this->tables.begin(), this->tables.end());
 }
-Menu const &Restaurant::getMenu() const
+
+Restaurant::TBiterator Restaurant::tbend()
 {
-    return menu;
+    return TBiterator(this->tables.end(), this->tables.end());
 }
 
 Restaurant::LOiterator& Restaurant::LOiterator::operator++()
