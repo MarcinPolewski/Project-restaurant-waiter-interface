@@ -61,6 +61,8 @@ public:
     {
     }
 
+    virtual void drawInformation() {}
+
     void drawStaticButtons()
     {
         for (auto &it : staticButtons)
@@ -84,6 +86,7 @@ public:
     {
         box(window, 0, 0);
         // write text here ??
+        drawInformation();
         wrefresh(window);
         drawScrollabeButtons();
         drawStaticButtons();
@@ -182,12 +185,17 @@ class MenuPopUpMenu : public PopUpMenu
 
 public:
     MenuPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Menu const &menu, int height = 40, int width = 60);
+    void drawInformation() override;
 };
 
 class ErrorPrompt : public PopUpMenu // used when error occurs, to signal it to user
 {
+    std::string message;
+
 public:
     ErrorPrompt(WINDOW *background, PopUpHandler *popUpHandler, std::string message, int height = 5, int width = 60);
+
+    void drawInformation() override;
 };
 
 class ChangeWaiterPopUpMenu : public PopUpMenu // used to select new waiter
@@ -196,6 +204,7 @@ class ChangeWaiterPopUpMenu : public PopUpMenu // used to select new waiter
 
 public:
     ChangeWaiterPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Restaurant *rest, int height = 40, int width = 60);
+    void drawInformation() override;
 };
 
 class NoOrderAssignedToTablePopUpMenu : public PopUpMenu // used to signal to user, that this table does not have a order assigned
@@ -205,6 +214,7 @@ class NoOrderAssignedToTablePopUpMenu : public PopUpMenu // used to signal to us
 
 public:
     NoOrderAssignedToTablePopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Restaurant *rest, Table *table, int height = 9, int width = strlen(NO_ORDER_ASSIGNED_MESS) + 2);
+    void drawInformation() override;
 };
 
 class LocalOrderPopUpMenu : public PopUpMenu
@@ -214,6 +224,7 @@ class LocalOrderPopUpMenu : public PopUpMenu
 
 public:
     LocalOrderPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Restaurant *rest, Order *order, int height = 40, int width = 60);
+    void drawInformation() override;
 };
 
 class LocalOrdersPopUpMenu : public PopUpMenu // presents all local order
@@ -222,6 +233,7 @@ class LocalOrdersPopUpMenu : public PopUpMenu // presents all local order
 
 public:
     LocalOrdersPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Restaurant *restaurant, int height = 40, int width = 60);
+    void drawInformation() override;
 };
 
 class RemoteOrdersPopUpMenu : public PopUpMenu
