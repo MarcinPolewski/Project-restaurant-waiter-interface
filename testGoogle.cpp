@@ -773,7 +773,7 @@ TEST(OrderTest, getTotalPriceStr_zero)
     LocalOrder lo(tbl);
     Order& ord = lo;
 
-    ASSERT_EQ(lo.getTotalPriceStr(), "0,00");
+    ASSERT_EQ(ord.getTotalPriceStr(), "0,00");
 }
 
 TEST(OrderTest, getTotalPriceStr_less_than_10_fraction)
