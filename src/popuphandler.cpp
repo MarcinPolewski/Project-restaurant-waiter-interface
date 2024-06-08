@@ -48,7 +48,7 @@ void PopUpHandler::newRemoteOrdersPopUpMenu()
 
 void PopUpHandler::newErrorPrompt(std::string message)
 {
-    windowStack.push(std::make_unique<ErrorPrompt>(backgroundWindow, this, message, 6, std::max(10, (int)message.size() + 2)));
+    windowStack.push(std::make_unique<ErrorPrompt>(backgroundWindow, this, message));
     windowStack.top()->draw();
 }
 
