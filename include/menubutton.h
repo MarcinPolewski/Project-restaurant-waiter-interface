@@ -20,7 +20,7 @@ public:
     MenuButton(int height, int width, int yPosition, int xPosition, std::string title, PopUpHandler *popUpHandler, bool selected = false) // not passed by reference due to nature of initialization of buttons
         : TerminalUIObject(height, width, yPosition, xPosition), title(title), selected(selected), popUpHandler(popUpHandler)
     {
-        draw();
+        // draw();
     }
     void draw() override
     {
@@ -95,4 +95,20 @@ public:
     }
 
     void pressed() override;
+};
+
+class AButton : public MenuButton
+{
+public:
+    AButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, bool selected = false)
+        : MenuButton(height, width, yPosition, xPosition, "A", popUpHandler, selected) {}
+    void pressed() {}
+};
+
+class BButton : public MenuButton
+{
+public:
+    BButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, bool selected = false)
+        : MenuButton(height, width, yPosition, xPosition, "B", popUpHandler, selected) {}
+    void pressed() {}
 };

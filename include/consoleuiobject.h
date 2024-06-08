@@ -11,8 +11,8 @@ public:
     TerminalUIObject(int height, int width, int yPosition, int xPosition)
     {
         window = newwin(height, width, yPosition, xPosition);
-        box(window, 0, 0);
-        wrefresh(window);
+        // box(window, 0, 0);
+        // wrefresh(window);
     }
 
     int startX()
@@ -33,6 +33,16 @@ public:
     int endY()
     {
         return getbegy(window) + getmaxy(window) - 1;
+    }
+
+    void repositionVerticaly(int deltaY)
+    {
+        mvwin(window, startY() + deltaY, startX());
+    }
+
+    void setNewY(int newY)
+    {
+        mvwin(window, newY, startX());
     }
 
     bool isCursorInWindow(int CursorY, int CursorX) // borders do not cound as window

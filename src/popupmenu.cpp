@@ -11,14 +11,15 @@ ChangeWaiterPopUpMenu::ChangeWaiterPopUpMenu(WINDOW *background, PopUpHandler *p
     std::vector<Waiter> &waiters = restaurant->getWaiters();
     for (auto &it : waiters)
     {
-        buttons.push_back(std::make_unique<ChangeWaiterButton>(BUTTON_HEIGHT, width - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler, restaurant, &it));
+        staticButtons.push_back(std::make_unique<ChangeWaiterButton>(BUTTON_HEIGHT, width - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler, restaurant, &it));
         buttonY += BUTTON_HEIGHT;
     }
 
-    buttons[0]->activate();
-    buttons[0]->draw();
+    staticButtons[0]->activate();
+    staticButtons[0]->draw();
 
-    buttons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, width - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler));
+    staticButtons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, width - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler));
+    auto_initialize();
 }
 
 LocalOrderPopUpMenu::LocalOrderPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Restaurant *rest, Order *order, int height, int width)
@@ -34,18 +35,27 @@ LocalOrderPopUpMenu::LocalOrderPopUpMenu(WINDOW *background, PopUpHandler *popUp
     mvwprintw(window, 6, 1, "--------------------");
 
     // order item srcoll section ==========
+
+    int buttonX = startX() + BUTTON_SIDE_OFFSET;
+    int buttonY = getbegy(window) + 20;
+
     if (order->empty())
         mvwprintw(window, 8, 1, "Order is empty");
     else
     {
+        unsigned int cnt = 0;
+        for (auto it = order->begin(); cnt != NUMBER_OF_BUTTONS_IN_SCROLL && it != order->end(); ++it, ++cnt)
+        {
+            staticButtons.push_back(std::make_unique<OrderItemButton>(BUTTON_HEIGHT, width - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler, &(*it)));
+            buttonY += BUTTON_HEIGHT;
         }
+    }
 
-    wrefresh(window);
-    // action button section ======
-    int buttonX = startX() + BUTTON_SIDE_OFFSET;
-    int buttonY = getbegy(window) + 20;
+    // wrefresh(window);
+    //  action button section ======
 
-    buttons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, width - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler, true));
+    staticButtons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, width - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler, true));
+    auto_initialize();
 }
 
 ErrorPrompt::ErrorPrompt(WINDOW *background, PopUpHandler *popUpHandler, std::string message, int height, int width)
@@ -54,26 +64,28 @@ ErrorPrompt::ErrorPrompt(WINDOW *background, PopUpHandler *popUpHandler, std::st
 
     // mvwprintw(window, buttonY, buttonX, message.c_str());
     mvwprintw(window, 1, 1, message.c_str());
-    wrefresh(window);
+    // wrefresh(window);
 
     int buttonX = startX() + BUTTON_SIDE_OFFSET;
     int buttonY = getbegy(window) + BUTTON_TOP_OFFSET;
 
-    buttons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, width - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler, true));
+    staticButtons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, width - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler, true));
+    auto_initialize();
 }
 NoOrderAssignedToTablePopUpMenu::NoOrderAssignedToTablePopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Restaurant *rest, Table *table, int height, int width)
 
     : PopUpMenu(background, popUpHandler, height, width), restaurant(rest), table(table)
 {
     mvwprintw(window, 1, 1, NO_ORDER_ASSIGNED_MESS);
-    wrefresh(window);
+    // wrefresh(window);
 
     int buttonX = startX() + BUTTON_SIDE_OFFSET;
     int buttonY = getbegy(window) + BUTTON_TOP_OFFSET;
 
-    buttons.push_back(std::make_unique<NewLocalOrderButton>(BUTTON_HEIGHT, width - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler, restaurant, table, true));
+    staticButtons.push_back(std::make_unique<NewLocalOrderButton>(BUTTON_HEIGHT, width - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler, restaurant, table, true));
     buttonY += BUTTON_HEIGHT;
-    buttons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, width - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler));
+    staticButtons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, width - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler));
+    auto_initialize();
 }
 
 LocalOrdersPopUpMenu::LocalOrdersPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Restaurant *restaurant, int height, int width)
@@ -84,8 +96,19 @@ LocalOrdersPopUpMenu::LocalOrdersPopUpMenu(WINDOW *background, PopUpHandler *pop
     int buttonY = getbegy(window) + BUTTON_TOP_OFFSET;
 
     // TODO add order buttons here
+    scrollStartY = buttonY;
+    for (int i = 0; i < 10; ++i)
+    {
+        scrollableButtons.push_back(std::make_unique<AButton>(BUTTON_HEIGHT, width - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler));
+        scrollableButtons.push_back(std::make_unique<BButton>(BUTTON_HEIGHT, width - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler));
+    }
 
-    buttons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, width - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler));
+    buttonY += 30;
+    staticButtons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, width - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler));
+
+    auto_initialize();
+
+    // staticButtons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, width - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler));
 }
 
 RemoteOrdersPopUpMenu::RemoteOrdersPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Restaurant *restaurant, int height, int width)
@@ -97,5 +120,6 @@ RemoteOrdersPopUpMenu::RemoteOrdersPopUpMenu(WINDOW *background, PopUpHandler *p
 
     // TODO add order buttons here
 
-    buttons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, width - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler));
+    staticButtons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, width - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler));
+    auto_initialize();
 }

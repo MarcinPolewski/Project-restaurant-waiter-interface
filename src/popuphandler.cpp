@@ -10,32 +10,38 @@ PopUpHandler::PopUpHandler(WINDOW *background, Restaurant *restaurant)
 void PopUpHandler::newLocalOrderPopUpMenu(LocalOrder *order)
 {
     windowStack.push(std::make_unique<LocalOrderPopUpMenu>(backgroundWindow, this, restaurant, order));
+    windowStack.top()->draw();
 }
 
 void PopUpHandler::newTableNoOrderPopUpMenu(Table *table)
 {
     windowStack.push(std::make_unique<NoOrderAssignedToTablePopUpMenu>(backgroundWindow, this, restaurant, table));
+    windowStack.top()->draw();
 }
 
 void PopUpHandler::newChangeWaiterPopUpMenu()
 {
 
     windowStack.push(std::make_unique<ChangeWaiterPopUpMenu>(backgroundWindow, this, restaurant));
+    windowStack.top()->draw();
 }
 
 void PopUpHandler::newLocalOrdersPopUpMenu()
 {
     windowStack.push(std::make_unique<LocalOrdersPopUpMenu>(backgroundWindow, this, restaurant));
+    windowStack.top()->draw();
 }
 
 void PopUpHandler::newRemoteOrdersPopUpMenu()
 {
     windowStack.push(std::make_unique<RemoteOrdersPopUpMenu>(backgroundWindow, this, restaurant));
+    windowStack.top()->draw();
 }
 
 void PopUpHandler::newErrorPrompt(std::string message)
 {
     windowStack.push(std::make_unique<ErrorPrompt>(backgroundWindow, this, message, 6, std::max(10, (int)message.size() + 2)));
+    windowStack.top()->draw();
 }
 
 bool PopUpHandler::closePopUpMenu()

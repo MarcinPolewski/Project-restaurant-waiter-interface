@@ -11,12 +11,41 @@
 
 class PopUpMenu : public TerminalUIObject
 {
+    /*
+        Structure:
+            - scroll menu with buttons
+            - other buttons
+    */
 protected:
-    std::vector<std::unique_ptr<MenuButton>> buttons;
-    int selected = 0;
+    std::vector<std::unique_ptr<MenuButton>> scrollableButtons; // butons that make scrollable view
+    std::vector<std::unique_ptr<MenuButton>> staticButtons;     // other buttons in Menu
+
+    int scrollStartY;
+    std::vector<std::unique_ptr<MenuButton>>::iterator firstDisplayedScrollButton;
+    std::vector<std::unique_ptr<MenuButton>>::iterator selectedButton;
+
     PopUpHandler *popUpHandler;
 
+    void auto_initialize()
+    {
+        if (!scrollableButtons.empty())
+        {
+            firstDisplayedScrollButton = scrollableButtons.begin();
+            selectedButton = scrollableButtons.begin();
+            (*selectedButton)->activate();
+        }
+        else if (!staticButtons.empty())
+        {
+            selectedButton = staticButtons.begin();
+            (*selectedButton)->activate();
+        }
+        else
+            throw std::invalid_argument("cannot initialize pop up menu, that has no buttons(scrollable or static)");
+    }
+
 public:
+    // CONSTRUCTOR MUST INITIALIZED ITERATORS !!!!!
+
     PopUpMenu(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler)
         : TerminalUIObject(height, width, yPosition, xPosition), popUpHandler(popUpHandler)
     {
@@ -31,38 +60,118 @@ public:
     {
     }
 
-    void draw() override
+    void drawStaticButtons()
     {
-        box(window, 0, 0);
-        for (auto &it : buttons)
+        for (auto &it : staticButtons)
         {
             it->draw();
         }
     }
+    void drawScrollabeButtons()
+    {
+        int buttonY = scrollStartY;
+        int cnt = 0;
+        for (auto it = firstDisplayedScrollButton; cnt != NUMBER_OF_BUTTONS_IN_SCROLL && it != scrollableButtons.end(); ++cnt, ++it)
+        {
+            (*it)->setNewY(buttonY); // reposition buttons
+            (*it)->draw();           // draw button
+            buttonY += BUTTON_HEIGHT;
+        }
+    }
+
+    void draw() override
+    {
+        box(window, 0, 0);
+        // write text here ??
+        wrefresh(window);
+        drawScrollabeButtons();
+        drawStaticButtons();
+    }
 
     void moveUp()
     {
-        buttons[selected]->deactivate();
-        if (selected == 0)
-            selected = buttons.size() - 1;
-        else
-            --selected;
-        buttons[selected]->activate();
+        (*selectedButton)->deactivate();
+        if (selectedButton != scrollableButtons.begin())
+        {
+            if (selectedButton != staticButtons.begin())
+            {
+                if (selectedButton == firstDisplayedScrollButton)
+                {
+                    --firstDisplayedScrollButton;
+                }
+                --selectedButton;
+                // reposition buttons in scroll view if neccessary
+            }
+            else // selectedButton == staticButtons.begin()
+            {
+                if (scrollableButtons.empty())
+                {
+                    selectedButton = staticButtons.end() - 1;
+                }
+                else
+                {
+                    selectedButton = scrollableButtons.end() - 1;
+                    firstDisplayedScrollButton = selectedButton - (NUMBER_OF_BUTTONS_IN_SCROLL - 1);
+                }
+            }
+        }
+        else // selectedButton == scrollableButtons.begin() -> cursor is in scroll
+        {
+            if (staticButtons.empty())
+            {
+                selectedButton = scrollableButtons.end() - 1;
+                firstDisplayedScrollButton = selectedButton - (NUMBER_OF_BUTTONS_IN_SCROLL - 1);
+            }
+            else
+            {
+                selectedButton = staticButtons.end() - 1;
+            }
+        }
+        (*selectedButton)->activate();
     }
 
     void moveDown()
     {
-        buttons[selected]->deactivate();
-        if (selected == (int)buttons.size() - 1)
-            selected = 0;
-        else
-            ++selected;
-        buttons[selected]->activate();
+        (*selectedButton)->deactivate();
+        if (selectedButton != scrollableButtons.end() - 1)
+        {
+            if (selectedButton != staticButtons.end() - 1)
+            {
+                if (selectedButton == firstDisplayedScrollButton + (NUMBER_OF_BUTTONS_IN_SCROLL - 1))
+                    ++firstDisplayedScrollButton;
+                ++selectedButton;
+            }
+            else // selectedButton == staticButtons.end() -1
+            {
+                if (scrollableButtons.empty())
+                {
+                    selectedButton = staticButtons.begin();
+                }
+                else
+                {
+                    selectedButton = scrollableButtons.begin();
+                    firstDisplayedScrollButton = selectedButton;
+                }
+            }
+        }
+        else // selectedButton == scrollableButtons.end() -1 -> cursor is in scroll
+        {
+            if (staticButtons.empty())
+            {
+                selectedButton = scrollableButtons.begin();
+                firstDisplayedScrollButton = selectedButton;
+            }
+            else
+            {
+                selectedButton = staticButtons.begin();
+            }
+        }
+        (*selectedButton)->activate();
     }
 
     void buttonPressed()
     {
-        buttons[selected]->pressed();
+        (*selectedButton)->pressed();
     }
 };
 

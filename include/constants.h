@@ -5,3 +5,4 @@
 #define CURSORSPEED 9            // must be an odd number !!!!
 #define COLUMN_TO_WIDTH_RATION 2 // ration between column and height - approximately one row is the same amount of pixels as two columns
 #define NO_ORDER_ASSIGNED_MESS "No order assigned to this table, do you want to create one?"
+#define NUMBER_OF_BUTTONS_IN_SCROLL 5
