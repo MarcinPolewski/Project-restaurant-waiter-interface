@@ -3,6 +3,7 @@
 #include "orderitem.h"
 #include "table.h"
 #include "remote.h"
+#include "filtered_unique_iterator.h"
 
 #include <time.h>
 #include <vector>
@@ -16,12 +17,12 @@ enum class OrderStatus
 class Order
 {
 private:
-    OrderStatus orderStatus = OrderStatus::inProgress;
-    time_t waitingTimeStamp = time(NULL);
     std::vector<std::unique_ptr<OrderItem>> orderItems;
-public:
-    const time_t orderTime = this->waitingTimeStamp;
+    OrderStatus orderStatus = OrderStatus::inProgress;
+    const time_t orderTime = time(NULL);
+    time_t waitingTimeStamp = this-> orderTime;
 
+public:
     virtual ~Order() = default;
 
     void addOrderItem(const MenuItem& menu_item, unsigned int count,
@@ -40,24 +41,9 @@ public:
 
     unsigned int getTotalPrice() const;
 
-    class iterator
-    {
-    private:
-        std::vector<std::unique_ptr<OrderItem>>::iterator it;
-
-        iterator(std::vector<std::unique_ptr<OrderItem>>::iterator iter)
-            : it(iter) {}
-
-        friend class Order;
-    public:
-        iterator& operator++();
-        OrderItem& operator*();
-        bool operator!=(iterator it2) const;
-    };
-
-    iterator begin();
-    iterator end();
-
+    typedef filtered_unique_iterator<OrderItem> OIiterator;
+    OIiterator oibegin();
+    OIiterator oiend();
 };
 
 class LocalOrder : public Order

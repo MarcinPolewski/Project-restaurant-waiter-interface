@@ -63,30 +63,14 @@ unsigned int Order::getTotalPrice() const
     return total_price;
 }
 
-Order::iterator& Order::iterator::operator++()
+Order::OIiterator Order::oibegin()
 {
-    this->it++;
-    return *this;
+    return OIiterator(orderItems.begin(), orderItems.end());
 }
 
-OrderItem& Order::iterator::operator*()
+Order::OIiterator Order::oiend()
 {
-    return *it->get();
-}
-
-bool Order::iterator::operator!=(iterator it2) const
-{
-    return this->it != it2.it;
-}
-
-Order::iterator Order::begin()
-{
-    return iterator(orderItems.begin());
-}
-
-Order::iterator Order::end()
-{
-    return iterator(orderItems.end());
+    return OIiterator(orderItems.end(), orderItems.end());
 }
 
 LocalOrder::LocalOrder(Table& tbl)

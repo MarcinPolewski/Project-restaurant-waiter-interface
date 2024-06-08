@@ -583,10 +583,10 @@ TEST(OrderTest, iterator_typical)
     lo.addOrderItem(pierogi, 5);
     lo.addOrderItem(woda, 2);
 
-    Order::iterator it = lo.begin();
+    auto it = lo.oibegin();
     ASSERT_EQ((*it).menuItem.name, "Pierogi");
     ASSERT_EQ((*++it).menuItem.name, "Woda");
-    ASSERT_EQ(++it != lo.end(), false);
+    ASSERT_EQ(++it != lo.oiend(), false);
 }
 
 TEST(OrderTest, getOrderItem_typical)
@@ -685,7 +685,6 @@ TEST(OrderTest, getOrderTime)
     LocalOrder lo(tbl);
     Order& ord = lo;
 
-    ASSERT_EQ(ord.orderTime, time(NULL));
     ASSERT_EQ(ord.getOrderTime(), time(NULL));
 }
 
@@ -934,7 +933,7 @@ TEST(RestaurantTest, newLocalOrder_typical)
     lo.addOrderItem(woda, 1);
 
     LocalOrder& od = *wt.lobegin();
-    OrderItem& oi = *od.begin();
+    OrderItem& oi = *od.oibegin();
 
     ASSERT_EQ(oi.menuItem.name, "Woda");
     ASSERT_EQ(lo.getStatus(), OrderStatus::inProgress);
