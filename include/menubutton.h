@@ -20,7 +20,6 @@ public:
     MenuButton(int height, int width, int yPosition, int xPosition, std::string title, PopUpHandler *popUpHandler, bool selected = false) // not passed by reference due to nature of initialization of buttons
         : TerminalUIObject(height, width, yPosition, xPosition), title(title), selected(selected), popUpHandler(popUpHandler)
     {
-        // draw();
     }
     void draw() override
     {
@@ -110,18 +109,40 @@ public:
     void pressed() override;
 };
 
-class AButton : public MenuButton
+class AddOrderItemButton : public MenuButton // button used to bring up menu, to add order item to order
 {
+    Order *order;
+
 public:
-    AButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, bool selected = false)
-        : MenuButton(height, width, yPosition, xPosition, "A", popUpHandler, selected) {}
-    void pressed() {}
+    AddOrderItemButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, Order *order, bool selected = false)
+        : MenuButton(height, width, yPosition, xPosition, "Add item to order", popUpHandler, selected), order(order)
+    {
+    }
+    void pressed() override;
 };
 
-class BButton : public MenuButton
+class AddOrderItemToOrderButton : public MenuButton // represents specyfic menu item, when clicked it will be added to order
 {
+    Order *order;
+    MenuItem const &menuItem;
+
 public:
-    BButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, bool selected = false)
-        : MenuButton(height, width, yPosition, xPosition, "B", popUpHandler, selected) {}
-    void pressed() {}
+    AddOrderItemToOrderButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, Order *order, MenuItem const &menuItem, bool selected = false)
+        : MenuButton(height, width, yPosition, xPosition, menuItem.name, popUpHandler, selected), order(order), menuItem(menuItem)
+    {
+    }
+
+    void pressed() override;
+};
+
+class CloseOrderButton : public MenuButton
+{
+    Order *order;
+
+public:
+    CloseOrderButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, Order *order, bool selected = false)
+        : MenuButton(height, width, yPosition, xPosition, "Close order", popUpHandler, selected), order(order)
+    {
+    }
+    void pressed() override;
 };

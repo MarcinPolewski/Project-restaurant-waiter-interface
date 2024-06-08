@@ -84,6 +84,8 @@ public:
         }
     }
 
+    virtual void update() {}
+
     void draw() override
     {
         box(window, 0, 0);
@@ -231,6 +233,7 @@ class LocalOrderPopUpMenu : public PopUpMenu
 public:
     LocalOrderPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Restaurant *rest, Order *order);
     void drawInformation() override;
+    void update() override;
 };
 
 class LocalOrdersPopUpMenu : public PopUpMenu // presents all local order
@@ -248,4 +251,14 @@ class RemoteOrdersPopUpMenu : public PopUpMenu
 
 public:
     RemoteOrdersPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Restaurant *restaurant);
+};
+
+class AddItemToOrderPopUpMenu : public PopUpMenu
+{
+    Order *order;
+    Menu const &menu;
+
+public:
+    AddItemToOrderPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Order *order, Menu const &menu);
+    void drawInformation() override;
 };

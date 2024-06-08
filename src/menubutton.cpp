@@ -20,6 +20,20 @@ void MenuItemButton::pressed()
 {
 }
 
+void AddOrderItemButton::pressed()
+{
+    popUpHandler->newAddItemToOrderPopUpMenu(order);
+}
+
+void AddOrderItemToOrderButton::pressed()
+{
+    order->addOrderItem(menuItem, 1);
+}
+
+void CloseOrderButton::pressed()
+{
+}
+
 void ChangeWaiterButton::pressed()
 {
     restaurant->changeCurrentWaiter(waiter);

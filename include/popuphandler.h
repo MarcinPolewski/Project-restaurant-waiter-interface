@@ -16,6 +16,7 @@ class UITable;
 class LocalOrder;
 class RemoteOrder;
 class Table;
+class Order;
 
 class PopUpHandler
 {
@@ -23,19 +24,13 @@ class PopUpHandler
     Restaurant *restaurant;
     std::stack<std::unique_ptr<PopUpMenu>> windowStack;
 
-    // ========= pointers to popUps
-    // std::unique_ptr<TablePopUpMenu> tablePopUpMenu;
-    // std::unique_ptr<ChangeWaiterPopUpMenu> changeWaiterPopUpMenu;
-    // std::unique_ptr<LocalOrdersPopUpMenu> localOrdersPopUpMenu;
-    // std::unique_ptr<RemoteOrdersPopUpMenu> remoteOrdersPopUpMenu;
-    // std::unique_ptr<ErrorPrompt> errorPrompt;
-
 public:
     PopUpHandler(WINDOW *background, Restaurant *restaurant);
 
     void newLocalOrderPopUpMenu(LocalOrder *order);
     //  void newRemoteOrderPopUpMenu(RemoteOrder *order);
     void newTableNoOrderPopUpMenu(Table *table);
+    void newAddItemToOrderPopUpMenu(Order *order);
 
     void newMenuPopUpMenu();
     void newChangeWaiterPopUpMenu();

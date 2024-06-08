@@ -15,6 +15,12 @@ void PopUpHandler::newLocalOrderPopUpMenu(LocalOrder *order)
     windowStack.top()->draw();
 }
 
+void PopUpHandler::newAddItemToOrderPopUpMenu(Order *order)
+{
+    windowStack.push(std::make_unique<AddItemToOrderPopUpMenu>(backgroundWindow, this, order, restaurant->getMenu()));
+    windowStack.top()->draw();
+}
+
 void PopUpHandler::newTableNoOrderPopUpMenu(Table *table)
 {
     windowStack.push(std::make_unique<NoOrderAssignedToTablePopUpMenu>(backgroundWindow, this, restaurant, table));
@@ -55,6 +61,11 @@ void PopUpHandler::newErrorPrompt(std::string message)
 bool PopUpHandler::closePopUpMenu()
 {
     windowStack.pop();
+    if (!windowStack.empty())
+    {
+        windowStack.top()->update();
+        windowStack.top()->draw();
+    }
     return windowStack.empty();
 }
 

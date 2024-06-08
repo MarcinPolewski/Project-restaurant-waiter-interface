@@ -40,15 +40,18 @@ LocalOrderPopUpMenu::LocalOrderPopUpMenu(WINDOW *background, PopUpHandler *popUp
     int buttonY = getbegy(window) + 8;
 
     scrollStartY = buttonY;
-    unsigned int cnt = 0;
-    for (auto it = order->begin(); cnt != numberOfScrollButtonsOnScreen && it != order->end(); ++it, ++cnt)
+    for (auto it = order->begin(); it != order->end(); ++it)
     {
-        staticButtons.push_back(std::make_unique<OrderItemButton>(BUTTON_HEIGHT, DEFAULT_WIDTH - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler, &(*it)));
+        scrollableButtons.push_back(std::make_unique<OrderItemButton>(BUTTON_HEIGHT, DEFAULT_WIDTH - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler, &(*it)));
         buttonY += BUTTON_HEIGHT;
     }
 
-    buttonY = endY() - BUTTON_HEIGHT - 1;
-    staticButtons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, DEFAULT_WIDTH - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler, true));
+    buttonY = endY() - 3 * BUTTON_HEIGHT;
+    staticButtons.push_back(std::make_unique<AddOrderItemButton>(BUTTON_HEIGHT, DEFAULT_WIDTH - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler, order));
+    buttonY += BUTTON_HEIGHT;
+    staticButtons.push_back(std::make_unique<CloseOrderButton>(BUTTON_HEIGHT, DEFAULT_WIDTH - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler, order));
+    buttonY += BUTTON_HEIGHT;
+    staticButtons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, DEFAULT_WIDTH - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler));
     auto_initialize();
 }
 
@@ -62,8 +65,28 @@ void LocalOrderPopUpMenu::drawInformation()
     mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, ("Total price:  " + order->getTotalPriceStr()).c_str());
     mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, DEFAULT_WIDTH_DEVIDER);
 
-    if (order->empty())
-        mvwprintw(window, scrollStartY, 1, "Order is empty");
+    yCoordinate = ORDER_SCROLL_SECTION_START_Y + (NUMBER_OF_SCROLL_BUTTONS_ORDERS * BUTTON_HEIGHT);
+    mvwprintw(window, yCoordinate, BUTTON_SIDE_OFFSET, DEFAULT_WIDTH_DEVIDER);
+}
+
+void LocalOrderPopUpMenu::update()
+{
+    // // add new buttons
+    // // add buttons once again
+    // // use auto_initialize()
+
+    scrollableButtons.clear();
+    (*selectedButton)->deactivate();
+    int buttonWidth = DEFAULT_WIDTH - 2 * BUTTON_SIDE_OFFSET;
+
+    int buttonX = startX() + BUTTON_SIDE_OFFSET;
+    int buttonY = getbegy(window) + 4;
+
+    for (auto it = order->begin(); it != order->end(); ++it)
+    {
+        scrollableButtons.push_back(std::make_unique<OrderItemButton>(BUTTON_HEIGHT, DEFAULT_WIDTH - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler, &(*it)));
+    }
+    auto_initialize();
 }
 
 MenuPopUpMenu::MenuPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Menu const &menu)
@@ -81,7 +104,7 @@ MenuPopUpMenu::MenuPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Men
         buttonY += BUTTON_HEIGHT;
     }
 
-    buttonY = endY() - BUTTON_HEIGHT - 1;
+    buttonY = endY() - BUTTON_HEIGHT;
     staticButtons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, buttonWidth, buttonY, buttonX, popUpHandler));
     auto_initialize();
 }
@@ -91,6 +114,36 @@ void MenuPopUpMenu::drawInformation()
     int yCoordinate = DEFAULT_TEXT_SECTION_START_Y;
     mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, "Use arrow keys to navigate the menu.");
     mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, "Press enter for further information");
+    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, DEFAULT_WIDTH_DEVIDER);
+    yCoordinate = (NUMBER_OF_SCROLL_BUTTONS_MENU * BUTTON_HEIGHT) + DEFAULT_SCROLL_SECTION_START_Y;
+    mvwprintw(window, yCoordinate, BUTTON_SIDE_OFFSET, DEFAULT_WIDTH_DEVIDER);
+}
+
+AddItemToOrderPopUpMenu::AddItemToOrderPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Order *order, Menu const &menu)
+    : PopUpMenu(background, popUpHandler, MENU_POP_UP_HEIGHT, DEFAULT_WIDTH, NUMBER_OF_SCROLL_BUTTONS_MENU), order(order), menu(menu)
+{
+    int buttonWidth = DEFAULT_WIDTH - 2 * BUTTON_SIDE_OFFSET;
+
+    int buttonX = startX() + BUTTON_SIDE_OFFSET;
+    int buttonY = getbegy(window) + 4;
+    scrollStartY = buttonY;
+
+    for (auto it = menu.mibegin(); it != menu.miend(); ++it)
+    {
+        scrollableButtons.push_back(std::make_unique<AddOrderItemToOrderButton>(BUTTON_HEIGHT, buttonWidth, buttonY, buttonX, popUpHandler, order, *it));
+        buttonY += BUTTON_HEIGHT;
+    }
+
+    buttonY = endY() - BUTTON_HEIGHT;
+    staticButtons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, buttonWidth, buttonY, buttonX, popUpHandler));
+    auto_initialize();
+}
+
+void AddItemToOrderPopUpMenu::drawInformation()
+{
+    int yCoordinate = DEFAULT_TEXT_SECTION_START_Y;
+    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, "Use arrow keys to navigate the menu.");
+    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, "Press enter to select desired menu item to add");
     mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, DEFAULT_WIDTH_DEVIDER);
     yCoordinate = (NUMBER_OF_SCROLL_BUTTONS_MENU * BUTTON_HEIGHT) + DEFAULT_SCROLL_SECTION_START_Y;
     mvwprintw(window, yCoordinate, BUTTON_SIDE_OFFSET, DEFAULT_WIDTH_DEVIDER);
@@ -141,11 +194,11 @@ LocalOrdersPopUpMenu::LocalOrdersPopUpMenu(WINDOW *background, PopUpHandler *pop
     scrollStartY = buttonY;
     for (int i = 0; i < 10; ++i)
     {
-        scrollableButtons.push_back(std::make_unique<AButton>(BUTTON_HEIGHT, DEFAULT_WIDTH - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler));
-        scrollableButtons.push_back(std::make_unique<BButton>(BUTTON_HEIGHT, DEFAULT_WIDTH - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler));
+        // scrollableButtons.push_back(std::make_unique<AButton>(BUTTON_HEIGHT, DEFAULT_WIDTH - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler));
+        // scrollableButtons.push_back(std::make_unique<BButton>(BUTTON_HEIGHT, DEFAULT_WIDTH - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler));
     }
 
-    buttonY = endY() - BUTTON_HEIGHT - 1;
+    buttonY = endY() - BUTTON_HEIGHT;
     staticButtons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, DEFAULT_WIDTH - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler));
 
     auto_initialize();
@@ -169,7 +222,7 @@ RemoteOrdersPopUpMenu::RemoteOrdersPopUpMenu(WINDOW *background, PopUpHandler *p
 
     // TODO add order buttons here
 
-    buttonY = endY() - BUTTON_HEIGHT - 1;
+    buttonY = endY() - BUTTON_HEIGHT;
     staticButtons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, DEFAULT_WIDTH - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler));
     auto_initialize();
 }
