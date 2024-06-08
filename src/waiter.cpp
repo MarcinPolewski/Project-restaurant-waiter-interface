@@ -1,44 +1,45 @@
 #include "waiter.h"
 
-const std::vector<LocalOrder *> &Waiter::getLocalOrders()
+Waiter::LOiterator& Waiter::LOiterator::operator++()
 {
-    return localOrders;
+    filtered_iterator::operator++();
+    return *this;
 }
 
-const std::vector<RemoteOrder *> &Waiter::getRemoteOrders()
+LocalOrder& Waiter::LOiterator::operator*()
 {
-    return remoteOrders;
+    return dynamic_cast<LocalOrder&>(**this->current_it);
 }
 
-void Waiter::addOrder(Order *order)
+Waiter::LOiterator Waiter::lobegin()
 {
-    LocalOrder *localOrder = dynamic_cast<LocalOrder *>(order);
-    if (localOrder) // true if order is a local order
-    {
-        localOrders.push_back(localOrder);
-    }
-    else
-    {
-        remoteOrders.push_back(dynamic_cast<RemoteOrder *>(order));
-    }
+    return LOiterator(orders.begin(), orders.end(),
+        [](Order* ord){return dynamic_cast<LocalOrder*>(ord);});
 }
 
-void Waiter::closeOrder(Order *order)
+Waiter::LOiterator Waiter::loend()
 {
-    LocalOrder *localOrder = dynamic_cast<LocalOrder *>(order);
-    if (localOrder) // true if order is a local order
-    {
-        std::vector<LocalOrder *>::const_iterator it = std::find(localOrders.cbegin(), localOrders.cend(), localOrder);
-        if (it == localOrders.end())
-            throw std::runtime_error("Local orders do not have such an error");
-        localOrders.erase(it);
-    }
-    else
-    {
-        RemoteOrder *remoteOrder = dynamic_cast<RemoteOrder *>(order);
-        std::vector<RemoteOrder *>::const_iterator it = std::find(remoteOrders.cbegin(), remoteOrders.cend(), remoteOrder);
-        if (it == remoteOrders.end())
-            throw std::runtime_error("Remote orders do not have such an error");
-        remoteOrders.erase(it);
-    }
+    return LOiterator(orders.begin(), orders.end(), nullptr);
+}
+
+Waiter::RTiterator& Waiter::RTiterator::operator++()
+{
+    filtered_iterator::operator++();
+    return *this;
+}
+
+RemoteOrder& Waiter::RTiterator::operator*()
+{
+    return dynamic_cast<RemoteOrder&>(**this->current_it);
+}
+
+Waiter::RTiterator Waiter::rtbegin()
+{
+    return RTiterator(orders.begin(), orders.end(),
+        [](Order* ord){return dynamic_cast<RemoteOrder*>(ord);});
+}
+
+Waiter::RTiterator Waiter::rtend()
+{
+    return RTiterator(orders.begin(), orders.end(), nullptr);
 }

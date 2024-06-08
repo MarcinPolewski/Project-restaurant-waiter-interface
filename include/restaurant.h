@@ -3,6 +3,7 @@
 #include "serverhandler.h"
 #include "memoryhandler.h"
 #include "waiter.h"
+#include "filtered_unique_iterator.h"
 
 #include <stdexcept>
 
@@ -11,58 +12,43 @@ class Restaurant
     MemoryHandler memoryHandler;
     ServerHandler serverHandler;
     Menu menu;
-    const std::vector<Waiter> waiters;
+
+    std::vector<std::unique_ptr<Waiter>> waiters;
+
     const std::vector<Table> tables;
 
     std::vector<std::unique_ptr<Order>> orders;
 
-    const Waiter *currentWaiter;
-
-    typedef std::vector<std::unique_ptr<Order>>::iterator u_order_iterator;
 public:
     Restaurant();
     void closeRestaurant();
 
-    void changeCurrentWaiter(Waiter *waiter);
-    Waiter const *getCurrentWaiter() const;
+    RemoteOrder& newRemoteOrder(Waiter& waiter, Remote& remote);
+    LocalOrder& newLocalOrder(Waiter& waiter,Table& table);
 
-    RemoteOrder& newRemoteOrder(Remote& remote);
-    LocalOrder& newLocalOrder(Table& table);
+    typedef filtered_unique_iterator<Waiter> WTiterator;
+    WTiterator wtbegin();
+    WTiterator wtend();
 
-    std::vector<Waiter> const &getWaiters() const;
     std::vector<Table> const &getTables() const;
     Menu const &getMenu() const;
 
-    class LOiterator
+    class LOiterator : public filtered_unique_iterator<Order>
     {
-    private:
-        u_order_iterator current_it;
-        u_order_iterator end_it;
-
-        LOiterator(u_order_iterator start_it, u_order_iterator end_it);
-
-        friend class Restaurant;
     public:
+        using filtered_unique_iterator::filtered_unique_iterator;
         LOiterator& operator++();
         LocalOrder& operator*();
-        bool operator!=(const LOiterator& it2) const;
     };
     LOiterator lobegin();
     LOiterator loend();
 
-    class RTiterator
+    class RTiterator : public filtered_unique_iterator<Order>
     {
-    private:
-        u_order_iterator current_it;
-        u_order_iterator end_it;
-
-        RTiterator(u_order_iterator start_it, u_order_iterator end_it);
-
-        friend class Restaurant;
     public:
+        using filtered_unique_iterator::filtered_unique_iterator;
         RTiterator& operator++();
         RemoteOrder& operator*();
-        bool operator!=(const RTiterator& it2) const;
     };
     RTiterator rtbegin();
     RTiterator rtend();

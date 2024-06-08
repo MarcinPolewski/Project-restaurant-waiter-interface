@@ -5,36 +5,36 @@
 
 #include "order.h"
 #include "destination.h"
+#include "employee.h"
+#include "filtered_iterator.h"
 
-class Employee
-{
-public:
-    const unsigned int id;
-    const std::string name;
-    const std::string surname;
-
-    Employee(unsigned int id, std::string &name, std::string &surname)
-        : id(id), name(name), surname(surname)
-    {
-    }
-
-    std::string toString()
-    {
-        return std::to_string(id) + ". " + name + " " + surname;
-    }
-};
 
 class Waiter : public Employee
 {
-    std::vector<LocalOrder *> localOrders;
-    std::vector<RemoteOrder *> remoteOrders;
+    std::vector<Order*> orders;
 
+    friend class Restaurant;
 public:
     using Employee::Employee; // inheriting constructors from parent
 
-    const std::vector<LocalOrder *> &getLocalOrders();
-    const std::vector<RemoteOrder *> &getRemoteOrders();
+    class LOiterator : public filtered_iterator<Order>
+    {
+    public:
+        using filtered_iterator::filtered_iterator;
+        LOiterator& operator++();
+        LocalOrder& operator*();
+    };
+    LOiterator lobegin();
+    LOiterator loend();
 
-    void addOrder(Order *order);
-    void closeOrder(Order *order);
+    class RTiterator : public filtered_iterator<Order>
+    {
+    public:
+        using filtered_iterator::filtered_iterator;
+        RTiterator& operator++();
+        RemoteOrder& operator*();
+    };
+    RTiterator rtbegin();
+    RTiterator rtend();
+
 };

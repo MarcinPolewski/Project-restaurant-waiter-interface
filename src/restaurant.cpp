@@ -4,26 +4,30 @@ Restaurant::Restaurant()
     : memoryHandler(),
       serverHandler(memoryHandler),
       menu(memoryHandler.fetchMenu()),
-      waiters(memoryHandler.fetchWaiters()),
       tables(memoryHandler.fetchTables())
 {
+    std::vector<Waiter> waiters_vec = memoryHandler.fetchWaiters();
+
     if (menu.empty())
         throw std::runtime_error("Menu cannot be empty");
-    if (waiters.empty())
+    if (waiters_vec.empty())
         throw std::runtime_error("Waiters list cannot be empty");
 
-    currentWaiter = &waiters[0];
+    for (auto&& waiter : waiters_vec)
+        this->waiters.push_back(std::make_unique<Waiter>(waiter));
 }
 
-RemoteOrder& Restaurant::newRemoteOrder(Remote& remote)
+RemoteOrder& Restaurant::newRemoteOrder(Waiter& waiter, Remote& remote)
 {
     orders.push_back(std::make_unique<RemoteOrder>(remote));
+    waiter.orders.push_back(orders.back().get());
     return dynamic_cast<RemoteOrder&>(*orders.back().get());
 }
 
-LocalOrder& Restaurant::newLocalOrder(Table& table)
+LocalOrder& Restaurant::newLocalOrder(Waiter& waiter, Table& table)
 {
     orders.push_back(std::make_unique<LocalOrder>(table));
+    waiter.orders.push_back(orders.back().get());
     return dynamic_cast<LocalOrder&>(*orders.back().get());
 }
 
@@ -33,20 +37,16 @@ void Restaurant::closeRestaurant()
         throw std::runtime_error("cannot close restaurant, when some orders are still in progress");
 }
 
-void Restaurant::changeCurrentWaiter(Waiter *waiter)
+Restaurant::WTiterator Restaurant::wtbegin()
 {
-    currentWaiter = waiter;
+    return WTiterator(this->waiters.begin(), this->waiters.end());
 }
 
-Waiter const *Restaurant::getCurrentWaiter() const
+Restaurant::WTiterator Restaurant::wtend()
 {
-    return currentWaiter;
+    return WTiterator(this->waiters.end(), this->waiters.end());
 }
 
-std::vector<Waiter> const &Restaurant::getWaiters() const
-{
-    return waiters;
-}
 std::vector<Table> const &Restaurant::getTables() const
 {
     return tables;
@@ -56,19 +56,9 @@ Menu const &Restaurant::getMenu() const
     return menu;
 }
 
-Restaurant::LOiterator::LOiterator(u_order_iterator start_it, u_order_iterator end_it)
-    : current_it(start_it), end_it(end_it)
-{
-    if (this->current_it != this->end_it)
-        this->current_it = std::find_if(this->current_it, this->end_it,
-            [](const std::unique_ptr<Order>& ord){return dynamic_cast<LocalOrder*>(ord.get());});
-}
-
 Restaurant::LOiterator& Restaurant::LOiterator::operator++()
 {
-    if (this->current_it != this->end_it)
-    this->current_it = std::find_if(++this->current_it, this->end_it,
-        [](const std::unique_ptr<Order>& ord){return dynamic_cast<LocalOrder*>(ord.get());});
+    filtered_unique_iterator::operator++();
     return *this;
 }
 
@@ -77,34 +67,20 @@ LocalOrder& Restaurant::LOiterator::operator*()
     return dynamic_cast<LocalOrder&>(*(*current_it).get());
 }
 
-bool Restaurant::LOiterator::operator!=(const LOiterator& it2) const
-{
-    return this->current_it != it2.current_it;
-}
-
 Restaurant::LOiterator Restaurant::lobegin()
 {
-    return LOiterator(this->orders.begin(), this->orders.end());
+    return LOiterator(this->orders.begin(), this->orders.end(),
+        [](const std::unique_ptr<Order>& ord){return dynamic_cast<LocalOrder*>(ord.get());});
 }
 
 Restaurant::LOiterator Restaurant::loend()
 {
-    return LOiterator(this->orders.end(), this->orders.end());
-}
-
-Restaurant::RTiterator::RTiterator(u_order_iterator start_it, u_order_iterator end_it)
-    : current_it(start_it), end_it(end_it)
-{
-    if (this->current_it != this->end_it)
-        this->current_it = std::find_if(this->current_it, this->end_it,
-            [](const std::unique_ptr<Order>& ord){return dynamic_cast<RemoteOrder*>(ord.get());});
+    return LOiterator(this->orders.end(), this->orders.end(), nullptr);
 }
 
 Restaurant::RTiterator& Restaurant::RTiterator::operator++()
 {
-     if (this->current_it != this->end_it)
-        this->current_it = std::find_if(++this->current_it, this->end_it,
-            [](const std::unique_ptr<Order>& ord){return dynamic_cast<RemoteOrder*>(ord.get());});
+    filtered_unique_iterator::operator++();
     return *this;
 }
 
@@ -113,17 +89,13 @@ RemoteOrder& Restaurant::RTiterator::operator*()
     return dynamic_cast<RemoteOrder&>(*(*this->current_it).get());
 }
 
-bool Restaurant::RTiterator::operator!=(const RTiterator& it2) const
-{
-    return this->current_it != it2.current_it;
-}
-
 Restaurant::RTiterator Restaurant::rtbegin()
 {
-    return RTiterator(this->orders.begin(), this->orders.end());
+    return RTiterator(this->orders.begin(), this->orders.end(),
+        [](const std::unique_ptr<Order>& ord){return dynamic_cast<RemoteOrder*>(ord.get());});
 }
 
 Restaurant::RTiterator Restaurant::rtend()
 {
-    return RTiterator(this->orders.end(), this->orders.end());
+    return RTiterator(this->orders.end(), this->orders.end(), nullptr);
 }
