@@ -2,6 +2,8 @@
 
 #include "popupmenu.h"
 
+#include "restaurant.h"
+
 PopUpHandler::PopUpHandler(WINDOW *background, Restaurant *restaurant)
     : backgroundWindow(background), restaurant(restaurant)
 {
@@ -16,6 +18,12 @@ void PopUpHandler::newLocalOrderPopUpMenu(LocalOrder *order)
 void PopUpHandler::newTableNoOrderPopUpMenu(Table *table)
 {
     windowStack.push(std::make_unique<NoOrderAssignedToTablePopUpMenu>(backgroundWindow, this, restaurant, table));
+    windowStack.top()->draw();
+}
+
+void PopUpHandler::newMenuPopUpMenu()
+{
+    windowStack.push(std::make_unique<MenuPopUpMenu>(backgroundWindow, this, restaurant->getMenu()));
     windowStack.top()->draw();
 }
 

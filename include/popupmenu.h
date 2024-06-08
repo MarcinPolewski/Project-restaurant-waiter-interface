@@ -8,6 +8,7 @@
 #include "popuphandler.h"
 #include "menubutton.h"
 #include "uitable.h"
+#include "menu.h"
 
 class PopUpMenu : public TerminalUIObject
 {
@@ -173,6 +174,14 @@ public:
     {
         (*selectedButton)->pressed();
     }
+};
+
+class MenuPopUpMenu : public PopUpMenu
+{
+    const Menu &menu;
+
+public:
+    MenuPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Menu const &menu, int height = 40, int width = 60);
 };
 
 class ErrorPrompt : public PopUpMenu // used when error occurs, to signal it to user

@@ -97,6 +97,19 @@ public:
     void pressed() override;
 };
 
+class MenuItemButton : public MenuButton
+{
+    MenuItem *menuItem;
+
+public:
+    MenuItemButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, MenuItem *menuItem, bool selected = false)
+        : MenuButton(height, width, yPosition, xPosition, menuItem->name, popUpHandler, selected), menuItem(menuItem)
+    {
+    }
+
+    void pressed() override;
+};
+
 class AButton : public MenuButton
 {
 public:

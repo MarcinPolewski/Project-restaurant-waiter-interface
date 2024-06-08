@@ -17,12 +17,12 @@ protected:
 public:
     PopUpHandler *popUpHandler;
     TopBarButton(std::string name, PopUpHandler *popUpHandler); // string not passed by reference due to nature of it's use
-    // : name(name), popUpHandler(popUpHandler)
-    // {
-    // }
+
     virtual std::string toString() { return name; }
     virtual bool pressed() = 0;
-    virtual void update() = 0;
+    virtual void update()
+    {
+    }
     virtual ~TopBarButton() = default;
 };
 
@@ -33,8 +33,8 @@ class ChangeWaiterTopBarButton : public TopBarButton
 public:
     ChangeWaiterTopBarButton(PopUpHandler *popUpHandler, Restaurant *restaurant);
 
-    bool pressed();
-    void update();
+    bool pressed() override;
+    void update() override;
 };
 
 class RemoteOrderTopBarButton : public TopBarButton
@@ -44,8 +44,8 @@ class RemoteOrderTopBarButton : public TopBarButton
 public:
     RemoteOrderTopBarButton(PopUpHandler *popUpHandler, Restaurant *restaurant);
 
-    bool pressed();
-    void update();
+    bool pressed() override;
+    void update() override;
 };
 
 class LocalOrderTopBarButton : public TopBarButton
@@ -55,8 +55,17 @@ class LocalOrderTopBarButton : public TopBarButton
 public:
     LocalOrderTopBarButton(PopUpHandler *popUpHandler, Restaurant *restaurant);
 
-    bool pressed();
-    void update();
+    bool pressed() override;
+    void update() override;
+};
+
+class MenuTopBarButton : public TopBarButton
+{
+
+public:
+    MenuTopBarButton(PopUpHandler *popUpHandler);
+
+    bool pressed() override;
 };
 
 class CloseOrderTopBarButton : public TopBarButton
@@ -67,7 +76,6 @@ public:
     CloseOrderTopBarButton(PopUpHandler *popUpHandler, Restaurant *restaurant);
 
     bool pressed();
-    void update();
 };
 
 class TopBar : public TerminalUIObject

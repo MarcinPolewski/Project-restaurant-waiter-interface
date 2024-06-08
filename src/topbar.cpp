@@ -52,6 +52,16 @@ void LocalOrderTopBarButton::update()
     name = "Local Orders (" + std::to_string(restaurant->localOrdersCount()) + ")";
 }
 
+MenuTopBarButton::MenuTopBarButton(PopUpHandler *popUpHandler)
+    : TopBarButton(std::string("Menu"), popUpHandler)
+{
+}
+bool MenuTopBarButton::pressed()
+{
+    popUpHandler->newMenuPopUpMenu();
+    return true;
+}
+
 CloseOrderTopBarButton::CloseOrderTopBarButton(PopUpHandler *popUpHandler, Restaurant *restaurant)
     : TopBarButton(std::string("Close Restaurant"), popUpHandler),
       restaurant(restaurant) {}
@@ -65,18 +75,13 @@ bool CloseOrderTopBarButton::pressed()
         popUpHandler->newErrorPrompt(std::string("Cannot close restaurant, orders are still in progress."));
     return true;
 }
-
-void CloseOrderTopBarButton::update()
-{
-    // do nothin
-}
-
 TopBar::TopBar(int height, int width, int positionY, int positionX, PopUpHandler *popUpHandler, Restaurant *restaurant)
     : TerminalUIObject(height, width, positionY, positionX), popUpHandler(popUpHandler), restaurant(restaurant)
 {
     buttons.push_back(std::make_unique<ChangeWaiterTopBarButton>(popUpHandler, restaurant));
     buttons.push_back(std::make_unique<RemoteOrderTopBarButton>(popUpHandler, restaurant));
     buttons.push_back(std::make_unique<LocalOrderTopBarButton>(popUpHandler, restaurant));
+    buttons.push_back(std::make_unique<MenuTopBarButton>(popUpHandler));
     buttons.push_back(std::make_unique<CloseOrderTopBarButton>(popUpHandler, restaurant));
 
     draw();

@@ -37,6 +37,7 @@ public:
     //  void newRemoteOrderPopUpMenu(RemoteOrder *order);
     void newTableNoOrderPopUpMenu(Table *table);
 
+    void newMenuPopUpMenu();
     void newChangeWaiterPopUpMenu();
     void newLocalOrdersPopUpMenu();
     void newRemoteOrdersPopUpMenu();

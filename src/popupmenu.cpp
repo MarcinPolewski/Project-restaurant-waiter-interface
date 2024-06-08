@@ -58,8 +58,30 @@ LocalOrderPopUpMenu::LocalOrderPopUpMenu(WINDOW *background, PopUpHandler *popUp
     auto_initialize();
 }
 
-ErrorPrompt::ErrorPrompt(WINDOW *background, PopUpHandler *popUpHandler, std::string message, int height, int width)
-    : PopUpMenu(background, popUpHandler, height, width)
+MenuPopUpMenu::MenuPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Menu const &menu, int height, int width)
+    : PopUpMenu(background, popUpHandler, height, width), menu(menu)
+{
+
+    // add menu buttons
+
+    int buttonWidth = width - 2 * BUTTON_SIDE_OFFSET;
+
+    int buttonX = startX() + BUTTON_SIDE_OFFSET;
+    int buttonY = getbegy(window) + BUTTON_TOP_OFFSET;
+
+    scrollStartY = buttonY;
+    for (auto it = menu.mibegin(); it != menu.miend(); ++it)
+    {
+        scrollableButtons.push_back(std::make_unique<MenuItemButton>(BUTTON_HEIGHT, buttonWidth, buttonY, buttonX, popUpHandler, *it));
+        buttonY += BUTTON_HEIGHT;
+    }
+
+    buttonY = endY() - BUTTON_HEIGHT - 1;
+    staticButtons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, buttonWidth, buttonY, buttonX, popUpHandler, true));
+    auto_initialize();
+}
+
+ErrorPrompt::ErrorPrompt(WINDOW *background, PopUpHandler *popUpHandler, std::string message, int height, int width) : PopUpMenu(background, popUpHandler, height, width)
 {
 
     // mvwprintw(window, buttonY, buttonX, message.c_str());

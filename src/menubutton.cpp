@@ -16,6 +16,10 @@ void NewLocalOrderButton::pressed()
     //   kwestia tego ze referencja na table przestaje być aktualna??
 }
 
+void MenuItemButton::pressed()
+{
+}
+
 void ChangeWaiterButton::pressed()
 {
     restaurant->changeCurrentWaiter(waiter);
