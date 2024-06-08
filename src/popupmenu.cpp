@@ -145,8 +145,8 @@ void AddItemToOrderPopUpMenu::drawInformation()
     mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, "Use arrow keys to navigate the menu.");
     mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, "Press enter to select desired menu item to add");
     mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, DEFAULT_WIDTH_DEVIDER);
-    yCoordinate = (NUMBER_OF_SCROLL_BUTTONS_MENU * BUTTON_HEIGHT) + DEFAULT_SCROLL_SECTION_START_Y;
-    mvwprintw(window, yCoordinate, BUTTON_SIDE_OFFSET, DEFAULT_WIDTH_DEVIDER);
+    // yCoordinate = (NUMBER_OF_SCROLL_BUTTONS_MENU * BUTTON_HEIGHT) + DEFAULT_SCROLL_SECTION_START_Y;
+    // mvwprintw(window, yCoordinate, BUTTON_SIDE_OFFSET, DEFAULT_WIDTH_DEVIDER);
 }
 
 ErrorPrompt::ErrorPrompt(WINDOW *background, PopUpHandler *popUpHandler, std::string message)
