@@ -905,6 +905,20 @@ TEST(RestaurantTest, iteration_over_Waiters_typical)
     ASSERT_EQ(++waiter_it != restaurant.wtend(), false);
 }
 
+TEST(RestaurantTest, iteration_over_Tables_typical)
+{
+    Restaurant restaurant;
+
+    auto table_it = restaurant.tbbegin();
+    ASSERT_EQ((*table_it).position.x, 1);
+    ASSERT_EQ((*table_it).position.y, 1);
+    ASSERT_EQ((*table_it).position.level, 0);
+    ASSERT_EQ((*table_it).seats, 4);
+    ASSERT_EQ((*++table_it).position.y, 5);
+    ASSERT_EQ((*++table_it).position.y, 1);
+    ASSERT_EQ((*++table_it).position.y, 5);
+    ASSERT_EQ(++table_it != restaurant.tbend(), false);
+}
 
 TEST(RestaurantTest, newLocalOrder_typical)
 {

@@ -14,24 +14,25 @@ class Restaurant
     Menu menu;
 
     std::vector<std::unique_ptr<Waiter>> waiters;
-
-    const std::vector<Table> tables;
-
+    std::vector<std::unique_ptr<Table>> tables;
     std::vector<std::unique_ptr<Order>> orders;
 
 public:
     Restaurant();
     void closeRestaurant();
 
-    RemoteOrder& newRemoteOrder(Waiter& waiter, Remote& remote);
-    LocalOrder& newLocalOrder(Waiter& waiter,Table& table);
+    const Menu &getMenu() const;
 
     typedef filtered_unique_iterator<Waiter> WTiterator;
     WTiterator wtbegin();
     WTiterator wtend();
 
-    std::vector<Table> const &getTables() const;
-    Menu const &getMenu() const;
+    typedef filtered_unique_iterator<Table> TBiterator;
+    TBiterator tbbegin();
+    TBiterator tbend();
+
+    RemoteOrder& newRemoteOrder(Waiter& waiter, Remote& remote);
+    LocalOrder& newLocalOrder(Waiter& waiter,Table& table);
 
     class LOiterator : public filtered_unique_iterator<Order>
     {
