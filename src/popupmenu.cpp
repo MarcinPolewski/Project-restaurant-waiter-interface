@@ -9,15 +9,15 @@ ChangeWaiterPopUpMenu::ChangeWaiterPopUpMenu(WINDOW *background, PopUpHandler *p
     int buttonY = getbegy(window) + BUTTON_TOP_OFFSET;
 
     std::vector<Waiter> &waiters = restaurant->getWaiters();
+
+    scrollStartY = buttonY + 2;
     for (auto &it : waiters)
     {
-        staticButtons.push_back(std::make_unique<ChangeWaiterButton>(BUTTON_HEIGHT, width - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler, restaurant, &it));
+        scrollableButtons.push_back(std::make_unique<ChangeWaiterButton>(BUTTON_HEIGHT, width - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler, restaurant, &it));
         buttonY += BUTTON_HEIGHT;
     }
 
-    staticButtons[0]->activate();
-    staticButtons[0]->draw();
-
+    buttonY = endY() - BUTTON_HEIGHT;
     staticButtons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, width - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler));
     auto_initialize();
 }
@@ -26,6 +26,7 @@ void ChangeWaiterPopUpMenu::drawInformation()
 {
     mvwprintw(window, 1, 1, "Select current waiter using arrows");
     mvwprintw(window, 2, 1, "and select with enter key");
+    mvwprintw(window, 3, 1, "--------------------");
 }
 
 LocalOrderPopUpMenu::LocalOrderPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Restaurant *rest, Order *order, int height, int width)
@@ -36,7 +37,7 @@ LocalOrderPopUpMenu::LocalOrderPopUpMenu(WINDOW *background, PopUpHandler *popUp
     int buttonY = getbegy(window) + 20;
 
     unsigned int cnt = 0;
-    for (auto it = order->begin(); cnt != NUMBER_OF_BUTTONS_IN_SCROLL && it != order->end(); ++it, ++cnt)
+    for (auto it = order->begin(); cnt != numberOfScrollButtonsOnScreen && it != order->end(); ++it, ++cnt)
     {
         staticButtons.push_back(std::make_unique<OrderItemButton>(BUTTON_HEIGHT, width - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler, &(*it)));
         buttonY += BUTTON_HEIGHT;
@@ -60,7 +61,7 @@ void LocalOrderPopUpMenu::drawInformation()
 }
 
 MenuPopUpMenu::MenuPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Menu const &menu, int height, int width)
-    : PopUpMenu(background, popUpHandler, height, width), menu(menu)
+    : PopUpMenu(background, popUpHandler, height, width, 10), menu(menu)
 {
 
     // add menu buttons

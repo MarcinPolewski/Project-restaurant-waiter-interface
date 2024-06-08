@@ -26,6 +26,7 @@ protected:
     std::vector<std::unique_ptr<MenuButton>>::iterator selectedButton;
 
     PopUpHandler *popUpHandler;
+    const unsigned int numberOfScrollButtonsOnScreen;
 
     void auto_initialize()
     {
@@ -47,17 +48,18 @@ protected:
 public:
     // CONSTRUCTOR MUST INITIALIZED ITERATORS !!!!!
 
-    PopUpMenu(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler)
-        : TerminalUIObject(height, width, yPosition, xPosition), popUpHandler(popUpHandler)
+    PopUpMenu(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, unsigned int numberOfScrollButtons = NUMBER_OF_BUTTONS_IN_SCROLL)
+        : TerminalUIObject(height, width, yPosition, xPosition), popUpHandler(popUpHandler), numberOfScrollButtonsOnScreen(numberOfScrollButtons)
     {
     }
 
     // this constructor turned out ugly, because it's the only way to call another constructor
-    PopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, int height = 40, int width = 60)
+    PopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, int height = 40, int width = 60, unsigned int numberOfScrollButtons = NUMBER_OF_BUTTONS_IN_SCROLL)
         : PopUpMenu(height, width,
                     getbegy(background) + ((getmaxy(background) - height) / 2),
                     getbegx(background) + ((getmaxx(background) - width) / 2),
-                    popUpHandler)
+                    popUpHandler,
+                    numberOfScrollButtons)
     {
     }
 
@@ -74,7 +76,7 @@ public:
     {
         int buttonY = scrollStartY;
         int cnt = 0;
-        for (auto it = firstDisplayedScrollButton; cnt != NUMBER_OF_BUTTONS_IN_SCROLL && it != scrollableButtons.end(); ++cnt, ++it)
+        for (auto it = firstDisplayedScrollButton; cnt != numberOfScrollButtonsOnScreen && it != scrollableButtons.end(); ++cnt, ++it)
         {
             (*it)->setNewY(buttonY); // reposition buttons
             (*it)->draw();           // draw button
@@ -94,9 +96,11 @@ public:
 
     void moveUp()
     {
+
         (*selectedButton)->deactivate();
         if (selectedButton != scrollableButtons.begin())
         {
+
             if (selectedButton != staticButtons.begin())
             {
                 if (selectedButton == firstDisplayedScrollButton)
@@ -104,7 +108,6 @@ public:
                     --firstDisplayedScrollButton;
                 }
                 --selectedButton;
-                // reposition buttons in scroll view if neccessary
             }
             else // selectedButton == staticButtons.begin()
             {
@@ -115,16 +118,19 @@ public:
                 else
                 {
                     selectedButton = scrollableButtons.end() - 1;
-                    firstDisplayedScrollButton = selectedButton - (NUMBER_OF_BUTTONS_IN_SCROLL - 1);
+                    int firstDisplayedOffset = std::min((size_t)numberOfScrollButtonsOnScreen, scrollableButtons.size()) - 1;
+                    firstDisplayedScrollButton = selectedButton - firstDisplayedOffset;
                 }
             }
         }
         else // selectedButton == scrollableButtons.begin() -> cursor is in scroll
         {
+
             if (staticButtons.empty())
             {
                 selectedButton = scrollableButtons.end() - 1;
-                firstDisplayedScrollButton = selectedButton - (NUMBER_OF_BUTTONS_IN_SCROLL - 1);
+                int firstDisplayedOffset = std::min((size_t)numberOfScrollButtonsOnScreen, scrollableButtons.size()) - 1;
+                firstDisplayedScrollButton = selectedButton - firstDisplayedOffset;
             }
             else
             {
@@ -141,7 +147,7 @@ public:
         {
             if (selectedButton != staticButtons.end() - 1)
             {
-                if (selectedButton == firstDisplayedScrollButton + (NUMBER_OF_BUTTONS_IN_SCROLL - 1))
+                if (selectedButton == firstDisplayedScrollButton + (numberOfScrollButtonsOnScreen - 1))
                     ++firstDisplayedScrollButton;
                 ++selectedButton;
             }
@@ -203,7 +209,7 @@ class ChangeWaiterPopUpMenu : public PopUpMenu // used to select new waiter
     Restaurant *restaurant;
 
 public:
-    ChangeWaiterPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Restaurant *rest, int height = 40, int width = 60);
+    ChangeWaiterPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Restaurant *rest, int height = 30, int width = 60);
     void drawInformation() override;
 };
 
