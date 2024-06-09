@@ -1173,6 +1173,22 @@ TEST(RestaurantTest, newLocalOrder_typical)
     EXPECT_THROW(tbl1.getOrder(), std::runtime_error);
 }
 
+TEST(RestaurantTest, newLocalOrder_in_waiter_iteration)
+{
+    Restaurant restaurant;
+    Table& tbl1 = *restaurant.tbbegin();
+    Table& tbl2 = *++restaurant.tbbegin();
+    Waiter& wt = *(restaurant.wtbegin());
+
+    restaurant.newLocalOrder(wt, tbl1);
+    restaurant.newLocalOrder(wt, tbl2);
+
+    auto it = wt.lobegin();
+    ASSERT_EQ((*it).table.position.y, 1);
+    ASSERT_EQ((*++it).table.position.y, 5);
+    ASSERT_EQ(++it != wt.loend(), false);
+}
+
 TEST(RestaurantTest, newLocalOrder_waiter_outside_restaurant)
 {
     Restaurant restaurant;

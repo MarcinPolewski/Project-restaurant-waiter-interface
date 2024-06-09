@@ -8,7 +8,7 @@ class filtered_iterator
 {
 protected:
     typedef std::vector<T*>::iterator iter;
-    typedef std::function<bool(T*)> predicate;
+    typedef std::function<bool(const T*)> predicate;
 
     iter current_it;
     iter end_it;

@@ -19,7 +19,7 @@ Waiter::LOiterator Waiter::lobegin()
 
 Waiter::LOiterator Waiter::loend()
 {
-    return LOiterator(orders.begin(), orders.end(), nullptr);
+    return LOiterator(orders.end(), orders.end(), nullptr);
 }
 
 Waiter::LOiterator Waiter::lobegin_inprogress()
@@ -48,7 +48,7 @@ Waiter::RTiterator Waiter::rtbegin()
 
 Waiter::RTiterator Waiter::rtend()
 {
-    return RTiterator(orders.begin(), orders.end(), nullptr);
+    return RTiterator(orders.end(), orders.end(), nullptr);
 }
 
 Waiter::RTiterator Waiter::rtbegin_inprogress()
