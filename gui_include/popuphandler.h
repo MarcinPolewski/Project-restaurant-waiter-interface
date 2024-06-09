@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <stack>
 #include <algorithm>
-
+#include <memory>
 // #include "restaurant.h"
 class UIRestaurant;
 class PopUpMenu;
