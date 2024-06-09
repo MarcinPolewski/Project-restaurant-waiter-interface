@@ -181,7 +181,7 @@ public:
         (*selectedButton)->activate();
     }
 
-    void buttonPressed()
+    virtual void buttonPressed()
     {
         (*selectedButton)->pressed();
     }
@@ -234,6 +234,7 @@ public:
     LocalOrderPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Restaurant *rest, Order *order);
     void drawInformation() override;
     void update() override;
+    void buttonPressed() override;
 };
 
 class LocalOrdersPopUpMenu : public PopUpMenu // presents all local order
@@ -269,5 +270,14 @@ class MenuItemView : public PopUpMenu
 
 public:
     MenuItemView(WINDOW *background, PopUpHandler *popUpHandler, MenuItem const &menuItem);
+    void drawInformation() override;
+};
+
+class OrderItemView : public PopUpMenu
+{
+    OrderItem *orderItem;
+
+public:
+    OrderItemView(WINDOW *background, PopUpHandler *popUpHandler, OrderItem *orderItem);
     void drawInformation() override;
 };

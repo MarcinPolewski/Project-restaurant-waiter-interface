@@ -26,6 +26,12 @@ void PopUpHandler::newMenuItemView(MenuItem const &menuItem)
     windowStack.top()->draw();
 }
 
+void PopUpHandler::newOrderItemView(OrderItem *orderItem)
+{
+    windowStack.push(std::make_unique<OrderItemView>(backgroundWindow, this, orderItem));
+    windowStack.top()->draw();
+}
+
 void PopUpHandler::newTableNoOrderPopUpMenu(Table *table)
 {
     windowStack.push(std::make_unique<NoOrderAssignedToTablePopUpMenu>(backgroundWindow, this, restaurant, table));

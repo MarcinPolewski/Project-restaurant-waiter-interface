@@ -69,6 +69,8 @@ void LocalOrderPopUpMenu::drawInformation()
     mvwprintw(window, yCoordinate, BUTTON_SIDE_OFFSET, DEFAULT_WIDTH_DEVIDER);
 }
 
+int i = 10;
+
 void LocalOrderPopUpMenu::update()
 {
     // // add new buttons
@@ -76,7 +78,6 @@ void LocalOrderPopUpMenu::update()
     // // use auto_initialize()
 
     scrollableButtons.clear();
-    (*selectedButton)->deactivate();
     int buttonWidth = DEFAULT_WIDTH - 2 * BUTTON_SIDE_OFFSET;
 
     int buttonX = startX() + BUTTON_SIDE_OFFSET;
@@ -87,6 +88,12 @@ void LocalOrderPopUpMenu::update()
         scrollableButtons.push_back(std::make_unique<OrderItemButton>(BUTTON_HEIGHT, DEFAULT_WIDTH - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler, &(*it)));
     }
     auto_initialize();
+}
+
+void LocalOrderPopUpMenu::buttonPressed()
+{
+    (*selectedButton)->deactivate();
+    (*selectedButton)->pressed();
 }
 
 MenuPopUpMenu::MenuPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Menu const &menu)
@@ -257,4 +264,24 @@ void MenuItemView::drawInformation()
         description = description.substr(maxTextWidth);
     }
     mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, description.c_str());
+}
+
+OrderItemView::OrderItemView(WINDOW *background, PopUpHandler *popUpHandler, OrderItem *orderItem)
+    : PopUpMenu(background, popUpHandler, ORDER_ITEM_POP_UP_MENU_HEIGHT, ORDER_ITEM_POP_UP_MENU_WIDTH), orderItem(orderItem)
+{
+    int buttonX = startX() + BUTTON_SIDE_OFFSET;
+    int buttonY = getbegy(window) + BUTTON_TOP_OFFSET;
+    int buttonWidth = ORDER_ITEM_POP_UP_MENU_WIDTH - (2 * BUTTON_SIDE_OFFSET);
+
+    // TODO add order buttons here
+    buttonY = endY() - BUTTON_HEIGHT;
+    staticButtons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, buttonWidth, buttonY, buttonX, popUpHandler));
+    buttonY -= BUTTON_HEIGHT;
+    staticButtons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, buttonWidth, buttonY, buttonX, popUpHandler));
+
+    auto_initialize();
+}
+
+void OrderItemView::drawInformation()
+{
 }

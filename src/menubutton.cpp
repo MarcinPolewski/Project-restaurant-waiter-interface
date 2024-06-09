@@ -43,4 +43,5 @@ void ChangeWaiterButton::pressed()
 
 void OrderItemButton::pressed()
 {
+    popUpHandler->newOrderItemView(orderItem);
 }
