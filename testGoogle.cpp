@@ -1409,7 +1409,7 @@ TEST(RestaurantTest, iteration_over_LocalOrders_inprogress_typical)
     ASSERT_EQ(++loit != restaurant.loend(), false);
 }
 
-TEST(RestaurantTest, iteration_over_RemoteOrders)
+TEST(RestaurantTest, iteration_over_RemoteOrders_typical)
 {
     Restaurant restaurant;
 
@@ -1430,6 +1430,29 @@ TEST(RestaurantTest, iteration_over_RemoteOrders)
     ASSERT_EQ((*rtit).getDestination().name, "Elzbieta Kopyto");
     ASSERT_EQ((*++rtit).getDestination().name, "Barbara Nara");
     ASSERT_EQ(++rtit != restaurant.rtend(), false);
+}
+
+TEST(RestaurantTest, const_iteration_over_RemoteOrders_typical)
+{
+    Restaurant restaurant;
+
+    Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
+    Remote rmt1("Elzbieta Kopyto", "123456789", adr);
+    Remote rmt2("Barbara Nara", "987654321", adr);
+    Table& tbl1 = *restaurant.tbbegin();
+    Table& tbl2 = *++restaurant.tbbegin();
+    Waiter& wt1 = *restaurant.wtbegin();
+
+    restaurant.newLocalOrder(wt1, tbl1);
+    restaurant.newRemoteOrder(wt1, rmt1);
+    restaurant.newLocalOrder(wt1, tbl2);
+    restaurant.newRemoteOrder(wt1, rmt2);
+
+    auto rtit = restaurant.rtcbegin();
+
+    ASSERT_EQ((*rtit).getDestination().name, "Elzbieta Kopyto");
+    ASSERT_EQ((*++rtit).getDestination().name, "Barbara Nara");
+    ASSERT_EQ(++rtit != restaurant.rtcend(), false);
 }
 
 TEST(RestaurantTest, iteration_over_RemoteOrders_inprogress_and_count)
@@ -1461,6 +1484,35 @@ TEST(RestaurantTest, iteration_over_RemoteOrders_inprogress_and_count)
     ASSERT_EQ(++rtit != restaurant.rtend(), false);
 }
 
+TEST(RestaurantTest, const_iteration_over_RemoteOrders_inprogress_and_count)
+{
+    Restaurant restaurant;
+
+    Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
+    Remote rmt1("Elzbieta Kopyto", "123456789", adr);
+    Remote rmt2("Barbara Nara", "987654321", adr);
+    Remote rmt3("Anna Nara", "987654321", adr);
+    Table& tbl1 = *restaurant.tbbegin();
+    Table& tbl2 = *++restaurant.tbbegin();
+    Waiter& wt1 = *restaurant.wtbegin();
+
+    restaurant.newRemoteOrder(wt1, rmt1);
+    restaurant.newLocalOrder(wt1, tbl1);
+    restaurant.newLocalOrder(wt1, tbl2);
+    auto& ro = restaurant.newRemoteOrder(wt1, rmt2);
+    restaurant.newRemoteOrder(wt1, rmt3);
+
+    ro.setClosed();
+
+    ASSERT_EQ(restaurant.openLocalOrdersCount(), 2);
+
+    auto rtit = restaurant.rtcbegin_inprogress();
+
+    ASSERT_EQ((*rtit).getDestination().name, "Elzbieta Kopyto");
+    ASSERT_EQ((*++rtit).getDestination().name, "Anna Nara");
+    ASSERT_EQ(++rtit != restaurant.rtcend(), false);
+}
+
 TEST(RestaurantTest, iteration_over_RemoteOrders_first_remote)
 {
     Restaurant restaurant;
@@ -1484,6 +1536,29 @@ TEST(RestaurantTest, iteration_over_RemoteOrders_first_remote)
     ASSERT_EQ(++rtit != restaurant.rtend(), false);
 }
 
+TEST(RestaurantTest, const_iteration_over_RemoteOrders_first_remote)
+{
+    Restaurant restaurant;
+
+    Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
+    Remote rmt1("Elzbieta Kopyto", "123456789", adr);
+    Remote rmt2("Barbara Nara", "987654321", adr);
+    Table& tbl1 = *restaurant.tbbegin();
+    Table& tbl2 = *++restaurant.tbbegin();
+    Waiter& wt1 = *restaurant.wtbegin();
+
+    restaurant.newLocalOrder(wt1, tbl1);
+    restaurant.newRemoteOrder(wt1, rmt1);
+    restaurant.newLocalOrder(wt1, tbl2);
+    restaurant.newRemoteOrder(wt1, rmt2);
+
+    auto rtit = restaurant.rtcbegin();
+
+    ASSERT_EQ((*rtit).getDestination().name, "Elzbieta Kopyto");
+    ASSERT_EQ((*++rtit).getDestination().name, "Barbara Nara");
+    ASSERT_EQ(++rtit != restaurant.rtcend(), false);
+}
+
 TEST(RestaurantTest, iteration_over_RemoteOrders_empty)
 {
     Restaurant restaurant;
@@ -1501,6 +1576,25 @@ TEST(RestaurantTest, iteration_over_RemoteOrders_empty)
     auto rtit = restaurant.rtbegin();
 
     ASSERT_EQ(rtit != restaurant.rtend(), false);
+}
+
+TEST(RestaurantTest, const_iteration_over_RemoteOrders_empty)
+{
+    Restaurant restaurant;
+
+    Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
+    Remote rmt1("Elzbieta Kopyto", "123456789", adr);
+    Remote rmt2("Barbara Nara", "987654321", adr);
+    Table& tbl1 = *restaurant.tbbegin();
+    Table& tbl2 = *++restaurant.tbbegin();
+    Waiter& wt1 = *restaurant.wtbegin();
+
+    restaurant.newLocalOrder(wt1, tbl1);
+    restaurant.newLocalOrder(wt1, tbl2);
+
+    auto rtit = restaurant.rtcbegin();
+
+    ASSERT_EQ(rtit != restaurant.rtcend(), false);
 }
 
 TEST(RestaurantTest, close_typical)

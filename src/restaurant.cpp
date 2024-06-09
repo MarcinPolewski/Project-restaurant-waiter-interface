@@ -188,6 +188,36 @@ Restaurant::RTiterator Restaurant::rtbegin_inprogress()
             && ord.get()->getStatus() == OrderStatus::inProgress;});
 }
 
+// new
+Restaurant::const_RTiterator& Restaurant::const_RTiterator::operator++()
+{
+    const_filtered_unique_iterator::operator++();
+    return *this;
+}
+
+const RemoteOrder& Restaurant::const_RTiterator::operator*()
+{
+    return dynamic_cast<const RemoteOrder&>(*(*this->current_it).get());
+}
+
+Restaurant::const_RTiterator Restaurant::rtcbegin() const
+{
+    return const_RTiterator(this->orders.cbegin(), this->orders.cend(),
+        [](const std::unique_ptr<Order>& ord){return dynamic_cast<const RemoteOrder*>(ord.get());});
+}
+
+Restaurant::const_RTiterator Restaurant::rtcend() const
+{
+    return const_RTiterator(this->orders.cend(), this->orders.cend(), nullptr);
+}
+
+Restaurant::const_RTiterator Restaurant::rtcbegin_inprogress() const
+{
+    return const_RTiterator(this->orders.cbegin(), this->orders.cend(),
+        [](const std::unique_ptr<Order>& ord){return dynamic_cast<const RemoteOrder*>(ord.get())
+            && ord.get()->getStatus() == OrderStatus::inProgress;});
+}
+
 unsigned int Restaurant::openLocalOrdersCount() const
 {
     unsigned int counter = 0;
@@ -196,15 +226,15 @@ unsigned int Restaurant::openLocalOrdersCount() const
     return counter;
 }
 
-unsigned int Restaurant::openRemoteOrdersCount()
+unsigned int Restaurant::openRemoteOrdersCount() const
 {
     unsigned int counter = 0;
-    for (RTiterator it = this->rtbegin_inprogress(); it != this->loend(); ++it)
+    for (const_RTiterator it = this->rtcbegin_inprogress(); it != this->locend(); ++it)
         counter++;
     return counter;
 }
 
-bool Restaurant::canBeClosed()
+bool Restaurant::canBeClosed() const
 {
     return !(this->openLocalOrdersCount() || this->openRemoteOrdersCount());
 }
