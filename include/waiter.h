@@ -22,25 +22,49 @@ public:
     public:
         using filtered_iterator::filtered_iterator;
         LOiterator& operator++();
-        LocalOrder& operator*();
+        LocalOrder& operator*() const;
     };
     LOiterator lobegin();
     LOiterator loend();
 
     LOiterator lobegin_inprogress();
 
+    class const_LOiterator : public const_filtered_iterator<Order>
+    {
+    public:
+        using const_filtered_iterator::const_filtered_iterator;
+        const_LOiterator& operator++();
+        const LocalOrder& operator*() const;
+    };
+    const_LOiterator locbegin() const;
+    const_LOiterator locend() const;
+
+    const_LOiterator locbegin_inprogress() const;
+
     class RTiterator : public filtered_iterator<Order>
     {
     public:
         using filtered_iterator::filtered_iterator;
         RTiterator& operator++();
-        RemoteOrder& operator*();
+        RemoteOrder& operator*() const;
     };
     RTiterator rtbegin();
     RTiterator rtend();
 
     RTiterator rtbegin_inprogress();
 
-    unsigned int openLocalOrdersCount();
-    unsigned int openRemoteOrdersCount();
+    class const_RTiterator : public const_filtered_iterator<Order>
+    {
+    public:
+        using const_filtered_iterator::const_filtered_iterator;
+        const_RTiterator& operator++();
+        const RemoteOrder& operator*() const;
+    };
+    const_RTiterator rtcbegin() const;
+    const_RTiterator rtcend() const;
+
+    const_RTiterator rtcbegin_inprogress() const;
+
+    unsigned int openLocalOrdersCount() const;
+    unsigned int openRemoteOrdersCount() const;
 };

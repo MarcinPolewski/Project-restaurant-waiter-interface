@@ -107,7 +107,7 @@ Restaurant::LOiterator& Restaurant::LOiterator::operator++()
     return *this;
 }
 
-LocalOrder& Restaurant::LOiterator::operator*()
+LocalOrder& Restaurant::LOiterator::operator*() const
 {
     return dynamic_cast<LocalOrder&>(*(*current_it).get());
 }
@@ -136,7 +136,7 @@ Restaurant::const_LOiterator& Restaurant::const_LOiterator::operator++()
     return *this;
 }
 
-const LocalOrder& Restaurant::const_LOiterator::operator*()
+const LocalOrder& Restaurant::const_LOiterator::operator*() const
 {
     return dynamic_cast<const LocalOrder&>(*(*current_it).get());
 }
@@ -165,7 +165,7 @@ Restaurant::RTiterator& Restaurant::RTiterator::operator++()
     return *this;
 }
 
-RemoteOrder& Restaurant::RTiterator::operator*()
+RemoteOrder& Restaurant::RTiterator::operator*() const
 {
     return dynamic_cast<RemoteOrder&>(*(*this->current_it).get());
 }
@@ -195,7 +195,7 @@ Restaurant::const_RTiterator& Restaurant::const_RTiterator::operator++()
     return *this;
 }
 
-const RemoteOrder& Restaurant::const_RTiterator::operator*()
+const RemoteOrder& Restaurant::const_RTiterator::operator*() const
 {
     return dynamic_cast<const RemoteOrder&>(*(*this->current_it).get());
 }

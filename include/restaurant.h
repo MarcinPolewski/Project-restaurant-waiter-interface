@@ -48,7 +48,7 @@ public:
     public:
         using filtered_unique_iterator::filtered_unique_iterator;
         LOiterator& operator++();
-        LocalOrder& operator*();
+        LocalOrder& operator*() const;
     };
     LOiterator lobegin();
     LOiterator loend();
@@ -60,7 +60,7 @@ public:
     public:
         using const_filtered_unique_iterator::const_filtered_unique_iterator;
         const_LOiterator& operator++();
-        const LocalOrder& operator*();
+        const LocalOrder& operator*() const;
     };
     const_LOiterator locbegin() const;
     const_LOiterator locend() const;
@@ -72,7 +72,7 @@ public:
     public:
         using filtered_unique_iterator::filtered_unique_iterator;
         RTiterator& operator++();
-        RemoteOrder& operator*();
+        RemoteOrder& operator*() const;
     };
     RTiterator rtbegin();
     RTiterator rtend();
@@ -84,7 +84,7 @@ public:
     public:
         using const_filtered_unique_iterator::const_filtered_unique_iterator;
         const_RTiterator& operator++();
-        const RemoteOrder& operator*();
+        const RemoteOrder& operator*() const;
     };
     const_RTiterator rtcbegin() const;
     const_RTiterator rtcend() const;
