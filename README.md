@@ -5,7 +5,8 @@
 
 ## Temat projektu
 Celem projektu było stworzenie aplikacji typu POS(Point Of Sale) do obsługi zamówień przez kelnera. W tym celu stworzyliśmy bibliotekę ***restaurant***, zawierającą implementację poszczególnych klas(składowych) restauracji, wyróżnionych na diagramie UML zamieszczonym poniżej.
-%diagram UML%
+
+![diagram UML](restaurant_uml.png)
 
 ## Klasa ServerHandler
 Jest to klasa stworzona głównie w celach pokazowych, tzn. w realnym zastosowaniu miałaby ona odpowiadać za komunikację z serwerem. Dokładniej, wysyłanie zamówionych rzeczy na serwer oraz archiwizowanie zamówień. Nie rozwijaliśmy jej dalej ze względu na to, że w tym miejscu postawiliśmy granice naszego projektu.
@@ -18,5 +19,5 @@ Interfejs graficzny został wykonany w ncurses. W pliku gui.cpp przechwytywane j
 - Dobrze dobrana struktura jest kluczowa, a późniejsze nakładanie na nią interfejsu jest tylko przyjemnością.
 - Wraz z partnerem, na początku, dobrze udało nam się ustalić wspólne cele, podział pracy, komunikację między klasami (diagram UML) i wspólne wzorce projektowe (struktura nazw plików, nazwy klas pisane od dużej litery itp.), co było jedną z lepszych naszych decyzji.
 
-## Refleksje
+## Wnioski - Michał
 Największą trudnością w tym projekcie było ustanowienie jego struktury. Od samego początku zależało nam na tym, aby nasze rozwiązanie było maksymalnie modularne i umożliwiało jego dalszy rozwój bez konieczności znacznej ingerencji w szkielet całej aplikacji. Wobec tego niektóre komponenty, mogą wydawać się zaimplementowane pozornie na wyrost, jednak dzięki temu w każdym momencie można je wymienić na bardziej wyspecjalizowane, wykonujące określone zadania. Nasz diagram UML zmieniał się i ewoluował aż do samego końca pracy. Jednak z każdą zmianą coraz bardziej się do niego przekonywaliśmy, a nasze pierwotne dosyć swobodne założenia ulegały konkretyzacji w coraz większym stopniu. O ile na początku pracy, było to kolokwialnie ujmując "błądzenie po omacku" o tyle pod koniec każdy z członków zespołu podzielał tą samą wizje rozwoju.
