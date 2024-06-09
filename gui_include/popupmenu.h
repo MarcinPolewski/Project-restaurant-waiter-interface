@@ -75,7 +75,7 @@ public:
     void drawScrollabeButtons()
     {
         int buttonY = scrollStartY;
-        int cnt = 0;
+        unsigned int cnt = 0;
         for (auto it = firstDisplayedScrollButton; cnt != numberOfScrollButtonsOnScreen && it != scrollableButtons.end(); ++cnt, ++it)
         {
             (*it)->setNewY(buttonY); // reposition buttons
