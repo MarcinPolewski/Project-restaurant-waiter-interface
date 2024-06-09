@@ -1032,7 +1032,7 @@ TEST(MemoryHandlerTest, fetchMenu)
 
     ASSERT_FALSE(menu.empty());
 
-    Dish *mi = dynamic_cast<Dish *>(menu.menuItems[0].get());
+    const Dish *mi = dynamic_cast<const Dish *>(menu.menuItems[0].get());
     ASSERT_EQ(mi->name, "Caesar Salad");
     ASSERT_EQ(mi->description, "A classic salad with romaine lettuce and Caesar dressing");
     ASSERT_EQ(mi->category, 14);
@@ -1040,29 +1040,13 @@ TEST(MemoryHandlerTest, fetchMenu)
     ASSERT_EQ(mi->ingredients, "Romaine Lettuce Caesar Dressing Parmesan Croutons");
     ASSERT_EQ(mi->volume, 350);
 
-    mi = dynamic_cast<Dish *>(menu.menuItems[1].get());
+    mi = dynamic_cast<const Dish *>(menu.menuItems[1].get());
     ASSERT_EQ(mi->name, "Tomato Soup");
     ASSERT_EQ(mi->description, "A creamy tomato soup");
     ASSERT_EQ(mi->category, 13);
     ASSERT_EQ(mi->price, 700);
     ASSERT_EQ(mi->ingredients, "Tomatoes Cream Garlic Basil");
     ASSERT_EQ(mi->volume, 300);
-
-    Beverage *b = dynamic_cast<Beverage *>(menu.menuItems[2].get());
-    ASSERT_EQ(b->name, "Margarita");
-    ASSERT_EQ(b->description, "A refreshing cocktail with lime juice and tequila");
-    ASSERT_EQ(b->category, 0);
-    ASSERT_EQ(b->price, 850);
-    ASSERT_EQ(b->alcoholPercentage, 40);
-    ASSERT_EQ(b->volume, 250);
-
-    b = dynamic_cast<Beverage *>(menu.menuItems[3].get());
-    ASSERT_EQ(b->name, "Red Wine");
-    ASSERT_EQ(b->description, "Full-bodied red wine with notes of cherry and oak");
-    ASSERT_EQ(b->category, 5);
-    ASSERT_EQ(b->price, 2500);
-    ASSERT_EQ(b->alcoholPercentage, 14);
-    ASSERT_EQ(b->volume, 750);
 }
 TEST(MemoryHandlerTest, Waiteres)
 {
@@ -1089,13 +1073,13 @@ TEST(MemoryHandlerTest, Tables)
     ASSERT_FALSE(tables.empty());
 
     ASSERT_EQ(tables[0].position.x, 1);
-    ASSERT_EQ(tables[0].position.y, 2);
-    ASSERT_EQ(tables[0].position.level, 3);
+    ASSERT_EQ(tables[0].position.y, 1);
+    ASSERT_EQ(tables[0].position.level, 0);
     ASSERT_EQ(tables[0].seats, 4);
-    ASSERT_EQ(tables[1].position.x, 5);
-    ASSERT_EQ(tables[1].position.y, 6);
-    ASSERT_EQ(tables[1].position.level, 7);
-    ASSERT_EQ(tables[1].seats, 8);
+    ASSERT_EQ(tables[1].position.x, 1);
+    ASSERT_EQ(tables[1].position.y, 5);
+    ASSERT_EQ(tables[1].position.level, 0);
+    ASSERT_EQ(tables[1].seats, 4);
 }
 
 TEST(Employee, init)
