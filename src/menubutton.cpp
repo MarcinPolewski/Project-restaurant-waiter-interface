@@ -10,11 +10,8 @@ void CloseButton::pressed()
 
 void NewLocalOrderButton::pressed()
 {
-    restaurant->newLocalOrder((*(restaurant->tbbegin())));
-    // restaurant->newLocalOrder(*table);
+    restaurant->newLocalOrder(*table);
     popUpHandler->closePopUpMenu(); // gdy to zakomentowane to dziala xd
-    //    popUpHandler->newLocalOrderPopUpMenu(&(table->getOrder())); // przez te linie wywala teg fault, kwestia tego ze order nie jest przypisywany !!!! @TODO unhash
-    //   kwestia tego ze referencja na table przestaje być aktualna??
 }
 
 void MenuItemButton::pressed()
@@ -34,6 +31,16 @@ void AddOrderItemToOrderButton::pressed()
 
 void CloseOrderButton::pressed()
 {
+    try
+    {
+        order->setClosed();
+        popUpHandler->closePopUpMenu();
+    }
+    catch (const std::exception &e)
+    {
+        std::string errorMessage = e.what();
+        popUpHandler->newErrorPrompt(errorMessage);
+    }
 }
 
 void ChangeWaiterButton::pressed()
@@ -52,6 +59,7 @@ void setDeliveredButton::pressed()
     try
     {
         orderItem->setDelivered();
+        popUpHandler->closePopUpMenu();
     }
 
     catch (const std::exception &e)
@@ -67,6 +75,7 @@ void setCanceledButton::pressed()
     try
     {
         orderItem->setCancelled();
+        popUpHandler->closePopUpMenu();
     }
 
     catch (const std::exception &e)
