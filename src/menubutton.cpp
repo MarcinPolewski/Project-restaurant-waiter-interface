@@ -95,3 +95,8 @@ void setDiscountButton::pressed()
     orderItem->setDiscount(discount);
     popUpHandler->closePopUpMenu();
 }
+
+void LocalOrderButton::pressed()
+{
+    popUpHandler->newLocalOrderPopUpMenu(order);
+}

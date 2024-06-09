@@ -194,3 +194,16 @@ public:
     }
     void pressed() override;
 };
+
+class LocalOrderButton : public MenuButton
+{
+    LocalOrder *order;
+
+public:
+    LocalOrderButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, LocalOrder *order, bool selected = false)
+        : MenuButton(height, width, yPosition, xPosition, "zamowienie", popUpHandler, selected), order(order)
+    {
+        title = order->table.toString() + " " + order->getOrderTimeStr() + " " + order->getTotalPriceStr();
+    }
+    void pressed() override;
+};

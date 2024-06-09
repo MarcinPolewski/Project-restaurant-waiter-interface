@@ -189,22 +189,24 @@ void NoOrderAssignedToTablePopUpMenu::drawInformation()
 }
 
 LocalOrdersPopUpMenu::LocalOrdersPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, UIRestaurant *restaurant)
-    : PopUpMenu(background, popUpHandler, ORDERS_POP_UP_HEIGHT, DEFAULT_WIDTH), restaurant(restaurant)
+    : PopUpMenu(background, popUpHandler, ORDERS_POP_UP_HEIGHT, DEFAULT_WIDTH, NUMBER_OF_SCROLL_BUTTONS_MENU), restaurant(restaurant)
 {
 
     int buttonX = startX() + BUTTON_SIDE_OFFSET;
     int buttonY = getbegy(window) + BUTTON_TOP_OFFSET;
+    int buttonWidth = DEFAULT_WIDTH - 2 * BUTTON_SIDE_OFFSET;
 
-    // TODO add order buttons here
+    Waiter::LOiterator it = restaurant->getCurrentWaiter()->lobegin();
+    Waiter::LOiterator ed = restaurant->getCurrentWaiter()->loend();
+
     scrollStartY = buttonY;
-    for (int i = 0; i < 10; ++i)
+    for (; it != ed; ++it)
     {
-        // scrollableButtons.push_back(std::make_unique<AButton>(BUTTON_HEIGHT, DEFAULT_WIDTH - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler));
-        // scrollableButtons.push_back(std::make_unique<BButton>(BUTTON_HEIGHT, DEFAULT_WIDTH - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler));
+        scrollableButtons.push_back(std::make_unique<LocalOrderButton>(BUTTON_HEIGHT, buttonWidth, buttonY, buttonX, popUpHandler, &(*it)));
     }
 
     buttonY = endY() - BUTTON_HEIGHT;
-    staticButtons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, DEFAULT_WIDTH - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler));
+    staticButtons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, buttonWidth, buttonY, buttonX, popUpHandler));
 
     auto_initialize();
 }
