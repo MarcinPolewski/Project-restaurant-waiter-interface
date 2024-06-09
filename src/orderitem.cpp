@@ -141,6 +141,7 @@ std::string OrderItem::getStatusStr() const
         case ItemStatus::canceled:
             return "canceled";
     }
+    return "none";
 }
 
 std::string OrderItem::getDiscountStr() const
