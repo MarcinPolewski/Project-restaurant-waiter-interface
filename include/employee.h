@@ -9,7 +9,7 @@ public:
     const std::string name;
     const std::string surname;
 
-    Employee(unsigned int id, std::string &name, std::string &surname)
+    Employee(unsigned int id, const std::string &name, const std::string &surname)
         : id(id), name(name), surname(surname)
     {
     }

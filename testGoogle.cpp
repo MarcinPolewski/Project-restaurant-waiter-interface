@@ -1167,6 +1167,15 @@ TEST(RestaurantTest, newLocalOrder_typical)
     EXPECT_THROW(tbl1.getOrder(), std::runtime_error);
 }
 
+TEST(RestaurantTest, newLocalOrder_waiter_outside_restaurant)
+{
+    Restaurant restaurant;
+    Table tbl1(Table::Position(0, 0, 0), 4);
+    Waiter wt(1, "Andrzej", "Wolny");
+
+    EXPECT_THROW(restaurant.newLocalOrder(wt, tbl1), std::runtime_error);
+}
+
 TEST(RestaurantTest, newRemoteOrder_typical)
 {
     Restaurant restaurant;
@@ -1181,6 +1190,16 @@ TEST(RestaurantTest, newRemoteOrder_typical)
     ASSERT_EQ(ro.getStatus(), OrderStatus::closed);
 
     ASSERT_EQ((*wt.rtbegin()).getStatus(), OrderStatus::closed);
+}
+
+TEST(RestaurantTest, newRemoteOrder_waiter_outside_restaurant)
+{
+    Restaurant restaurant;
+    Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
+    Remote remote("Elzbieta Kopyto", "123456789", adr);
+    Waiter wt(1, "Andrzej", "Wolny");
+
+    EXPECT_THROW(restaurant.newRemoteOrder(wt, remote), std::runtime_error);
 }
 
 TEST(RestaurantTest, iteration_over_LocalOrders)
