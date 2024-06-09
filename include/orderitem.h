@@ -3,6 +3,7 @@
 #include "menuitem.h"
 
 #include <time.h>
+#include <iostream>
 
 enum class ItemStatus
 {
@@ -37,6 +38,8 @@ public:
 
     void changeStatus(ItemStatus new_status);
     void setOrdered();
+    void setInPreparation();
+    void setReadyToDeliver();
     void setDelivered();
     void setCancelled();
     ItemStatus getStatus() const;
@@ -44,4 +47,9 @@ public:
     unsigned int getPrice() const;
 
     time_t getWaitingTime() const;
+
+    std::string getPriceStr() const;
+    std::string getQuantityStr() const;
+    std::string getStatusStr() const;
+    std::string getDiscountStr() const;
 };

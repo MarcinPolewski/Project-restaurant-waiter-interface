@@ -26,6 +26,9 @@ protected:
     std::vector<std::unique_ptr<Table>> tables;
     std::vector<std::unique_ptr<Order>> orders;
 
+    bool isWaiter(Waiter &waiter);
+    bool isTable(Table &waiter);
+
 public:
     Restaurant();
 
@@ -39,8 +42,8 @@ public:
     TBiterator tbbegin();
     TBiterator tbend();
 
-    RemoteOrder &newRemoteOrder(Waiter &waiter, Remote &remote);
     LocalOrder &newLocalOrder(Waiter &waiter, Table &table);
+    RemoteOrder &newRemoteOrder(Waiter &waiter, Remote &remote);
 
     class LOiterator : public filtered_unique_iterator<Order>
     {

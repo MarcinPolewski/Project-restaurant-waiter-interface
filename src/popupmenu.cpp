@@ -291,10 +291,10 @@ void OrderItemView::drawInformation()
     int yCoordinate = DEFAULT_TEXT_SECTION_START_Y;
 
     mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, ("Name:     " + orderItem->menuItem.name).c_str());
-    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, ("Price:    " + orderItem->priceStr()).c_str());
-    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, ("Quantity: " + orderItem->quantityStr()).c_str());
-    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, ("Status:   " + orderItem->statusStr()).c_str());
-    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, ("Discount: " + orderItem->discountStr()).c_str());
+    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, ("Price:    " + orderItem->getPriceStr()).c_str());
+    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, ("Quantity: " + orderItem->getQuantityStr()).c_str());
+    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, ("Status:   " + orderItem->getStatusStr()).c_str());
+    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, ("Discount: " + orderItem->getDiscountStr()).c_str());
     // mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSEsT, ().c_str());
     // mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, ().c_str());
     mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, ORDER_ITEM_VIEW_DIVIDER);

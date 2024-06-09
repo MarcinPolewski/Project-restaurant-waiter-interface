@@ -342,17 +342,20 @@ TEST(OrderItemTest, addComment_too_long)
     EXPECT_THROW(orderit1.addComment(com), std::invalid_argument);
 }
 
-TEST(OrderItemTest, addComment_move_typical)
+TEST(OrderItemTest, addComment_delivered_canceled)
 {
     Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::Category::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+
     OrderItem orderit1(pierogi, 1);
-    orderit1.addComment(std::move("Połowa porcji"));
-    ASSERT_EQ(orderit1.getComment(), "Połowa porcji");
-    orderit1.addComment(std::move(""));
-    ASSERT_EQ(orderit1.getComment(), "");
+    orderit1.setDelivered();
+    EXPECT_THROW(orderit1.addComment("Polowa porcji"), std::runtime_error);
+
+    OrderItem orderit2(pierogi, 1);
+    orderit2.setCancelled();
+    EXPECT_THROW(orderit2.addComment("Polowa porcji"), std::runtime_error);
 }
 
-TEST(OrderItemTest, add_discount_typical)
+TEST(OrderItemTest, setDiscount_typical)
 {
     Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::Category::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
     OrderItem orderit1(pierogi, 1);
@@ -364,11 +367,24 @@ TEST(OrderItemTest, add_discount_typical)
     ASSERT_EQ(orderit1.getDiscount(), 0);
 }
 
-TEST(OrderItemTest, add_discount_too_big)
+TEST(OrderItemTest, setDiscount_too_big)
 {
     Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::Category::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
     OrderItem orderit(pierogi, 1);
     EXPECT_THROW(orderit.setDiscount(101), std::invalid_argument);
+}
+
+TEST(OrderItemTest, setDiscount_canceled_delivered)
+{
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::Category::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+
+    OrderItem orderit(pierogi, 1);
+    orderit.setCancelled();
+    EXPECT_THROW(orderit.setDiscount(10), std::runtime_error);
+
+    OrderItem orderit2(pierogi, 1);
+    orderit2.setDelivered();
+    EXPECT_THROW(orderit2.setDiscount(10), std::runtime_error);
 }
 
 TEST(OrderItemTest, changeStatus_typical)
@@ -478,16 +494,20 @@ TEST(OrderItemTest, setDelivered_typical)
     ASSERT_EQ(orderit.getStatus(), ItemStatus::delivered);
 }
 
-TEST(OrderItemTest, setDelivered_while_not_ready)
+TEST(OrderItemTest, setInPreparation_typical)
 {
     Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::Category::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
     OrderItem orderit(pierogi, 1);
-    ASSERT_EQ(orderit.getStatus(), ItemStatus::created);
-    EXPECT_THROW(orderit.setDelivered(), std::runtime_error);
-    orderit.changeStatus(ItemStatus::ordered);
-    EXPECT_THROW(orderit.setDelivered(), std::runtime_error);
-    orderit.changeStatus(ItemStatus::inPreparation);
-    EXPECT_THROW(orderit.setDelivered(), std::runtime_error);
+    orderit.setInPreparation();
+    ASSERT_EQ(orderit.getStatus(), ItemStatus::inPreparation);
+}
+
+TEST(OrderItemTest, setReadyToDeliver_typical)
+{
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::Category::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    OrderItem orderit(pierogi, 1);
+    orderit.setReadyToDeliver();
+    ASSERT_EQ(orderit.getStatus(), ItemStatus::readyToDeliver);
 }
 
 TEST(OrderItemTest, setCancelled_typical)
@@ -505,20 +525,6 @@ TEST(OrderItemTest, setCancelled_typical)
     ASSERT_EQ(orderit2.getStatus(), ItemStatus::canceled);
 }
 
-TEST(OrderItemTest, setCancelled_after_ordered)
-{
-    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::Category::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
-    OrderItem orderit(pierogi, 1);
-
-    orderit.changeStatus(ItemStatus::inPreparation);
-    EXPECT_THROW(orderit.setCancelled(), std::runtime_error);
-
-    orderit.changeStatus(ItemStatus::readyToDeliver);
-    EXPECT_THROW(orderit.setCancelled(), std::runtime_error);
-
-    orderit.changeStatus(ItemStatus::delivered);
-    EXPECT_THROW(orderit.setCancelled(), std::runtime_error);
-}
 
 TEST(OrderItemTest, getPrice_typical)
 {
@@ -588,6 +594,64 @@ TEST(OrderItemTest, getWaitingTime_typical)
     ASSERT_EQ(orderit1.getWaitingTime(), 5);
 }
 
+TEST(OrderItemTest, getPriceStr_typical)
+{
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::Category::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    OrderItem orderit(pierogi, 1);
+
+    ASSERT_EQ(orderit.getPriceStr(), "19,99");
+}
+
+TEST(OrderItemTest, getPriceStr_less_than_10_fractions)
+{
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::Category::mainCourse, 1904, "mięso, mąka, woda, cebula, przyprawy", 300);
+    OrderItem orderit(pierogi, 1);
+
+    ASSERT_EQ(orderit.getPriceStr(), "19,04");
+}
+
+TEST(OrderItemTest, getPriceStr_zero)
+{
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::Category::mainCourse, 0, "mięso, mąka, woda, cebula, przyprawy", 300);
+    OrderItem orderit(pierogi, 1);
+
+    ASSERT_EQ(orderit.getPriceStr(), "0,00");
+}
+
+TEST(OrderItemTest, getQuantityStr_typical)
+{
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::Category::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    OrderItem orderit(pierogi, 4);
+
+    ASSERT_EQ(orderit.getQuantityStr(), "4");
+}
+
+TEST(OrderItemTest, getStatusStr_typical)
+{
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::Category::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    OrderItem orderit(pierogi, 4);
+
+    ASSERT_EQ(orderit.getStatusStr(), "created");
+
+    orderit.changeStatus(ItemStatus::ordered);
+    ASSERT_EQ(orderit.getStatusStr(), "ordered");
+
+    orderit.changeStatus(ItemStatus::inPreparation);
+    ASSERT_EQ(orderit.getStatusStr(), "in preparation");
+
+    orderit.changeStatus(ItemStatus::readyToDeliver);
+    ASSERT_EQ(orderit.getStatusStr(), "ready to deliver");
+
+    orderit.changeStatus(ItemStatus::delivered);
+    ASSERT_EQ(orderit.getStatusStr(), "delivered");
+
+    OrderItem orderit2(pierogi, 2);
+    ASSERT_EQ(orderit2.getStatusStr(), "created");
+
+    orderit2.changeStatus(ItemStatus::canceled);
+    ASSERT_EQ(orderit2.getStatusStr(), "canceled");
+}
+
 TEST(OrderTest, create_LocalOrder)
 {
     Table tbl(Table::Position(3, 5, 0), 4);
@@ -617,6 +681,14 @@ TEST(OrderTest, create_LocalOrder_free_table)
     ASSERT_EQ(tbl.isOccupied(), false);
 }
 
+TEST(OrderItemTest, getDiscountStr_typical)
+{
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::Category::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    OrderItem orderit(pierogi, 4);
+
+    orderit.setDiscount(50);
+    ASSERT_EQ(orderit.getDiscountStr(), "50%");
+}
 TEST(OrderTest, create_RemoteOrder)
 {
     Remote rmt("Andrzej Kowal", "111111111", Address("Olsztyn", "00-000", "Kaliny", "5"));
@@ -1075,8 +1147,8 @@ TEST(RestaurantTest, iteration_over_Tables_typical)
 TEST(RestaurantTest, newLocalOrder_typical)
 {
     Restaurant restaurant;
-    Table tbl1(Table::Position(0, 0, 0), 4);
-    Table tbl2(Table::Position(5, 5, 0), 6);
+    Table& tbl1 = *restaurant.tbbegin();
+    Table& tbl2 = *++restaurant.tbbegin();
     Beverage woda("Woda", "Woda mineralna niegazowana", MenuItem::beverage, 299, 0, 500);
     Waiter& wt = *(restaurant.wtbegin());
 
@@ -1091,7 +1163,7 @@ TEST(RestaurantTest, newLocalOrder_typical)
     ASSERT_EQ(oi.menuItem.name, "Woda");
     ASSERT_EQ(lo.getStatus(), OrderStatus::inProgress);
     ASSERT_EQ(lo.table.seats, 4);
-    ASSERT_EQ(lo2.table.seats, 6);
+    ASSERT_EQ(lo2.table.position.y, 5);
     ASSERT_EQ(tbl1.isOccupied(), true);
     ASSERT_EQ(tbl2.isOccupied(), true);
     ASSERT_EQ(tbl1.getOrder().getStatus(), OrderStatus::inProgress);
@@ -1099,6 +1171,40 @@ TEST(RestaurantTest, newLocalOrder_typical)
     lo.setClosed();
     ASSERT_EQ(tbl1.isOccupied(), false);
     EXPECT_THROW(tbl1.getOrder(), std::runtime_error);
+}
+
+TEST(RestaurantTest, newLocalOrder_in_waiter_iteration)
+{
+    Restaurant restaurant;
+    Table& tbl1 = *restaurant.tbbegin();
+    Table& tbl2 = *++restaurant.tbbegin();
+    Waiter& wt = *(restaurant.wtbegin());
+
+    restaurant.newLocalOrder(wt, tbl1);
+    restaurant.newLocalOrder(wt, tbl2);
+
+    auto it = wt.lobegin();
+    ASSERT_EQ((*it).table.position.y, 1);
+    ASSERT_EQ((*++it).table.position.y, 5);
+    ASSERT_EQ(++it != wt.loend(), false);
+}
+
+TEST(RestaurantTest, newLocalOrder_waiter_outside_restaurant)
+{
+    Restaurant restaurant;
+    Table tbl1(Table::Position(0, 0, 0), 4);
+    Waiter wt(1, "Andrzej", "Wolny");
+
+    EXPECT_THROW(restaurant.newLocalOrder(wt, tbl1), std::runtime_error);
+}
+
+TEST(RestaurantTest, newLocalOrder_table_outside_restaurant)
+{
+    Restaurant restaurant;
+    Table tbl1(Table::Position(0, 0, 0), 4);
+    Waiter& wt = *restaurant.wtbegin();
+
+    EXPECT_THROW(restaurant.newLocalOrder(wt, tbl1), std::runtime_error);
 }
 
 TEST(RestaurantTest, newRemoteOrder_typical)
@@ -1117,6 +1223,16 @@ TEST(RestaurantTest, newRemoteOrder_typical)
     ASSERT_EQ((*wt.rtbegin()).getStatus(), OrderStatus::closed);
 }
 
+TEST(RestaurantTest, newRemoteOrder_waiter_outside_restaurant)
+{
+    Restaurant restaurant;
+    Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
+    Remote remote("Elzbieta Kopyto", "123456789", adr);
+    Waiter wt(1, "Andrzej", "Wolny");
+
+    EXPECT_THROW(restaurant.newRemoteOrder(wt, remote), std::runtime_error);
+}
+
 TEST(RestaurantTest, iteration_over_LocalOrders)
 {
     Restaurant restaurant;
@@ -1124,8 +1240,8 @@ TEST(RestaurantTest, iteration_over_LocalOrders)
     Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
     Remote rmt1("Elzbieta Kopyto", "123456789", adr);
     Remote rmt2("Barbara Nara", "987654321", adr);
-    Table tbl1(Table::Position(0, 0, 0), 4);
-    Table tbl2(Table::Position(5, 5, 0), 6);
+    Table& tbl1 = *restaurant.tbbegin();
+    Table& tbl2 = *++restaurant.tbbegin();
 
     restaurant.newLocalOrder(*(restaurant.wtbegin()), tbl1);
     restaurant.newRemoteOrder(*(restaurant.wtbegin()), rmt1);
@@ -1134,8 +1250,8 @@ TEST(RestaurantTest, iteration_over_LocalOrders)
 
     auto loit = restaurant.lobegin();
 
-    ASSERT_EQ((*loit).table.seats, 4);
-    ASSERT_EQ((*++loit).table.seats, 6);
+    ASSERT_EQ((*loit).table.position.y, 1);
+    ASSERT_EQ((*++loit).table.position.y, 5);
     ASSERT_EQ(++loit != restaurant.loend(), false);
 }
 
@@ -1146,8 +1262,8 @@ TEST(RestaurantTest, iteration_over_LocalOrders_first_remote)
     Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
     Remote rmt1("Elzbieta Kopyto", "123456789", adr);
     Remote rmt2("Barbara Nara", "987654321", adr);
-    Table tbl1(Table::Position(0, 0, 0), 4);
-    Table tbl2(Table::Position(5, 5, 0), 6);
+    Table& tbl1 = *restaurant.tbbegin();
+    Table& tbl2 = *++restaurant.tbbegin();
     Waiter& wt1 = *restaurant.wtbegin();
 
     restaurant.newRemoteOrder(wt1, rmt1);
@@ -1157,8 +1273,8 @@ TEST(RestaurantTest, iteration_over_LocalOrders_first_remote)
 
     auto loit = restaurant.lobegin();
 
-    ASSERT_EQ((*loit).table.seats, 4);
-    ASSERT_EQ((*++loit).table.seats, 6);
+    ASSERT_EQ((*loit).table.position.y, 1);
+    ASSERT_EQ((*++loit).table.position.y, 5);
     ASSERT_EQ(++loit != restaurant.loend(), false);
 }
 
@@ -1169,8 +1285,6 @@ TEST(RestaurantTest, iteration_over_LocalOrders_empty)
     Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
     Remote rmt1("Elzbieta Kopyto", "123456789", adr);
     Remote rmt2("Barbara Nara", "987654321", adr);
-    Table tbl1(Table::Position(0, 0, 0), 4);
-    Table tbl2(Table::Position(5, 5, 0), 6);
     Waiter& wt1 = *restaurant.wtbegin();
 
     restaurant.newRemoteOrder(wt1, rmt1);
@@ -1188,9 +1302,9 @@ TEST(RestaurantTest, iteration_over_LocalOrders_inprogress_typical)
     Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
     Remote rmt1("Elzbieta Kopyto", "123456789", adr);
     Remote rmt2("Barbara Nara", "987654321", adr);
-    Table tbl1(Table::Position(0, 0, 0), 4);
-    Table tbl2(Table::Position(5, 5, 0), 6);
-    Table tbl3(Table::Position(5, 10, 0), 8);
+    Table& tbl1 = *restaurant.tbbegin();
+    Table& tbl2 = *++restaurant.tbbegin();
+    Table& tbl3 = *++++restaurant.tbbegin();
     Waiter& wt1 = *restaurant.wtbegin();
 
     restaurant.newLocalOrder(wt1, tbl1);
@@ -1205,8 +1319,8 @@ TEST(RestaurantTest, iteration_over_LocalOrders_inprogress_typical)
 
     auto loit = restaurant.lobegin_inprogress();
 
-    ASSERT_EQ((*loit).table.seats, 4);
-    ASSERT_EQ((*++loit).table.seats, 8);
+    ASSERT_EQ((*loit).table.position.y, 1);
+    ASSERT_EQ((*++loit).table.position.x, 5);
     ASSERT_EQ(++loit != restaurant.loend(), false);
 }
 
@@ -1217,8 +1331,8 @@ TEST(RestaurantTest, iteration_over_RemoteOrders)
     Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
     Remote rmt1("Elzbieta Kopyto", "123456789", adr);
     Remote rmt2("Barbara Nara", "987654321", adr);
-    Table tbl1(Table::Position(0, 0, 0), 4);
-    Table tbl2(Table::Position(5, 5, 0), 6);
+    Table& tbl1 = *restaurant.tbbegin();
+    Table& tbl2 = *++restaurant.tbbegin();
     Waiter& wt1 = *restaurant.wtbegin();
 
     restaurant.newLocalOrder(wt1, tbl1);
@@ -1241,8 +1355,8 @@ TEST(RestaurantTest, iteration_over_RemoteOrders_inprogress_and_count)
     Remote rmt1("Elzbieta Kopyto", "123456789", adr);
     Remote rmt2("Barbara Nara", "987654321", adr);
     Remote rmt3("Anna Nara", "987654321", adr);
-    Table tbl1(Table::Position(0, 0, 0), 4);
-    Table tbl2(Table::Position(5, 5, 0), 6);
+    Table& tbl1 = *restaurant.tbbegin();
+    Table& tbl2 = *++restaurant.tbbegin();
     Waiter& wt1 = *restaurant.wtbegin();
 
     restaurant.newRemoteOrder(wt1, rmt1);
@@ -1269,8 +1383,8 @@ TEST(RestaurantTest, iteration_over_RemoteOrders_first_remote)
     Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
     Remote rmt1("Elzbieta Kopyto", "123456789", adr);
     Remote rmt2("Barbara Nara", "987654321", adr);
-    Table tbl1(Table::Position(0, 0, 0), 4);
-    Table tbl2(Table::Position(5, 5, 0), 6);
+    Table& tbl1 = *restaurant.tbbegin();
+    Table& tbl2 = *++restaurant.tbbegin();
     Waiter& wt1 = *restaurant.wtbegin();
 
     restaurant.newLocalOrder(wt1, tbl1);
@@ -1292,8 +1406,8 @@ TEST(RestaurantTest, iteration_over_RemoteOrders_empty)
     Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
     Remote rmt1("Elzbieta Kopyto", "123456789", adr);
     Remote rmt2("Barbara Nara", "987654321", adr);
-    Table tbl1(Table::Position(0, 0, 0), 4);
-    Table tbl2(Table::Position(5, 5, 0), 6);
+    Table& tbl1 = *restaurant.tbbegin();
+    Table& tbl2 = *++restaurant.tbbegin();
     Waiter& wt1 = *restaurant.wtbegin();
 
     restaurant.newLocalOrder(wt1, tbl1);
@@ -1310,7 +1424,7 @@ TEST(RestaurantTest, close_typical)
 
     Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
     Remote rmt1("Elzbieta Kopyto", "123456789", adr);
-    Table tbl1(Table::Position(0, 0, 0), 4);
+    Table& tbl1 = *restaurant.tbbegin();
     Waiter& wt1 = *restaurant.wtbegin();
 
     auto& ro = restaurant.newRemoteOrder(wt1, rmt1);
