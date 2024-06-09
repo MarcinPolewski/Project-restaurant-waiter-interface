@@ -1,5 +1,13 @@
 #include "restaurant.h"
 
+bool Restaurant::isWaiter(Waiter& waiter)
+{
+    for (WTiterator it = this->wtbegin(); it != this->wtend(); ++it)
+        if (&*it == &waiter)
+            return true;
+    return false;
+}
+
 Restaurant::Restaurant()
     : memoryHandler(),
       serverHandler(memoryHandler),
@@ -20,18 +28,22 @@ Restaurant::Restaurant()
         this->tables.push_back(std::make_unique<Table>(table));
 }
 
-RemoteOrder& Restaurant::newRemoteOrder(Waiter& waiter, Remote& remote)
-{
-    orders.push_back(std::make_unique<RemoteOrder>(remote));
-    waiter.orders.push_back(orders.back().get());
-    return dynamic_cast<RemoteOrder&>(*orders.back().get());
-}
-
 LocalOrder& Restaurant::newLocalOrder(Waiter& waiter, Table& table)
 {
+    if (!this->isWaiter(waiter))
+        throw (std::runtime_error("Cannot create order, waiter is not in the restaurant"));
     orders.push_back(std::make_unique<LocalOrder>(table));
     waiter.orders.push_back(orders.back().get());
     return dynamic_cast<LocalOrder&>(*orders.back().get());
+}
+
+RemoteOrder& Restaurant::newRemoteOrder(Waiter& waiter, Remote& remote)
+{
+    if (!this->isWaiter(waiter))
+        throw (std::runtime_error("Cannot create order, waiter is not in the restaurant"));
+    orders.push_back(std::make_unique<RemoteOrder>(remote));
+    waiter.orders.push_back(orders.back().get());
+    return dynamic_cast<RemoteOrder&>(*orders.back().get());
 }
 
 const Menu& Restaurant::getMenu() const
