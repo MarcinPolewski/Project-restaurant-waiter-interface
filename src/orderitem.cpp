@@ -14,6 +14,11 @@ OrderItem::OrderItem(const MenuItem& menu_item, unsigned int count,
 
 void OrderItem::addComment(const std::string& new_comment)
 {
+    if (this->getStatus() == ItemStatus::delivered)
+        throw (std::runtime_error("Cannot change status, order item has already been delivered."));
+    else if (this->getStatus() == ItemStatus::canceled)
+        throw (std::runtime_error("Cannot change status, order item was canceled."));
+
     if (new_comment.size() > 255)
         throw (std::invalid_argument("Comment cannot be longer than 255 characters."));
     this->comment = new_comment;
@@ -26,6 +31,11 @@ const std::string& OrderItem::getComment() const
 
 void OrderItem::setDiscount(unsigned int new_discount)
 {
+    if (this->getStatus() == ItemStatus::delivered)
+        throw (std::runtime_error("Cannot change status, order item has already been delivered."));
+    else if (this->getStatus() == ItemStatus::canceled)
+        throw (std::runtime_error("Cannot change status, order item was canceled."));
+
     if (new_discount > 100)
         throw (std::invalid_argument("Discount must be in range 0..100 (%)."));
     this->discount = new_discount;
@@ -53,18 +63,22 @@ void OrderItem::setOrdered()
 
 void OrderItem::setDelivered()
 {
-    if (this->itemStatus == ItemStatus::readyToDeliver)
-        this->changeStatus(ItemStatus::delivered);
-    else
-        throw (std::runtime_error("Unable to set delivered, item is not ready to be delivered yet."));
+    this->changeStatus(ItemStatus::delivered);
+}
+
+void OrderItem::setInPreparation()
+{
+    this->changeStatus(ItemStatus::inPreparation);
+}
+
+void OrderItem::setReadyToDeliver()
+{
+    this->changeStatus(ItemStatus::readyToDeliver);
 }
 
 void OrderItem::setCancelled()
 {
-    if (this->itemStatus < ItemStatus::inPreparation)
-        this->changeStatus(ItemStatus::canceled);
-    else
-        throw (std::runtime_error("Unable to cancel, item is already in preparation."));
+    this->changeStatus(ItemStatus::canceled);
 }
 
 ItemStatus OrderItem::getStatus() const
