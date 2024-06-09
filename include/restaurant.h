@@ -3,6 +3,7 @@
 #include "serverhandler.h"
 #include "memoryhandler.h"
 #include "waiter.h"
+#include "filtered_unique_iterator.h"
 
 #include "topbar.h"
 #include "mainscreen.h"
@@ -19,69 +20,54 @@ class Restaurant
     MemoryHandler memoryHandler;
     ServerHandler serverHandler;
     Menu menu;
-    std::vector<Waiter> waiters;
-    std::vector<Table> tables;
 
+    std::vector<std::unique_ptr<Waiter>> waiters;
+    std::vector<std::unique_ptr<Table>> tables;
     std::vector<std::unique_ptr<Order>> orders;
-
-    Waiter *currentWaiter;
-    bool closed = false;
-
-    typedef std::vector<std::unique_ptr<Order>>::iterator u_order_iterator;
 
 public:
     Restaurant();
-    void closeRestaurant();
 
-    void changeCurrentWaiter(Waiter *waiter);
-    Waiter *getCurrentWaiter();
+    const Menu &getMenu() const;
 
-    int remoteOrdersCount();
-    int localOrdersCount();
+    typedef filtered_unique_iterator<Waiter> WTiterator;
+    WTiterator wtbegin();
+    WTiterator wtend();
 
-    RemoteOrder &newRemoteOrder(Remote &remote);
-    LocalOrder &newLocalOrder(Table &table);
+    typedef filtered_unique_iterator<Table> TBiterator;
+    TBiterator tbbegin();
+    TBiterator tbend();
 
-    std::vector<Waiter> &getWaiters();
-    std::vector<Table> &getTables();
-    Menu const &getMenu() const;
+    RemoteOrder &newRemoteOrder(Waiter &waiter, Remote &remote);
+    LocalOrder &newLocalOrder(Waiter &waiter, Table &table);
 
-    bool canBeClosed();
-    bool isClosed();
-    void close();
-    class LOiterator
+    class LOiterator : public filtered_unique_iterator<Order>
     {
-    private:
-        u_order_iterator current_it;
-        u_order_iterator end_it;
-
-        LOiterator(u_order_iterator start_it, u_order_iterator end_it);
-
-        friend class Restaurant;
-
     public:
+        using filtered_unique_iterator::filtered_unique_iterator;
         LOiterator &operator++();
         LocalOrder &operator*();
-        bool operator!=(const LOiterator &it2) const;
     };
     LOiterator lobegin();
     LOiterator loend();
 
-    class RTiterator
+    LOiterator lobegin_inprogress();
+
+    class RTiterator : public filtered_unique_iterator<Order>
     {
-    private:
-        u_order_iterator current_it;
-        u_order_iterator end_it;
-
-        RTiterator(u_order_iterator start_it, u_order_iterator end_it);
-
-        friend class Restaurant;
-
     public:
+        using filtered_unique_iterator::filtered_unique_iterator;
         RTiterator &operator++();
         RemoteOrder &operator*();
-        bool operator!=(const RTiterator &it2) const;
     };
     RTiterator rtbegin();
     RTiterator rtend();
+
+    RTiterator rtbegin_inprogress();
+
+    unsigned int openLocalOrdersCount();
+    unsigned int openRemoteOrdersCount();
+
+    bool canBeClosed();
+    void close();
 };

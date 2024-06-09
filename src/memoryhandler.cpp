@@ -109,7 +109,7 @@ void MemoryHandler::fetchDishes(std::vector<std::unique_ptr<MenuItem>> &arr)
     while (in.read_row(name, description, category, price, ingredients, volume))
     {
 
-        MenuItem::CATEGORY convertedCategory = static_cast<MenuItem::CATEGORY>(category);
+        MenuItem::Category convertedCategory = static_cast<MenuItem::Category>(category);
         arr.push_back(std::make_unique<Dish>(
             name,
             description,
@@ -135,7 +135,7 @@ void MemoryHandler::fetchBeverages(std::vector<std::unique_ptr<MenuItem>> &arr)
 
     while (in.read_row(name, description, category, price, alcoholPercentage, volume))
     {
-        MenuItem::CATEGORY convertedCategory = static_cast<MenuItem::CATEGORY>(category);
+        MenuItem::Category convertedCategory = static_cast<MenuItem::Category>(category);
 
         arr.push_back(std::make_unique<Beverage>(
             name,

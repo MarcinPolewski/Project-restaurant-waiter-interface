@@ -4,14 +4,14 @@
 
 struct MenuItem
 {
-    enum UNIT
+    enum Unit
     {
         g,
         ml,
         piece
     };
 
-    enum CATEGORY
+    enum Category
     {
         beverage,
         coldBeverage,
@@ -39,37 +39,37 @@ struct MenuItem
     const std::string description;
     const unsigned int price;
     const unsigned int volume;
-    const UNIT unit;
-    const CATEGORY category;
+    const Unit unit;
+    const Category category;
 
-    MenuItem(const std::string &name, const std::string &description, CATEGORY category, unsigned int price, unsigned int volume, UNIT unit)
-        : name(name), description(description), price(price), volume(volume), unit(unit), category(category)
-    {
-    }
+    MenuItem(const std::string &name, const std::string &description,
+        Category category, unsigned int price, unsigned int volume, Unit unit);
 
     virtual MenuItem &get() = 0;
-    unsigned int calories() { return 100; } // calculate calories based on ingredients
     virtual ~MenuItem() = default;
+
+    std::string getPriceStr() const;
+    std::string getVolumeStr() const;
 };
 
 struct Dish : public MenuItem
 {
     const std::string ingredients;
 
-    Dish(const std::string &name, const std::string &description, CATEGORY category, unsigned int price, const std::string &ingredients, unsigned int volume)
-        : MenuItem{name, description, category, price, volume, UNIT::g}, ingredients{ingredients}
-    {
-    }
-    MenuItem &get() override { return *this; }
+    Dish(const std::string &name, const std::string &description,
+        Category category, unsigned int price, const std::string &ingredients,
+        unsigned int volume, Unit unit = Unit::g);
+
+    Dish& get() override;
 };
 
 struct Beverage : public MenuItem
 {
-    const unsigned int alcoholPercentage; // in percent
+    const unsigned int alcoholPercentage;
 
-    Beverage(const std::string &name, const std::string &description, CATEGORY category, unsigned int price, unsigned int alcoholPercentage, unsigned int volume)
-        : MenuItem{name, description, category, price, volume, UNIT::ml}, alcoholPercentage{alcoholPercentage}
-    {
-    }
-    MenuItem &get() override { return *this; }
+    Beverage(const std::string &name, const std::string &description,
+        Category category, unsigned int price, unsigned int alcoholPercentage,
+        unsigned int volume, Unit unit = Unit::ml);
+
+    Beverage& get() override;
 };
