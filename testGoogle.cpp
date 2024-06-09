@@ -1141,6 +1141,18 @@ TEST(RestaurantTest, iteration_over_Waiters_typical)
     ASSERT_EQ(++waiter_it != restaurant.wtend(), false);
 }
 
+TEST(RestaurantTest, const_iteration_over_Waiters)
+{
+    Restaurant restaurant;
+
+    auto waiter_it = restaurant.wtcbegin();
+    ASSERT_EQ((*waiter_it).name, "John");
+    ASSERT_EQ((*++waiter_it).name, "Jorek");
+    ASSERT_EQ((*++waiter_it).name, "Michael");
+    ASSERT_EQ((*++waiter_it).name, "Emily");
+    ASSERT_EQ(++waiter_it != restaurant.wtcend(), false);
+}
+
 TEST(RestaurantTest, iteration_over_Tables_typical)
 {
     Restaurant restaurant;
@@ -1154,6 +1166,21 @@ TEST(RestaurantTest, iteration_over_Tables_typical)
     ASSERT_EQ((*++table_it).position.y, 1);
     ASSERT_EQ((*++table_it).position.y, 5);
     ASSERT_EQ(++table_it != restaurant.tbend(), false);
+}
+
+TEST(RestaurantTest, const_iteration_over_Tables_typical)
+{
+    Restaurant restaurant;
+
+    auto table_it = restaurant.tbcbegin();
+    ASSERT_EQ((*table_it).position.x, 1);
+    ASSERT_EQ((*table_it).position.y, 1);
+    ASSERT_EQ((*table_it).position.level, 0);
+    ASSERT_EQ((*table_it).seats, 4);
+    ASSERT_EQ((*++table_it).position.y, 5);
+    ASSERT_EQ((*++table_it).position.y, 1);
+    ASSERT_EQ((*++table_it).position.y, 5);
+    ASSERT_EQ(++table_it != restaurant.tbcend(), false);
 }
 
 TEST(RestaurantTest, newLocalOrder_typical)

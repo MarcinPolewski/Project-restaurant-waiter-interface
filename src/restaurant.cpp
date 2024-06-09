@@ -1,16 +1,16 @@
 #include "restaurant.h"
 
-bool Restaurant::isWaiter(Waiter& waiter)
+bool Restaurant::isWaiter(const Waiter& waiter) const
 {
-    for (WTiterator it = this->wtbegin(); it != this->wtend(); ++it)
+    for (const_WTiterator it = this->wtcbegin(); it != this->wtcend(); ++it)
         if (&*it == &waiter)
             return true;
     return false;
 }
 
-bool Restaurant::isTable(Table& table)
+bool Restaurant::isTable(const Table& table) const
 {
-    for (TBiterator it = this->tbbegin(); it != this->tbend(); ++it)
+    for (const_TBiterator it = this->tbcbegin(); it != this->tbcend(); ++it)
         if (&*it == &table)
             return true;
     return false;
@@ -71,6 +71,16 @@ Restaurant::WTiterator Restaurant::wtend()
     return WTiterator(this->waiters.end(), this->waiters.end());
 }
 
+Restaurant::const_WTiterator Restaurant::wtcbegin() const
+{
+    return const_WTiterator(this->waiters.cbegin(), this->waiters.cend());
+}
+
+Restaurant::const_WTiterator Restaurant::wtcend() const
+{
+    return const_WTiterator(this->waiters.cend(), this->waiters.cend());
+}
+
 Restaurant::TBiterator Restaurant::tbbegin()
 {
     return TBiterator(this->tables.begin(), this->tables.end());
@@ -79,6 +89,16 @@ Restaurant::TBiterator Restaurant::tbbegin()
 Restaurant::TBiterator Restaurant::tbend()
 {
     return TBiterator(this->tables.end(), this->tables.end());
+}
+
+Restaurant::const_TBiterator Restaurant::tbcbegin() const
+{
+    return const_TBiterator(this->tables.cbegin(), this->tables.cend());
+}
+
+Restaurant::const_TBiterator Restaurant::tbcend() const
+{
+    return const_TBiterator(this->tables.cend(), this->tables.cend());
 }
 
 Restaurant::LOiterator& Restaurant::LOiterator::operator++()

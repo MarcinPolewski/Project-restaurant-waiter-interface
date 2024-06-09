@@ -17,8 +17,8 @@ class Restaurant
     std::vector<std::unique_ptr<Table>> tables;
     std::vector<std::unique_ptr<Order>> orders;
 
-    bool isWaiter(Waiter& waiter);
-    bool isTable(Table& waiter);
+    bool isWaiter(const Waiter& waiter) const;
+    bool isTable(const Table& waiter) const;
 public:
     Restaurant();
 
@@ -28,9 +28,17 @@ public:
     WTiterator wtbegin();
     WTiterator wtend();
 
+    typedef const_filtered_unique_iterator<Waiter> const_WTiterator;
+    const_WTiterator wtcbegin() const;
+    const_WTiterator wtcend() const;
+
     typedef filtered_unique_iterator<Table> TBiterator;
     TBiterator tbbegin();
     TBiterator tbend();
+
+    typedef const_filtered_unique_iterator<Table> const_TBiterator;
+    const_TBiterator tbcbegin() const;
+    const_TBiterator tbcend() const;
 
     LocalOrder& newLocalOrder(Waiter& waiter,Table& table);
     RemoteOrder& newRemoteOrder(Waiter& waiter, Remote& remote);
