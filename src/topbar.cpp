@@ -25,7 +25,7 @@ void ChangeWaiterTopBarButton::update()
 }
 
 RemoteOrderTopBarButton::RemoteOrderTopBarButton(PopUpHandler *popUpHandler, UIRestaurant *restaurant)
-    : TopBarButton(std::string("Remote Orders (" + std::to_string(restaurant->openRemoteOrdersCount()) + ")"), popUpHandler),
+    : TopBarButton(std::string("Remote Orders (" + std::to_string(restaurant->getCurrentWaiter()->openRemoteOrdersCount()) + ")"), popUpHandler),
       restaurant(restaurant) {}
 
 bool RemoteOrderTopBarButton::pressed()
@@ -35,11 +35,11 @@ bool RemoteOrderTopBarButton::pressed()
 }
 void RemoteOrderTopBarButton::update()
 {
-    name = "Remote Orders (" + std::to_string(restaurant->openRemoteOrdersCount()) + ")";
+    name = "Remote Orders (" + std::to_string(restaurant->getCurrentWaiter()->openRemoteOrdersCount()) + ")";
 }
 
 LocalOrderTopBarButton::LocalOrderTopBarButton(PopUpHandler *popUpHandler, UIRestaurant *restaurant)
-    : TopBarButton(std::string("Local Orders (" + std::to_string(restaurant->openLocalOrdersCount()) + ")"), popUpHandler),
+    : TopBarButton(std::string("Local Orders (" + std::to_string(restaurant->getCurrentWaiter()->openLocalOrdersCount()) + ")"), popUpHandler),
       restaurant(restaurant) {}
 
 bool LocalOrderTopBarButton::pressed()
@@ -49,7 +49,7 @@ bool LocalOrderTopBarButton::pressed()
 }
 void LocalOrderTopBarButton::update()
 {
-    name = "Local Orders (" + std::to_string(restaurant->openLocalOrdersCount()) + ")";
+    name = "Local Orders (" + std::to_string(restaurant->getCurrentWaiter()->openLocalOrdersCount()) + ")";
 }
 
 MenuTopBarButton::MenuTopBarButton(PopUpHandler *popUpHandler)

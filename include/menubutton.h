@@ -91,6 +91,7 @@ public:
     OrderItemButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, OrderItem *orderItem, bool selected = false)
         : MenuButton(height, width, yPosition, xPosition, orderItem->menuItem.name, popUpHandler, selected), orderItem(orderItem)
     {
+        title = orderItem->menuItem.name + " | quantity: " + orderItem->getQuantityStr() + " | total price: " + orderItem->getPriceStr();
     }
 
     void pressed() override;
@@ -203,7 +204,7 @@ public:
     LocalOrderButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, LocalOrder *order, bool selected = false)
         : MenuButton(height, width, yPosition, xPosition, "zamowienie", popUpHandler, selected), order(order)
     {
-        title = order->table.toString() + " " + order->getOrderTimeStr() + " " + order->getTotalPriceStr();
+        title = order->table.getPositionStr() + " " + order->getOrderTimeStr() + " " + order->getTotalPriceStr();
     }
     void pressed() override;
 };
