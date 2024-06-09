@@ -18,19 +18,22 @@ public:
         const unsigned int x, y;
         int level;
 
-        Position(unsigned int xp, unsigned int yp, int lvl)
-            :   x(xp), y(yp), level(lvl) {}
+        Position(unsigned int xp, unsigned int yp, int lvl);
+
+        std::string getStr() const;
     };
 
     const Position position;
     const unsigned int seats;
 
-    Table(const Position& pos, unsigned int sts)
-        : position(pos), seats(sts) {}
+    Table(const Position& pos, unsigned int sts);
 
     LocalOrder& getOrder() const;
 
-    Table& get() override {return *this;}
+    Table& get() override;
 
-    bool isOccupied() const {return this->order != nullptr;};
+    bool isOccupied() const;
+
+    std::string getPositionStr() const;
+    std::string getSeatsStr() const;
 };
