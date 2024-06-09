@@ -5,10 +5,19 @@
 #include "waiter.h"
 #include "filtered_unique_iterator.h"
 
+#include "topbar.h"
+#include "mainscreen.h"
+#include "popuphandler.h"
+#include "consoleuiobject.h"
+#include "constants.h"
+#include "menuitem.h"
+#include "popupmenu.h"
+
 #include <stdexcept>
 
 class Restaurant
 {
+protected:
     MemoryHandler memoryHandler;
     ServerHandler serverHandler;
     Menu menu;
@@ -17,8 +26,11 @@ class Restaurant
     std::vector<std::unique_ptr<Table>> tables;
     std::vector<std::unique_ptr<Order>> orders;
 
-    bool isWaiter(const Waiter& waiter) const;
-    bool isTable(const Table& waiter) const;
+    bool isWaiter(Waiter const &waiter) const;
+    bool isTable(Table const &waiter) const;
+
+    bool isRestaurantClosed = false;
+
 public:
     Restaurant();
 
@@ -40,15 +52,15 @@ public:
     const_TBiterator tbcbegin() const;
     const_TBiterator tbcend() const;
 
-    LocalOrder& newLocalOrder(Waiter& waiter,Table& table);
-    RemoteOrder& newRemoteOrder(Waiter& waiter, Remote& remote);
+    LocalOrder &newLocalOrder(Waiter &waiter, Table &table);
+    RemoteOrder &newRemoteOrder(Waiter &waiter, Remote &remote);
 
     class LOiterator : public filtered_unique_iterator<Order>
     {
     public:
         using filtered_unique_iterator::filtered_unique_iterator;
-        LOiterator& operator++();
-        LocalOrder& operator*() const;
+        LOiterator &operator++();
+        LocalOrder &operator*() const;
     };
     LOiterator lobegin();
     LOiterator loend();
@@ -59,8 +71,8 @@ public:
     {
     public:
         using const_filtered_unique_iterator::const_filtered_unique_iterator;
-        const_LOiterator& operator++();
-        const LocalOrder& operator*() const;
+        const_LOiterator &operator++();
+        const LocalOrder &operator*() const;
     };
     const_LOiterator locbegin() const;
     const_LOiterator locend() const;
@@ -71,8 +83,8 @@ public:
     {
     public:
         using filtered_unique_iterator::filtered_unique_iterator;
-        RTiterator& operator++();
-        RemoteOrder& operator*() const;
+        RTiterator &operator++();
+        RemoteOrder &operator*() const;
     };
     RTiterator rtbegin();
     RTiterator rtend();
@@ -83,8 +95,8 @@ public:
     {
     public:
         using const_filtered_unique_iterator::const_filtered_unique_iterator;
-        const_RTiterator& operator++();
-        const RemoteOrder& operator*() const;
+        const_RTiterator &operator++();
+        const RemoteOrder &operator*() const;
     };
     const_RTiterator rtcbegin() const;
     const_RTiterator rtcend() const;
@@ -96,4 +108,18 @@ public:
 
     bool canBeClosed() const;
     void close();
+    bool isClosed();
+};
+
+class UIRestaurant : public Restaurant
+{
+    Waiter *currentWaiter;
+
+public:
+    UIRestaurant();
+    RemoteOrder &newRemoteOrder(Remote &remote);
+    LocalOrder &newLocalOrder(Table &table);
+
+    Waiter *getCurrentWaiter();
+    void changeCurrentWaiter(Waiter *newWaiter);
 };

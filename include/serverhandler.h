@@ -37,10 +37,11 @@ public:
     {
         return "1.1.0";
     }
-    void archiveOrder(const Order*) override
+    void archiveOrder(const Order *) override
     {
     }
-    void sendOrderItem(OrderItem*) override // sends this message to server
+    void sendOrderItem(OrderItem *) override // sends this message to server
     {
+        // requestedOrders.push_back(order);
     }
 };
