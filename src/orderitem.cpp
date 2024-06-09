@@ -88,6 +88,8 @@ ItemStatus OrderItem::getStatus() const
 
 unsigned int OrderItem::getPrice() const
 {
+    if (this->getStatus() == ItemStatus::canceled)
+        return 0;
     unsigned int full_price = quantity * this->menuItem.price;
     if (full_price > MAX_ORDER_ITEM_PRICE)
         throw(std::runtime_error("Cannot compute price - overflow"));
