@@ -21,12 +21,13 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(csvReader)
 
 find_package(Curses REQUIRED)
-include_directories(${Restaurant_SOURCE_DIR}/include "${csvreader_SOURCE_DIR}" ${CURSES_INCLUDE_DIR})
+include_directories(${Restaurant_SOURCE_DIR}/include ${Restaurant_SOURCE_DIR}/gui_include "${csvreader_SOURCE_DIR}" ${CURSES_INCLUDE_DIR})
 add_subdirectory(src)
+add_subdirectory(gui_src)
 
 add_executable(testGoogle testGoogle.cpp)
 add_executable(gui gui.cpp)
 
 add_definitions(-DCMAKE_EXPORT_COMPILE_COMMANDS=ON)
 target_link_libraries(testGoogle PUBLIC gtest_main restaurant)
-target_link_libraries(gui ${CURSES_LIBRARIES} restaurant)
+target_link_libraries(gui ${CURSES_LIBRARIES} restaurant gui_restaurant)
