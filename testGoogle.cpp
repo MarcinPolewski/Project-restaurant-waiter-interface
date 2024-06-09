@@ -594,6 +594,14 @@ TEST(OrderItemTest, getPrice_discount_too_big_price)
     EXPECT_THROW(orderit1.getPrice(), std::runtime_error);
 }
 
+TEST(OrderItemTest, getPrice_canceled)
+{
+    Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::Category::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
+    OrderItem orderit1(pierogi, 1);
+    orderit1.changeStatus(ItemStatus::canceled);
+    ASSERT_EQ(orderit1.getPrice(), 0);
+}
+
 TEST(OrderItemTest, getWaitingTime_typical)
 {
     Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::Category::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
