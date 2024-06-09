@@ -59,16 +59,16 @@ LocalOrderPopUpMenu::LocalOrderPopUpMenu(WINDOW *background, PopUpHandler *popUp
 void LocalOrderPopUpMenu::drawInformation()
 {
     int yCoordinate = DEFAULT_TEXT_SECTION_START_Y;
-    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, "Order");
-    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, DEFAULT_WIDTH_DEVIDER);
-    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, ("Order time:   " + order->getOrderTimeStr()).c_str());
-    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, ("Waiting time: " + order->getWaitingTimeStr()).c_str());
-    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, ("Total price:  " + order->getTotalPriceStr()).c_str());
-    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, ("Table:  " + order->table.getPositionStr() + " Seats: " + order->table.getSeatsStr()).c_str());
-    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, DEFAULT_WIDTH_DEVIDER);
+    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, "%s", "Order");
+    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, "%s", DEFAULT_WIDTH_DEVIDER);
+    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, "%s", ("Order time:   " + order->getOrderTimeStr()).c_str());
+    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, "%s", ("Waiting time: " + order->getWaitingTimeStr()).c_str());
+    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, "%s", ("Total price:  " + order->getTotalPriceStr()).c_str());
+    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, "%s", ("Table:  " + order->table.getPositionStr() + " Seats: " + order->table.getSeatsStr()).c_str());
+    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, "%s", DEFAULT_WIDTH_DEVIDER);
 
     yCoordinate = ORDER_SCROLL_SECTION_START_Y + (NUMBER_OF_SCROLL_BUTTONS_ORDERS * BUTTON_HEIGHT);
-    mvwprintw(window, yCoordinate, BUTTON_SIDE_OFFSET, DEFAULT_WIDTH_DEVIDER);
+    mvwprintw(window, yCoordinate, BUTTON_SIDE_OFFSET, "%s", DEFAULT_WIDTH_DEVIDER);
 }
 
 int i = 10;
@@ -287,9 +287,9 @@ void MenuItemView::drawInformation()
     int maxTextWidth = MENU_ITEM_POP_UP_MENU_WIDTH - 2 * BUTTON_SIDE_OFFSET; // getmaxx(window) - 10; // Account for window borders
     int yCoordinate = DEFAULT_TEXT_SECTION_START_Y;
 
-    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, ("name:   " + menuItem.name).c_str());
-    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, ("price:  " + menuItem.getPriceStr()).c_str());
-    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, ("volume: " + menuItem.getVolumeStr()).c_str());
+    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, "name:   %s", menuItem.name.c_str());
+    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, "price:  %s", menuItem.getPriceStr().c_str());
+    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, "volume: %s", menuItem.getVolumeStr().c_str());
     mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, "description: ");
     // Split the product card into multiple lines if it exceeds the maximum width
     int lineCounter = 0;
@@ -297,7 +297,7 @@ void MenuItemView::drawInformation()
     while (lineCounter++ != 2 && (int)description.length() > maxTextWidth)
     {
         std::string line = description.substr(0, maxTextWidth);
-        mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, line.c_str());
+        mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, "%s", line.c_str());
         description = description.substr(maxTextWidth);
     }
     mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, description.c_str());
@@ -327,11 +327,11 @@ void OrderItemView::drawInformation()
 {
     int yCoordinate = DEFAULT_TEXT_SECTION_START_Y;
 
-    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, ("Name:     " + orderItem->menuItem.name).c_str());
-    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, ("Price:    " + orderItem->getPriceStr()).c_str());
-    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, ("Quantity: " + orderItem->getQuantityStr()).c_str());
-    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, ("Status:   " + orderItem->getStatusStr()).c_str());
-    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, ("Discount: " + orderItem->getDiscountStr()).c_str());
+    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, "Name:     %s", orderItem->menuItem.name.c_str());
+    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, "Price:    %s", orderItem->getPriceStr().c_str());
+    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, "Quantity: %s", orderItem->getQuantityStr().c_str());
+    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, "Status:   %s", orderItem->getStatusStr().c_str());
+    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, "Discount: %s", orderItem->getDiscountStr().c_str());
     // mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSEsT, ().c_str());
     // mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, ().c_str());
     mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, ORDER_ITEM_VIEW_DIVIDER);
