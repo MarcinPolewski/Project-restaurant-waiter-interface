@@ -1173,48 +1173,6 @@ TEST(RestaurantTest, newLocalOrder_typical)
     EXPECT_THROW(tbl1.getOrder(), std::runtime_error);
 }
 
-TEST(RestaurantTest, local_order_in_waiter_iteration_typical)
-{
-    Restaurant restaurant;
-    Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
-    Remote remote("Elzbieta Kopyto", "123456789", adr);
-    Table& tbl1 = *restaurant.tbbegin();
-    Table& tbl2 = *++restaurant.tbbegin();
-    Waiter& wt = *(restaurant.wtbegin());
-
-    restaurant.newRemoteOrder(wt, remote);
-    restaurant.newLocalOrder(wt, tbl1);
-    restaurant.newLocalOrder(wt, tbl2);
-
-    auto it = wt.lobegin();
-    ASSERT_EQ((*it).table.position.y, 1);
-    ASSERT_EQ((*++it).table.position.y, 5);
-    ASSERT_EQ(++it != wt.loend(), false);
-}
-
-TEST(RestaurantTest, local_order_in_waiter_iteration_inprogress)
-{
-    Restaurant restaurant;
-    Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
-    Remote remote("Elzbieta Kopyto", "123456789", adr);
-    Table& tbl1 = *restaurant.tbbegin();
-    Table& tbl2 = *++restaurant.tbbegin();
-    Table& tbl3 = *++++restaurant.tbbegin();
-    Waiter& wt = *(restaurant.wtbegin());
-
-    restaurant.newLocalOrder(wt, tbl1);
-    restaurant.newRemoteOrder(wt, remote);
-    auto& lo = restaurant.newLocalOrder(wt, tbl2);
-    restaurant.newLocalOrder(wt, tbl3);
-
-    lo.setClosed();
-
-    auto it = wt.lobegin_inprogress();
-    ASSERT_EQ((*it).table.position.x, 1);
-    ASSERT_EQ((*++it).table.position.x, 5);
-    ASSERT_EQ(++it != wt.loend(), false);
-}
-
 TEST(RestaurantTest, newLocalOrder_waiter_outside_restaurant)
 {
     Restaurant restaurant;
@@ -1464,6 +1422,111 @@ TEST(RestaurantTest, close_typical)
     lo.setClosed();
     ASSERT_EQ(restaurant.canBeClosed(), true);
     restaurant.close();
+}
+
+
+TEST(RestaurantTest, local_order_in_waiter_iteration_typical)
+{
+    Restaurant restaurant;
+    Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
+    Remote remote("Elzbieta Kopyto", "123456789", adr);
+    Table& tbl1 = *restaurant.tbbegin();
+    Table& tbl2 = *++restaurant.tbbegin();
+    Waiter& wt = *(restaurant.wtbegin());
+
+    restaurant.newRemoteOrder(wt, remote);
+    restaurant.newLocalOrder(wt, tbl1);
+    restaurant.newLocalOrder(wt, tbl2);
+
+    auto it = wt.lobegin();
+    ASSERT_EQ((*it).table.position.y, 1);
+    ASSERT_EQ((*++it).table.position.y, 5);
+    ASSERT_EQ(++it != wt.loend(), false);
+}
+
+TEST(RestaurantTest, local_order_in_waiter_iteration_inprogress)
+{
+    Restaurant restaurant;
+    Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
+    Remote remote("Elzbieta Kopyto", "123456789", adr);
+    Table& tbl1 = *restaurant.tbbegin();
+    Table& tbl2 = *++restaurant.tbbegin();
+    Table& tbl3 = *++++restaurant.tbbegin();
+    Waiter& wt = *(restaurant.wtbegin());
+
+    restaurant.newLocalOrder(wt, tbl1);
+    restaurant.newRemoteOrder(wt, remote);
+    auto& lo = restaurant.newLocalOrder(wt, tbl2);
+    restaurant.newLocalOrder(wt, tbl3);
+
+    ASSERT_EQ(wt.openLocalOrdersCount(), 3);
+    ASSERT_EQ(wt.openRemoteOrdersCount(), 1);
+
+    lo.setClosed();
+
+    ASSERT_EQ(wt.openLocalOrdersCount(), 2);
+    ASSERT_EQ(wt.openRemoteOrdersCount(), 1);
+
+    auto it = wt.lobegin_inprogress();
+    ASSERT_EQ((*it).table.position.x, 1);
+    ASSERT_EQ((*++it).table.position.x, 5);
+    ASSERT_EQ(++it != wt.loend(), false);
+}
+
+TEST(RestaurantTest, remote_order_in_waiter_iteration_typical)
+{
+    Restaurant restaurant;
+
+    Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
+    Remote rmt1("Elzbieta Kopyto", "123456789", adr);
+    Remote rmt2("Barbara Nara", "987654321", adr);
+    Table& tbl1 = *restaurant.tbbegin();
+    Table& tbl2 = *++restaurant.tbbegin();
+    Waiter& wt1 = *restaurant.wtbegin();
+
+    restaurant.newLocalOrder(wt1, tbl1);
+    restaurant.newRemoteOrder(wt1, rmt1);
+    restaurant.newLocalOrder(wt1, tbl2);
+    restaurant.newRemoteOrder(wt1, rmt2);
+
+    auto rtit = wt1.rtbegin();
+
+    ASSERT_EQ((*rtit).getDestination().name, "Elzbieta Kopyto");
+    ASSERT_EQ((*++rtit).getDestination().name, "Barbara Nara");
+    ASSERT_EQ(++rtit != wt1.rtend(), false);
+}
+
+TEST(RestaurantTest, remote_order_in_waiter_iteration_inprogress)
+{
+    Restaurant restaurant;
+
+    Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
+    Remote rmt1("Elzbieta Kopyto", "123456789", adr);
+    Remote rmt2("Barbara Nara", "987654321", adr);
+    Remote rmt3("Anna Nara", "987654321", adr);
+    Table& tbl1 = *restaurant.tbbegin();
+    Table& tbl2 = *++restaurant.tbbegin();
+    Waiter& wt1 = *restaurant.wtbegin();
+
+    restaurant.newRemoteOrder(wt1, rmt1);
+    restaurant.newLocalOrder(wt1, tbl1);
+    restaurant.newLocalOrder(wt1, tbl2);
+    auto& ro = restaurant.newRemoteOrder(wt1, rmt2);
+    restaurant.newRemoteOrder(wt1, rmt3);
+
+    ASSERT_EQ(wt1.openLocalOrdersCount(), 2);
+    ASSERT_EQ(wt1.openRemoteOrdersCount(), 3);
+
+    ro.setClosed();
+
+    ASSERT_EQ(wt1.openLocalOrdersCount(), 2);
+    ASSERT_EQ(wt1.openRemoteOrdersCount(), 2);
+
+    auto rtit = wt1.rtbegin_inprogress();
+
+    ASSERT_EQ((*rtit).getDestination().name, "Elzbieta Kopyto");
+    ASSERT_EQ((*++rtit).getDestination().name, "Anna Nara");
+    ASSERT_EQ(++rtit != wt1.rtend(), false);
 }
 
 TEST(OrderTest, getWaitingTimeStr_one_min)
