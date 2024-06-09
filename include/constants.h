@@ -6,11 +6,13 @@
 #define COLUMN_TO_WIDTH_RATION 2 // ration between column and height - approximately one row is the same amount of pixels as two columns
 #define NO_ORDER_ASSIGNED_MESS "No order assigned to this table, do you want to create one?"
 #define DEFAULT_WIDTH_DEVIDER "--------------------------------------------------------"
+#define ORDER_ITEM_VIEW_DIVIDER "------------------------------------"
 
 // pop up menus configurations
 #define NUMBER_OF_BUTTONS_IN_SCROLL 5
 #define NUMBER_OF_SCROLL_BUTTONS_ORDERS 10
 #define NUMBER_OF_SCROLL_BUTTONS_MENU 13
+#define NUMBER_OF_BUTTONS_IN_SCROLL_DISCOUNT 4
 
 #define DEFAULT_WIDTH 60
 #define DEFAULT_HEIGHT 40

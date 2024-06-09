@@ -274,9 +274,13 @@ OrderItemView::OrderItemView(WINDOW *background, PopUpHandler *popUpHandler, Ord
     int buttonWidth = ORDER_ITEM_POP_UP_MENU_WIDTH - (2 * BUTTON_SIDE_OFFSET);
 
     // TODO add order buttons here
-    buttonY = endY() - BUTTON_HEIGHT;
-    staticButtons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, buttonWidth, buttonY, buttonX, popUpHandler));
-    buttonY -= BUTTON_HEIGHT;
+    buttonY = endY() - 4 * BUTTON_HEIGHT;
+    staticButtons.push_back(std::make_unique<setDeliveredButton>(BUTTON_HEIGHT, buttonWidth, buttonY, buttonX, popUpHandler, orderItem));
+    buttonY += BUTTON_HEIGHT;
+    staticButtons.push_back(std::make_unique<setCanceledButton>(BUTTON_HEIGHT, buttonWidth, buttonY, buttonX, popUpHandler, orderItem));
+    buttonY += BUTTON_HEIGHT;
+    staticButtons.push_back(std::make_unique<setDiscountPopUpMenuButton>(BUTTON_HEIGHT, buttonWidth, buttonY, buttonX, popUpHandler, orderItem));
+    buttonY += BUTTON_HEIGHT;
     staticButtons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, buttonWidth, buttonY, buttonX, popUpHandler));
 
     auto_initialize();
@@ -284,4 +288,36 @@ OrderItemView::OrderItemView(WINDOW *background, PopUpHandler *popUpHandler, Ord
 
 void OrderItemView::drawInformation()
 {
+    int yCoordinate = DEFAULT_TEXT_SECTION_START_Y;
+
+    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, ("Name:     " + orderItem->menuItem.name).c_str());
+    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, ("Price:    " + orderItem->priceStr()).c_str());
+    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, ("Quantity: " + orderItem->quantityStr()).c_str());
+    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, ("Status:   " + orderItem->statusStr()).c_str());
+    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, ("Discount: " + orderItem->discoutnStr()).c_str());
+    // mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSEsT, ().c_str());
+    // mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, ().c_str());
+    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, ORDER_ITEM_VIEW_DIVIDER);
+}
+
+SetDisciountPopUpMenu::SetDisciountPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, OrderItem *orderItem)
+    : PopUpMenu(background, popUpHandler, ORDER_ITEM_POP_UP_MENU_HEIGHT, ORDER_ITEM_POP_UP_MENU_WIDTH, NUMBER_OF_BUTTONS_IN_SCROLL_DISCOUNT),
+      orderItem(orderItem)
+{
+    int buttonX = startX() + BUTTON_SIDE_OFFSET;
+    int buttonY = getbegy(window) + BUTTON_TOP_OFFSET;
+    int buttonWidth = ORDER_ITEM_POP_UP_MENU_WIDTH - (2 * BUTTON_SIDE_OFFSET);
+
+    scrollStartY = buttonY;
+    for (unsigned int i = 0; i <= 100; i += 10)
+    {
+        scrollableButtons.push_back(std::make_unique<setDiscountButton>(BUTTON_HEIGHT, buttonWidth, buttonY, buttonX, popUpHandler, orderItem, i));
+        // scrollableButtons.push_back(std::make_unique<AButton>(BUTTON_HEIGHT, DEFAULT_WIDTH - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler));
+        // scrollableButtons.push_back(std::make_unique<BButton>(BUTTON_HEIGHT, DEFAULT_WIDTH - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler));
+    }
+
+    // TODO add order buttons here
+    buttonY = endY() - BUTTON_HEIGHT;
+    staticButtons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, buttonWidth, buttonY, buttonX, popUpHandler));
+    auto_initialize();
 }

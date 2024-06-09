@@ -45,3 +45,43 @@ void OrderItemButton::pressed()
 {
     popUpHandler->newOrderItemView(orderItem);
 }
+
+void setDeliveredButton::pressed()
+{
+    try
+    {
+        orderItem->setDelivered();
+    }
+
+    catch (const std::exception &e)
+    {
+        std::string errorMessage = e.what();
+        popUpHandler->newErrorPrompt(errorMessage);
+    }
+}
+
+void setCanceledButton::pressed()
+{
+
+    try
+    {
+        orderItem->setCancelled();
+    }
+
+    catch (const std::exception &e)
+    {
+        std::string errorMessage = e.what();
+        popUpHandler->newErrorPrompt(errorMessage);
+    }
+}
+
+void setDiscountPopUpMenuButton::pressed()
+{
+    popUpHandler->newSetDisciountPopUpMenu(orderItem);
+}
+
+void setDiscountButton::pressed()
+{
+    orderItem->setDiscount(discount);
+    popUpHandler->closePopUpMenu();
+}

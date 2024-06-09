@@ -146,3 +146,51 @@ public:
     }
     void pressed() override;
 };
+
+class setDeliveredButton : public MenuButton
+{
+    OrderItem *orderItem;
+
+public:
+    setDeliveredButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, OrderItem *orderItem, bool selected = false)
+        : MenuButton(height, width, yPosition, xPosition, "Set delivered", popUpHandler, selected), orderItem(orderItem)
+    {
+    }
+    void pressed() override;
+};
+class setCanceledButton : public MenuButton
+{
+    OrderItem *orderItem;
+
+public:
+    setCanceledButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, OrderItem *orderItem, bool selected = false)
+        : MenuButton(height, width, yPosition, xPosition, "Set canceled", popUpHandler, selected), orderItem(orderItem)
+    {
+    }
+    void pressed() override;
+};
+
+class setDiscountPopUpMenuButton : public MenuButton
+{
+    OrderItem *orderItem;
+
+public:
+    setDiscountPopUpMenuButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, OrderItem *orderItem, bool selected = false)
+        : MenuButton(height, width, yPosition, xPosition, "Set discount", popUpHandler, selected), orderItem(orderItem)
+    {
+    }
+    void pressed() override;
+};
+
+class setDiscountButton : public MenuButton
+{
+    OrderItem *orderItem;
+    unsigned int discount;
+
+public:
+    setDiscountButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, OrderItem *orderItem, unsigned int discount, bool selected = false)
+        : MenuButton(height, width, yPosition, xPosition, (std::to_string(discount) + " percent").c_str(), popUpHandler, selected), orderItem(orderItem), discount(discount)
+    {
+    }
+    void pressed() override;
+};

@@ -32,6 +32,12 @@ void PopUpHandler::newOrderItemView(OrderItem *orderItem)
     windowStack.top()->draw();
 }
 
+void PopUpHandler::newSetDisciountPopUpMenu(OrderItem *orderItem)
+{
+    windowStack.push(std::make_unique<SetDisciountPopUpMenu>(backgroundWindow, this, orderItem));
+    windowStack.top()->draw();
+}
+
 void PopUpHandler::newTableNoOrderPopUpMenu(Table *table)
 {
     windowStack.push(std::make_unique<NoOrderAssignedToTablePopUpMenu>(backgroundWindow, this, restaurant, table));
@@ -71,6 +77,8 @@ void PopUpHandler::newErrorPrompt(std::string message)
 
 bool PopUpHandler::closePopUpMenu()
 {
+    wclear(windowStack.top()->getWindow());
+    wrefresh(windowStack.top()->getWindow());
     windowStack.pop();
     if (!windowStack.empty())
     {
@@ -105,9 +113,6 @@ bool PopUpHandler::buttonPressed()
     if (windowStack.empty())
         throw std::invalid_argument("no popup is displayed");
     windowStack.top()->buttonPressed();
-
-    // figure out which menu it is
-    // get input
 
     if (windowStack.empty())
         return true;

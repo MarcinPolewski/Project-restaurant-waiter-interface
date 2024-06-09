@@ -281,3 +281,11 @@ public:
     OrderItemView(WINDOW *background, PopUpHandler *popUpHandler, OrderItem *orderItem);
     void drawInformation() override;
 };
+
+class SetDisciountPopUpMenu : public PopUpMenu
+{
+    OrderItem *orderItem;
+
+public:
+    SetDisciountPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, OrderItem *orderItem);
+};

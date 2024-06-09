@@ -35,6 +35,7 @@ public:
     void newAddItemToOrderPopUpMenu(Order *order);
     void newMenuItemView(MenuItem const &menuItem);
     void newOrderItemView(OrderItem *orderItem);
+    void newSetDisciountPopUpMenu(OrderItem *orderItem);
 
     void newMenuPopUpMenu();
     void newChangeWaiterPopUpMenu();
