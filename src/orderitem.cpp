@@ -89,3 +89,47 @@ time_t OrderItem::getWaitingTime() const
 {
     return time(NULL) - orderTime;
 }
+
+std::string OrderItem::getPriceStr() const
+{
+    unsigned int mi_price = this->getPrice();
+    std::string units = std::to_string(mi_price / 100);
+    std::string fraction = std::to_string(mi_price % 100);
+    if (fraction.length() != 2)
+        fraction = "0" + fraction;
+    return units + "," + fraction;
+}
+
+std::string OrderItem::getQuantityStr() const
+{
+    return std::to_string(this->quantity);
+}
+
+std::string OrderItem::getStatusStr() const
+{
+    switch (this->itemStatus)
+    {
+        case ItemStatus::created:
+            return "created";
+
+        case ItemStatus::ordered:
+            return "ordered";
+
+        case ItemStatus::inPreparation:
+            return "in preparation";
+
+        case ItemStatus::readyToDeliver:
+            return "ready to deliver";
+
+        case ItemStatus::delivered:
+            return "delivered";
+
+        case ItemStatus::canceled:
+            return "canceled";
+    }
+}
+
+std::string OrderItem::getDiscountStr() const
+{
+    return std::to_string(this->discount) + "%";
+}

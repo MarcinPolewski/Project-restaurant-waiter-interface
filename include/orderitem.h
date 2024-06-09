@@ -44,4 +44,9 @@ public:
     unsigned int getPrice() const;
 
     time_t getWaitingTime() const;
+
+    std::string getPriceStr() const;
+    std::string getQuantityStr() const;
+    std::string getStatusStr() const;
+    std::string getDiscountStr() const;
 };
