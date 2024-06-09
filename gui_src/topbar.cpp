@@ -113,7 +113,7 @@ void TopBar::draw()
 
         if (active && i == selection) // print menu as selected if neccessary
             wattr_on(window, A_REVERSE, nullptr);
-        mvwprintw(window, cursorY, cursorX + offset, buttons[i]->toString().c_str());
+        mvwprintw(window, cursorY, cursorX + offset, "%s", buttons[i]->toString().c_str());
         wattr_off(window, A_REVERSE, nullptr);
         cursorX += widthPerButton;
         if (i != (int)buttons.size() - 1)

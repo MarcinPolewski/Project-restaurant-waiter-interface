@@ -13,7 +13,7 @@ void MenuButton::draw()
     box(window, 0, 0);
     if (selected)
         wattr_on(window, A_REVERSE, nullptr);
-    mvwprintw(window, 1, 1, title.c_str());
+    mvwprintw(window, 1, 1, "%s", title.c_str());
     wattr_off(window, A_REVERSE, nullptr);
 
     wrefresh(window);
