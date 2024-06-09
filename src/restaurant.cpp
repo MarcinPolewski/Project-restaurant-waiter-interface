@@ -8,6 +8,14 @@ bool Restaurant::isWaiter(Waiter& waiter)
     return false;
 }
 
+bool Restaurant::isTable(Table& table)
+{
+    for (TBiterator it = this->tbbegin(); it != this->tbend(); ++it)
+        if (&*it == &table)
+            return true;
+    return false;
+}
+
 Restaurant::Restaurant()
     : memoryHandler(),
       serverHandler(memoryHandler),
@@ -32,6 +40,8 @@ LocalOrder& Restaurant::newLocalOrder(Waiter& waiter, Table& table)
 {
     if (!this->isWaiter(waiter))
         throw (std::runtime_error("Cannot create order, waiter is not in the restaurant"));
+    if (!this->isTable(table))
+        throw (std::runtime_error("Cannot create order, table is not in the restaurant"));
     orders.push_back(std::make_unique<LocalOrder>(table));
     waiter.orders.push_back(orders.back().get());
     return dynamic_cast<LocalOrder&>(*orders.back().get());

@@ -18,6 +18,7 @@ class Restaurant
     std::vector<std::unique_ptr<Order>> orders;
 
     bool isWaiter(Waiter& waiter);
+    bool isTable(Table& waiter);
 public:
     Restaurant();
 
