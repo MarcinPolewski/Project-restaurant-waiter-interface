@@ -177,8 +177,16 @@ setDiscountButton::setDiscountButton(int height, int width, int yPosition, int x
 
 void setDiscountButton::pressed()
 {
-    orderItem->setDiscount(discount);
-    popUpHandler->closePopUpMenu();
+    try
+    {
+        orderItem->setDiscount(discount);
+        popUpHandler->closePopUpMenu();
+    }
+    catch (const std::exception &e)
+    {
+        std::string errorMessage = e.what();
+        popUpHandler->newErrorPrompt(errorMessage);
+    }
 }
 
 LocalOrderButton::LocalOrderButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, LocalOrder *order, bool selected)
