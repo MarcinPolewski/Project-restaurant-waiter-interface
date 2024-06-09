@@ -157,7 +157,6 @@ TEST(MenuItemTest, cast_beverage)
     ASSERT_EQ(dynamic_cast<Beverage &>(item).alcoholPercentage, 0);
 }
 
-
 TEST(MenuItemTest, getPriceStr_typical)
 {
     std::string name = "Pierogi";
@@ -168,7 +167,7 @@ TEST(MenuItemTest, getPriceStr_typical)
     MenuItem::Category category = MenuItem::Category::mainCourse;
 
     Dish pierogi(name, description, category, price, ingredients, volume);
-    MenuItem& mi = pierogi;
+    MenuItem &mi = pierogi;
 
     ASSERT_EQ(mi.getPriceStr(), "19,99");
 }
@@ -183,7 +182,7 @@ TEST(MenuItemTest, getPriceStr_less_than_10_fractions)
     MenuItem::Category category = MenuItem::Category::mainCourse;
 
     Dish pierogi(name, description, category, price, ingredients, volume);
-    MenuItem& mi = pierogi;
+    MenuItem &mi = pierogi;
 
     ASSERT_EQ(mi.getPriceStr(), "19,05");
 }
@@ -198,7 +197,7 @@ TEST(MenuItemTest, getPriceStr_zero)
     MenuItem::Category category = MenuItem::Category::mainCourse;
 
     Dish pierogi(name, description, category, price, ingredients, volume);
-    MenuItem& mi = pierogi;
+    MenuItem &mi = pierogi;
 
     ASSERT_EQ(mi.getPriceStr(), "0,00");
 }
@@ -213,7 +212,7 @@ TEST(MenuItemTest, getVolumeStr_grams)
     MenuItem::Category category = MenuItem::Category::mainCourse;
 
     Dish pierogi(name, description, category, price, ingredients, volume);
-    MenuItem& mi = pierogi;
+    MenuItem &mi = pierogi;
 
     ASSERT_EQ(mi.getVolumeStr(), "300g");
 }
@@ -230,7 +229,7 @@ TEST(MenuItemTest, getVolumeStr_ml)
 TEST(MenuItemTest, getVolumeStr_piece)
 {
     Dish ciacho("Ciacho", "Slodkie ciacho", MenuItem::Category::desert, 1999,
-        "maka", 1, MenuItem::Unit::piece);
+                "maka", 1, MenuItem::Unit::piece);
     MenuItem &mi = ciacho;
 
     ASSERT_EQ(mi.getVolumeStr(), "1pc");
@@ -537,7 +536,6 @@ TEST(OrderItemTest, setCancelled_typical)
     ASSERT_EQ(orderit2.getStatus(), ItemStatus::canceled);
 }
 
-
 TEST(OrderItemTest, getPrice_typical)
 {
     Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::Category::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
@@ -719,9 +717,9 @@ TEST(OrderTest, getDestinatin_LocalOrder)
     Table tbl(Table::Position(3, 5, 0), 4);
     LocalOrder lo(tbl);
 
-    Order& o = dynamic_cast<Order&>(lo);
+    Order &o = dynamic_cast<Order &>(lo);
 
-    const Table& tbl_ref = dynamic_cast<const Table&>(o.getDestination());
+    const Table &tbl_ref = dynamic_cast<const Table &>(o.getDestination());
 
     ASSERT_EQ(tbl_ref.seats, 4);
 }
@@ -731,9 +729,9 @@ TEST(OrderTest, getDestination_RemoteOrder)
     Remote rmt("Andrzej Kowal", "111111111", Address("Olsztyn", "00-000", "Kaliny", "5"));
     RemoteOrder ro(rmt);
 
-    Order& o = dynamic_cast<Order&>(ro);
+    Order &o = dynamic_cast<Order &>(ro);
 
-    const Remote& rmt_ref = dynamic_cast<const Remote&>(o.getDestination());
+    const Remote &rmt_ref = dynamic_cast<const Remote &>(o.getDestination());
 
     ASSERT_EQ(rmt_ref.name, "Andrzej Kowal");
 }
@@ -770,12 +768,12 @@ TEST(OrderTest, getOrderItem_typical)
 {
     Table tbl(Table::Position(3, 5, 0), 4);
     LocalOrder lo(tbl);
-    Order& ord = lo;
+    Order &ord = lo;
 
     const Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::Category::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
     ord.addOrderItem(pierogi, 3);
 
-    OrderItem& ordit = ord[0];
+    OrderItem &ordit = ord[0];
     ASSERT_EQ(ordit.quantity, 3);
     ASSERT_EQ(ordit.menuItem.name, "Pierogi");
 }
@@ -784,7 +782,7 @@ TEST(OrderTest, getOrderItem_out_of_range)
 {
     Table tbl(Table::Position(3, 5, 0), 4);
     LocalOrder lo(tbl);
-    Order& ord = lo;
+    Order &ord = lo;
 
     const Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::Category::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
     ord.addOrderItem(pierogi, 3);
@@ -796,7 +794,7 @@ TEST(OrderTest, getStatus_typical)
 {
     Table tbl(Table::Position(3, 5, 0), 4);
     LocalOrder lo(tbl);
-    Order& ord = lo;
+    Order &ord = lo;
 
     ASSERT_EQ(ord.getStatus(), OrderStatus::inProgress);
 }
@@ -805,7 +803,7 @@ TEST(OrderTest, setClosed_typical)
 {
     Table tbl(Table::Position(3, 5, 0), 4);
     LocalOrder lo(tbl);
-    Order& ord = dynamic_cast<Order&>(lo);
+    Order &ord = dynamic_cast<Order &>(lo);
 
     const Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::Category::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
     const Beverage woda("Woda", "Woda mineralna niegazowana", Beverage::Category::coldBeverage, 299, 0, 500);
@@ -824,7 +822,7 @@ TEST(OrderTest, setClosed_empty)
 {
     Table tbl(Table::Position(3, 5, 0), 4);
     LocalOrder lo(tbl);
-    Order& ord = dynamic_cast<Order&>(lo);
+    Order &ord = dynamic_cast<Order &>(lo);
 
     ASSERT_EQ(ord.getStatus(), OrderStatus::inProgress);
     ord.setClosed();
@@ -835,7 +833,7 @@ TEST(OrderTest, setClosed_double)
 {
     Table tbl(Table::Position(3, 5, 0), 4);
     LocalOrder lo(tbl);
-    Order& ord = dynamic_cast<Order&>(lo);
+    Order &ord = dynamic_cast<Order &>(lo);
 
     ord.setClosed();
     ASSERT_EQ(ord.getStatus(), OrderStatus::closed);
@@ -846,7 +844,7 @@ TEST(OrderTest, setClosed_changing_data)
 {
     Table tbl(Table::Position(3, 5, 0), 4);
     LocalOrder lo(tbl);
-    Order& ord = dynamic_cast<Order&>(lo);
+    Order &ord = dynamic_cast<Order &>(lo);
 
     const Beverage woda("Woda", "Woda mineralna niegazowana", Beverage::Category::coldBeverage, 299, 0, 500);
 
@@ -860,7 +858,7 @@ TEST(OrderTest, getOrderTime)
 {
     Table tbl(Table::Position(3, 5, 0), 4);
     LocalOrder lo(tbl);
-    Order& ord = lo;
+    Order &ord = lo;
 
     ASSERT_EQ(ord.getOrderTime(), time(NULL));
 }
@@ -869,7 +867,7 @@ TEST(OrderTest, getOrderTimeStr_typical)
 {
     Table tbl(Table::Position(3, 5, 0), 4);
     LocalOrder lo(tbl);
-    Order& ord = lo;
+    Order &ord = lo;
 
     char buf[6];
     time_t now = time(NULL);
@@ -883,7 +881,7 @@ TEST(OrderTest, getWaitingTime_typical)
 {
     Table tbl(Table::Position(3, 5, 0), 4);
     LocalOrder lo(tbl);
-    Order& ord = lo;
+    Order &ord = lo;
 
     sleep(3);
     ASSERT_EQ(ord.getWaitingTime(), 3);
@@ -895,7 +893,7 @@ TEST(OrderTest, getWaitingTimeStr_typical)
 {
     Table tbl(Table::Position(3, 5, 0), 4);
     LocalOrder lo(tbl);
-    Order& ord = lo;
+    Order &ord = lo;
 
     sleep(1);
     ASSERT_EQ(ord.getWaitingTimeStr(), "now");
@@ -905,7 +903,7 @@ TEST(OrderTest, resetWaitingTime_typical)
 {
     Table tbl(Table::Position(3, 5, 0), 4);
     LocalOrder lo(tbl);
-    Order& ord = lo;
+    Order &ord = lo;
 
     sleep(2);
     ASSERT_EQ(ord.getWaitingTime(), 2);
@@ -918,7 +916,7 @@ TEST(OrderTest, getTotalPrice)
 {
     Table tbl(Table::Position(3, 5, 0), 4);
     LocalOrder lo(tbl);
-    Order& ord = lo;
+    Order &ord = lo;
 
     const Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::Category::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
     const Beverage cola("Cola", "Niezdrowy napoj", MenuItem::Category::coldBeverage, 800, 0, 500);
@@ -933,7 +931,7 @@ TEST(OrderTest, getTotalPriceStr_typical)
 {
     Table tbl(Table::Position(3, 5, 0), 4);
     LocalOrder lo(tbl);
-    Order& ord = lo;
+    Order &ord = lo;
 
     const Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::Category::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
     const Beverage cola("Cola", "Niezdrowy napoj", MenuItem::Category::coldBeverage, 800, 0, 500);
@@ -948,7 +946,7 @@ TEST(OrderTest, getTotalPriceStr_zero)
 {
     Table tbl(Table::Position(3, 5, 0), 4);
     LocalOrder lo(tbl);
-    Order& ord = lo;
+    Order &ord = lo;
 
     ASSERT_EQ(ord.getTotalPriceStr(), "0,00");
 }
@@ -957,7 +955,7 @@ TEST(OrderTest, getTotalPriceStr_less_than_10_fraction)
 {
     Table tbl(Table::Position(3, 5, 0), 4);
     LocalOrder lo(tbl);
-    Order& ord = lo;
+    Order &ord = lo;
 
     const Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::Category::mainCourse, 1905, "mięso, mąka, woda, cebula, przyprawy", 300);
     ord.addOrderItem(pierogi, 1);
@@ -969,7 +967,7 @@ TEST(OrderTest, getTotalPrice_caneled_items)
 {
     Table tbl(Table::Position(3, 5, 0), 4);
     LocalOrder lo(tbl);
-    Order& ord = lo;
+    Order &ord = lo;
 
     const Dish pierogi("Pierogi", "Ręcznnie lepione pierogi z mięsem, smaożone na maśle", MenuItem::Category::mainCourse, 1999, "mięso, mąka, woda, cebula, przyprawy", 300);
     const Beverage cola("Cola", "Niezdrowy napoj", MenuItem::Category::coldBeverage, 800, 0, 500);
@@ -1131,7 +1129,7 @@ TEST(WaiterTest, init)
 
 TEST(RestaurantTest, iteration_over_Waiters_typical)
 {
-    Restaurant restaurant;
+    Restaurant restaurant("memoryHandlerTestFiles");
 
     auto waiter_it = restaurant.wtbegin();
     ASSERT_EQ((*waiter_it).name, "John");
@@ -1143,8 +1141,7 @@ TEST(RestaurantTest, iteration_over_Waiters_typical)
 
 TEST(RestaurantTest, const_iteration_over_Waiters)
 {
-    Restaurant restaurant;
-
+    Restaurant restaurant("memoryHandlerTestFiles");
     auto waiter_it = restaurant.wtcbegin();
     ASSERT_EQ((*waiter_it).name, "John");
     ASSERT_EQ((*++waiter_it).name, "Jorek");
@@ -1155,7 +1152,7 @@ TEST(RestaurantTest, const_iteration_over_Waiters)
 
 TEST(RestaurantTest, iteration_over_Tables_typical)
 {
-    Restaurant restaurant;
+    Restaurant restaurant("memoryHandlerTestFiles");
 
     auto table_it = restaurant.tbbegin();
     ASSERT_EQ((*table_it).position.x, 1);
@@ -1170,7 +1167,7 @@ TEST(RestaurantTest, iteration_over_Tables_typical)
 
 TEST(RestaurantTest, const_iteration_over_Tables_typical)
 {
-    Restaurant restaurant;
+    Restaurant restaurant("memoryHandlerTestFiles");
 
     auto table_it = restaurant.tbcbegin();
     ASSERT_EQ((*table_it).position.x, 1);
@@ -1185,19 +1182,19 @@ TEST(RestaurantTest, const_iteration_over_Tables_typical)
 
 TEST(RestaurantTest, newLocalOrder_typical)
 {
-    Restaurant restaurant;
-    Table& tbl1 = *restaurant.tbbegin();
-    Table& tbl2 = *++restaurant.tbbegin();
+    Restaurant restaurant("memoryHandlerTestFiles");
+    Table &tbl1 = *restaurant.tbbegin();
+    Table &tbl2 = *++restaurant.tbbegin();
     Beverage woda("Woda", "Woda mineralna niegazowana", MenuItem::beverage, 299, 0, 500);
-    Waiter& wt = *(restaurant.wtbegin());
+    Waiter &wt = *(restaurant.wtbegin());
 
     auto &lo = restaurant.newLocalOrder(wt, tbl1);
     auto &lo2 = restaurant.newLocalOrder(wt, tbl2);
 
     lo.addOrderItem(woda, 1);
 
-    LocalOrder& od = *wt.lobegin();
-    OrderItem& oi = *od.oibegin();
+    LocalOrder &od = *wt.lobegin();
+    OrderItem &oi = *od.oibegin();
 
     ASSERT_EQ(oi.menuItem.name, "Woda");
     ASSERT_EQ(lo.getStatus(), OrderStatus::inProgress);
@@ -1214,7 +1211,7 @@ TEST(RestaurantTest, newLocalOrder_typical)
 
 TEST(RestaurantTest, newLocalOrder_waiter_outside_restaurant)
 {
-    Restaurant restaurant;
+    Restaurant restaurant("memoryHandlerTestFiles");
     Table tbl1(Table::Position(0, 0, 0), 4);
     Waiter wt(1, "Andrzej", "Wolny");
 
@@ -1223,19 +1220,19 @@ TEST(RestaurantTest, newLocalOrder_waiter_outside_restaurant)
 
 TEST(RestaurantTest, newLocalOrder_table_outside_restaurant)
 {
-    Restaurant restaurant;
+    Restaurant restaurant("memoryHandlerTestFiles");
     Table tbl1(Table::Position(0, 0, 0), 4);
-    Waiter& wt = *restaurant.wtbegin();
+    Waiter &wt = *restaurant.wtbegin();
 
     EXPECT_THROW(restaurant.newLocalOrder(wt, tbl1), std::runtime_error);
 }
 
 TEST(RestaurantTest, newRemoteOrder_typical)
 {
-    Restaurant restaurant;
+    Restaurant restaurant("memoryHandlerTestFiles");
     Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
     Remote remote("Elzbieta Kopyto", "123456789", adr);
-    Waiter& wt = *(restaurant.wtbegin());
+    Waiter &wt = *(restaurant.wtbegin());
 
     auto &ro = restaurant.newRemoteOrder(wt, remote);
 
@@ -1248,7 +1245,7 @@ TEST(RestaurantTest, newRemoteOrder_typical)
 
 TEST(RestaurantTest, newRemoteOrder_waiter_outside_restaurant)
 {
-    Restaurant restaurant;
+    Restaurant restaurant("memoryHandlerTestFiles");
     Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
     Remote remote("Elzbieta Kopyto", "123456789", adr);
     Waiter wt(1, "Andrzej", "Wolny");
@@ -1258,13 +1255,12 @@ TEST(RestaurantTest, newRemoteOrder_waiter_outside_restaurant)
 
 TEST(RestaurantTest, iteration_over_LocalOrders_typical)
 {
-    Restaurant restaurant;
-
+    Restaurant restaurant("memoryHandlerTestFiles");
     Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
     Remote rmt1("Elzbieta Kopyto", "123456789", adr);
     Remote rmt2("Barbara Nara", "987654321", adr);
-    Table& tbl1 = *restaurant.tbbegin();
-    Table& tbl2 = *++restaurant.tbbegin();
+    Table &tbl1 = *restaurant.tbbegin();
+    Table &tbl2 = *++restaurant.tbbegin();
 
     restaurant.newLocalOrder(*(restaurant.wtbegin()), tbl1);
     restaurant.newRemoteOrder(*(restaurant.wtbegin()), rmt1);
@@ -1280,13 +1276,12 @@ TEST(RestaurantTest, iteration_over_LocalOrders_typical)
 
 TEST(RestaurantTest, const_iteration_over_LocalOrders_typical)
 {
-    Restaurant restaurant;
-
+    Restaurant restaurant("memoryHandlerTestFiles");
     Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
     Remote rmt1("Elzbieta Kopyto", "123456789", adr);
     Remote rmt2("Barbara Nara", "987654321", adr);
-    Table& tbl1 = *restaurant.tbbegin();
-    Table& tbl2 = *++restaurant.tbbegin();
+    Table &tbl1 = *restaurant.tbbegin();
+    Table &tbl2 = *++restaurant.tbbegin();
 
     restaurant.newLocalOrder(*(restaurant.wtbegin()), tbl1);
     restaurant.newRemoteOrder(*(restaurant.wtbegin()), rmt1);
@@ -1302,14 +1297,13 @@ TEST(RestaurantTest, const_iteration_over_LocalOrders_typical)
 
 TEST(RestaurantTest, iteration_over_LocalOrders_first_remote)
 {
-    Restaurant restaurant;
-
+    Restaurant restaurant("memoryHandlerTestFiles");
     Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
     Remote rmt1("Elzbieta Kopyto", "123456789", adr);
     Remote rmt2("Barbara Nara", "987654321", adr);
-    Table& tbl1 = *restaurant.tbbegin();
-    Table& tbl2 = *++restaurant.tbbegin();
-    Waiter& wt1 = *restaurant.wtbegin();
+    Table &tbl1 = *restaurant.tbbegin();
+    Table &tbl2 = *++restaurant.tbbegin();
+    Waiter &wt1 = *restaurant.wtbegin();
 
     restaurant.newRemoteOrder(wt1, rmt1);
     restaurant.newRemoteOrder(wt1, rmt2);
@@ -1325,14 +1319,13 @@ TEST(RestaurantTest, iteration_over_LocalOrders_first_remote)
 
 TEST(RestaurantTest, const_iteration_over_LocalOrders_first_remote)
 {
-    Restaurant restaurant;
-
+    Restaurant restaurant("memoryHandlerTestFiles");
     Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
     Remote rmt1("Elzbieta Kopyto", "123456789", adr);
     Remote rmt2("Barbara Nara", "987654321", adr);
-    Table& tbl1 = *restaurant.tbbegin();
-    Table& tbl2 = *++restaurant.tbbegin();
-    Waiter& wt1 = *restaurant.wtbegin();
+    Table &tbl1 = *restaurant.tbbegin();
+    Table &tbl2 = *++restaurant.tbbegin();
+    Waiter &wt1 = *restaurant.wtbegin();
 
     restaurant.newRemoteOrder(wt1, rmt1);
     restaurant.newRemoteOrder(wt1, rmt2);
@@ -1348,12 +1341,11 @@ TEST(RestaurantTest, const_iteration_over_LocalOrders_first_remote)
 
 TEST(RestaurantTest, iteration_over_LocalOrders_empty)
 {
-    Restaurant restaurant;
-
+    Restaurant restaurant("memoryHandlerTestFiles");
     Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
     Remote rmt1("Elzbieta Kopyto", "123456789", adr);
     Remote rmt2("Barbara Nara", "987654321", adr);
-    Waiter& wt1 = *restaurant.wtbegin();
+    Waiter &wt1 = *restaurant.wtbegin();
 
     restaurant.newRemoteOrder(wt1, rmt1);
     restaurant.newRemoteOrder(wt1, rmt2);
@@ -1365,12 +1357,11 @@ TEST(RestaurantTest, iteration_over_LocalOrders_empty)
 
 TEST(RestaurantTest, const_iteration_over_LocalOrders_empty)
 {
-    Restaurant restaurant;
-
+    Restaurant restaurant("memoryHandlerTestFiles");
     Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
     Remote rmt1("Elzbieta Kopyto", "123456789", adr);
     Remote rmt2("Barbara Nara", "987654321", adr);
-    Waiter& wt1 = *restaurant.wtbegin();
+    Waiter &wt1 = *restaurant.wtbegin();
 
     restaurant.newRemoteOrder(wt1, rmt1);
     restaurant.newRemoteOrder(wt1, rmt2);
@@ -1382,20 +1373,19 @@ TEST(RestaurantTest, const_iteration_over_LocalOrders_empty)
 
 TEST(RestaurantTest, iteration_over_LocalOrders_inprogress_typical)
 {
-    Restaurant restaurant;
-
+    Restaurant restaurant("memoryHandlerTestFiles");
     Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
     Remote rmt1("Elzbieta Kopyto", "123456789", adr);
     Remote rmt2("Barbara Nara", "987654321", adr);
-    Table& tbl1 = *restaurant.tbbegin();
-    Table& tbl2 = *++restaurant.tbbegin();
-    Table& tbl3 = *++++restaurant.tbbegin();
-    Waiter& wt1 = *restaurant.wtbegin();
+    Table &tbl1 = *restaurant.tbbegin();
+    Table &tbl2 = *++restaurant.tbbegin();
+    Table &tbl3 = *++ ++restaurant.tbbegin();
+    Waiter &wt1 = *restaurant.wtbegin();
 
     restaurant.newLocalOrder(wt1, tbl1);
     restaurant.newRemoteOrder(wt1, rmt1);
     restaurant.newRemoteOrder(wt1, rmt2);
-    auto& lo2 = restaurant.newLocalOrder(wt1, tbl2);
+    auto &lo2 = restaurant.newLocalOrder(wt1, tbl2);
     restaurant.newLocalOrder(wt1, tbl3);
 
     lo2.setClosed();
@@ -1411,14 +1401,13 @@ TEST(RestaurantTest, iteration_over_LocalOrders_inprogress_typical)
 
 TEST(RestaurantTest, iteration_over_RemoteOrders_typical)
 {
-    Restaurant restaurant;
-
+    Restaurant restaurant("memoryHandlerTestFiles");
     Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
     Remote rmt1("Elzbieta Kopyto", "123456789", adr);
     Remote rmt2("Barbara Nara", "987654321", adr);
-    Table& tbl1 = *restaurant.tbbegin();
-    Table& tbl2 = *++restaurant.tbbegin();
-    Waiter& wt1 = *restaurant.wtbegin();
+    Table &tbl1 = *restaurant.tbbegin();
+    Table &tbl2 = *++restaurant.tbbegin();
+    Waiter &wt1 = *restaurant.wtbegin();
 
     restaurant.newLocalOrder(wt1, tbl1);
     restaurant.newRemoteOrder(wt1, rmt1);
@@ -1434,14 +1423,13 @@ TEST(RestaurantTest, iteration_over_RemoteOrders_typical)
 
 TEST(RestaurantTest, const_iteration_over_RemoteOrders_typical)
 {
-    Restaurant restaurant;
-
+    Restaurant restaurant("memoryHandlerTestFiles");
     Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
     Remote rmt1("Elzbieta Kopyto", "123456789", adr);
     Remote rmt2("Barbara Nara", "987654321", adr);
-    Table& tbl1 = *restaurant.tbbegin();
-    Table& tbl2 = *++restaurant.tbbegin();
-    Waiter& wt1 = *restaurant.wtbegin();
+    Table &tbl1 = *restaurant.tbbegin();
+    Table &tbl2 = *++restaurant.tbbegin();
+    Waiter &wt1 = *restaurant.wtbegin();
 
     restaurant.newLocalOrder(wt1, tbl1);
     restaurant.newRemoteOrder(wt1, rmt1);
@@ -1457,20 +1445,19 @@ TEST(RestaurantTest, const_iteration_over_RemoteOrders_typical)
 
 TEST(RestaurantTest, iteration_over_RemoteOrders_inprogress_and_count)
 {
-    Restaurant restaurant;
-
+    Restaurant restaurant("memoryHandlerTestFiles");
     Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
     Remote rmt1("Elzbieta Kopyto", "123456789", adr);
     Remote rmt2("Barbara Nara", "987654321", adr);
     Remote rmt3("Anna Nara", "987654321", adr);
-    Table& tbl1 = *restaurant.tbbegin();
-    Table& tbl2 = *++restaurant.tbbegin();
-    Waiter& wt1 = *restaurant.wtbegin();
+    Table &tbl1 = *restaurant.tbbegin();
+    Table &tbl2 = *++restaurant.tbbegin();
+    Waiter &wt1 = *restaurant.wtbegin();
 
     restaurant.newRemoteOrder(wt1, rmt1);
     restaurant.newLocalOrder(wt1, tbl1);
     restaurant.newLocalOrder(wt1, tbl2);
-    auto& ro = restaurant.newRemoteOrder(wt1, rmt2);
+    auto &ro = restaurant.newRemoteOrder(wt1, rmt2);
     restaurant.newRemoteOrder(wt1, rmt3);
 
     ro.setClosed();
@@ -1486,20 +1473,19 @@ TEST(RestaurantTest, iteration_over_RemoteOrders_inprogress_and_count)
 
 TEST(RestaurantTest, const_iteration_over_RemoteOrders_inprogress_and_count)
 {
-    Restaurant restaurant;
-
+    Restaurant restaurant("memoryHandlerTestFiles");
     Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
     Remote rmt1("Elzbieta Kopyto", "123456789", adr);
     Remote rmt2("Barbara Nara", "987654321", adr);
     Remote rmt3("Anna Nara", "987654321", adr);
-    Table& tbl1 = *restaurant.tbbegin();
-    Table& tbl2 = *++restaurant.tbbegin();
-    Waiter& wt1 = *restaurant.wtbegin();
+    Table &tbl1 = *restaurant.tbbegin();
+    Table &tbl2 = *++restaurant.tbbegin();
+    Waiter &wt1 = *restaurant.wtbegin();
 
     restaurant.newRemoteOrder(wt1, rmt1);
     restaurant.newLocalOrder(wt1, tbl1);
     restaurant.newLocalOrder(wt1, tbl2);
-    auto& ro = restaurant.newRemoteOrder(wt1, rmt2);
+    auto &ro = restaurant.newRemoteOrder(wt1, rmt2);
     restaurant.newRemoteOrder(wt1, rmt3);
 
     ro.setClosed();
@@ -1515,14 +1501,13 @@ TEST(RestaurantTest, const_iteration_over_RemoteOrders_inprogress_and_count)
 
 TEST(RestaurantTest, iteration_over_RemoteOrders_first_remote)
 {
-    Restaurant restaurant;
-
+    Restaurant restaurant("memoryHandlerTestFiles");
     Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
     Remote rmt1("Elzbieta Kopyto", "123456789", adr);
     Remote rmt2("Barbara Nara", "987654321", adr);
-    Table& tbl1 = *restaurant.tbbegin();
-    Table& tbl2 = *++restaurant.tbbegin();
-    Waiter& wt1 = *restaurant.wtbegin();
+    Table &tbl1 = *restaurant.tbbegin();
+    Table &tbl2 = *++restaurant.tbbegin();
+    Waiter &wt1 = *restaurant.wtbegin();
 
     restaurant.newLocalOrder(wt1, tbl1);
     restaurant.newRemoteOrder(wt1, rmt1);
@@ -1538,14 +1523,13 @@ TEST(RestaurantTest, iteration_over_RemoteOrders_first_remote)
 
 TEST(RestaurantTest, const_iteration_over_RemoteOrders_first_remote)
 {
-    Restaurant restaurant;
-
+    Restaurant restaurant("memoryHandlerTestFiles");
     Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
     Remote rmt1("Elzbieta Kopyto", "123456789", adr);
     Remote rmt2("Barbara Nara", "987654321", adr);
-    Table& tbl1 = *restaurant.tbbegin();
-    Table& tbl2 = *++restaurant.tbbegin();
-    Waiter& wt1 = *restaurant.wtbegin();
+    Table &tbl1 = *restaurant.tbbegin();
+    Table &tbl2 = *++restaurant.tbbegin();
+    Waiter &wt1 = *restaurant.wtbegin();
 
     restaurant.newLocalOrder(wt1, tbl1);
     restaurant.newRemoteOrder(wt1, rmt1);
@@ -1561,14 +1545,13 @@ TEST(RestaurantTest, const_iteration_over_RemoteOrders_first_remote)
 
 TEST(RestaurantTest, iteration_over_RemoteOrders_empty)
 {
-    Restaurant restaurant;
-
+    Restaurant restaurant("memoryHandlerTestFiles");
     Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
     Remote rmt1("Elzbieta Kopyto", "123456789", adr);
     Remote rmt2("Barbara Nara", "987654321", adr);
-    Table& tbl1 = *restaurant.tbbegin();
-    Table& tbl2 = *++restaurant.tbbegin();
-    Waiter& wt1 = *restaurant.wtbegin();
+    Table &tbl1 = *restaurant.tbbegin();
+    Table &tbl2 = *++restaurant.tbbegin();
+    Waiter &wt1 = *restaurant.wtbegin();
 
     restaurant.newLocalOrder(wt1, tbl1);
     restaurant.newLocalOrder(wt1, tbl2);
@@ -1585,9 +1568,9 @@ TEST(RestaurantTest, const_iteration_over_RemoteOrders_empty)
     Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
     Remote rmt1("Elzbieta Kopyto", "123456789", adr);
     Remote rmt2("Barbara Nara", "987654321", adr);
-    Table& tbl1 = *restaurant.tbbegin();
-    Table& tbl2 = *++restaurant.tbbegin();
-    Waiter& wt1 = *restaurant.wtbegin();
+    Table &tbl1 = *restaurant.tbbegin();
+    Table &tbl2 = *++restaurant.tbbegin();
+    Waiter &wt1 = *restaurant.wtbegin();
 
     restaurant.newLocalOrder(wt1, tbl1);
     restaurant.newLocalOrder(wt1, tbl2);
@@ -1603,11 +1586,11 @@ TEST(RestaurantTest, close_typical)
 
     Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
     Remote rmt1("Elzbieta Kopyto", "123456789", adr);
-    Table& tbl1 = *restaurant.tbbegin();
-    Waiter& wt1 = *restaurant.wtbegin();
+    Table &tbl1 = *restaurant.tbbegin();
+    Waiter &wt1 = *restaurant.wtbegin();
 
-    auto& ro = restaurant.newRemoteOrder(wt1, rmt1);
-    auto& lo = restaurant.newLocalOrder(wt1, tbl1);
+    auto &ro = restaurant.newRemoteOrder(wt1, rmt1);
+    auto &lo = restaurant.newLocalOrder(wt1, tbl1);
 
     ASSERT_EQ(restaurant.canBeClosed(), false);
     EXPECT_THROW(restaurant.close(), std::runtime_error);
@@ -1621,12 +1604,12 @@ TEST(RestaurantTest, close_typical)
 
 TEST(RestaurantTest, local_order_in_waiter_iteration_typical)
 {
-    Restaurant restaurant;
+    Restaurant restaurant("memoryHandlerTestFiles");
     Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
     Remote remote("Elzbieta Kopyto", "123456789", adr);
-    Table& tbl1 = *restaurant.tbbegin();
-    Table& tbl2 = *++restaurant.tbbegin();
-    Waiter& wt = *(restaurant.wtbegin());
+    Table &tbl1 = *restaurant.tbbegin();
+    Table &tbl2 = *++restaurant.tbbegin();
+    Waiter &wt = *(restaurant.wtbegin());
 
     restaurant.newRemoteOrder(wt, remote);
     restaurant.newLocalOrder(wt, tbl1);
@@ -1640,12 +1623,12 @@ TEST(RestaurantTest, local_order_in_waiter_iteration_typical)
 
 TEST(RestaurantTest, local_order_in_waiter_const_iteration_typical)
 {
-    Restaurant restaurant;
+    Restaurant restaurant("memoryHandlerTestFiles");
     Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
     Remote remote("Elzbieta Kopyto", "123456789", adr);
-    Table& tbl1 = *restaurant.tbbegin();
-    Table& tbl2 = *++restaurant.tbbegin();
-    Waiter& wt = *(restaurant.wtbegin());
+    Table &tbl1 = *restaurant.tbbegin();
+    Table &tbl2 = *++restaurant.tbbegin();
+    Waiter &wt = *(restaurant.wtbegin());
 
     restaurant.newRemoteOrder(wt, remote);
     restaurant.newLocalOrder(wt, tbl1);
@@ -1659,17 +1642,17 @@ TEST(RestaurantTest, local_order_in_waiter_const_iteration_typical)
 
 TEST(RestaurantTest, local_order_in_waiter_iteration_inprogress)
 {
-    Restaurant restaurant;
+    Restaurant restaurant("memoryHandlerTestFiles");
     Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
     Remote remote("Elzbieta Kopyto", "123456789", adr);
-    Table& tbl1 = *restaurant.tbbegin();
-    Table& tbl2 = *++restaurant.tbbegin();
-    Table& tbl3 = *++++restaurant.tbbegin();
-    Waiter& wt = *(restaurant.wtbegin());
+    Table &tbl1 = *restaurant.tbbegin();
+    Table &tbl2 = *++restaurant.tbbegin();
+    Table &tbl3 = *++ ++restaurant.tbbegin();
+    Waiter &wt = *(restaurant.wtbegin());
 
     restaurant.newLocalOrder(wt, tbl1);
     restaurant.newRemoteOrder(wt, remote);
-    auto& lo = restaurant.newLocalOrder(wt, tbl2);
+    auto &lo = restaurant.newLocalOrder(wt, tbl2);
     restaurant.newLocalOrder(wt, tbl3);
 
     ASSERT_EQ(wt.openLocalOrdersCount(), 3);
@@ -1688,17 +1671,17 @@ TEST(RestaurantTest, local_order_in_waiter_iteration_inprogress)
 
 TEST(RestaurantTest, local_order_in_waiter_const_iteration_inprogress)
 {
-    Restaurant restaurant;
+    Restaurant restaurant("memoryHandlerTestFiles");
     Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
     Remote remote("Elzbieta Kopyto", "123456789", adr);
-    Table& tbl1 = *restaurant.tbbegin();
-    Table& tbl2 = *++restaurant.tbbegin();
-    Table& tbl3 = *++++restaurant.tbbegin();
-    Waiter& wt = *(restaurant.wtbegin());
+    Table &tbl1 = *restaurant.tbbegin();
+    Table &tbl2 = *++restaurant.tbbegin();
+    Table &tbl3 = *++ ++restaurant.tbbegin();
+    Waiter &wt = *(restaurant.wtbegin());
 
     restaurant.newLocalOrder(wt, tbl1);
     restaurant.newRemoteOrder(wt, remote);
-    auto& lo = restaurant.newLocalOrder(wt, tbl2);
+    auto &lo = restaurant.newLocalOrder(wt, tbl2);
     restaurant.newLocalOrder(wt, tbl3);
 
     lo.setClosed();
@@ -1711,14 +1694,13 @@ TEST(RestaurantTest, local_order_in_waiter_const_iteration_inprogress)
 
 TEST(RestaurantTest, remote_order_in_waiter_iteration_typical)
 {
-    Restaurant restaurant;
-
+    Restaurant restaurant("memoryHandlerTestFiles");
     Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
     Remote rmt1("Elzbieta Kopyto", "123456789", adr);
     Remote rmt2("Barbara Nara", "987654321", adr);
-    Table& tbl1 = *restaurant.tbbegin();
-    Table& tbl2 = *++restaurant.tbbegin();
-    Waiter& wt1 = *restaurant.wtbegin();
+    Table &tbl1 = *restaurant.tbbegin();
+    Table &tbl2 = *++restaurant.tbbegin();
+    Waiter &wt1 = *restaurant.wtbegin();
 
     restaurant.newLocalOrder(wt1, tbl1);
     restaurant.newRemoteOrder(wt1, rmt1);
@@ -1734,14 +1716,13 @@ TEST(RestaurantTest, remote_order_in_waiter_iteration_typical)
 
 TEST(RestaurantTest, remote_order_in_waiter_const_iteration_typical)
 {
-    Restaurant restaurant;
-
+    Restaurant restaurant("memoryHandlerTestFiles");
     Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
     Remote rmt1("Elzbieta Kopyto", "123456789", adr);
     Remote rmt2("Barbara Nara", "987654321", adr);
-    Table& tbl1 = *restaurant.tbbegin();
-    Table& tbl2 = *++restaurant.tbbegin();
-    Waiter& wt1 = *restaurant.wtbegin();
+    Table &tbl1 = *restaurant.tbbegin();
+    Table &tbl2 = *++restaurant.tbbegin();
+    Waiter &wt1 = *restaurant.wtbegin();
 
     restaurant.newLocalOrder(wt1, tbl1);
     restaurant.newRemoteOrder(wt1, rmt1);
@@ -1757,20 +1738,19 @@ TEST(RestaurantTest, remote_order_in_waiter_const_iteration_typical)
 
 TEST(RestaurantTest, remote_order_in_waiter_iteration_inprogress)
 {
-    Restaurant restaurant;
-
+    Restaurant restaurant("memoryHandlerTestFiles");
     Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
     Remote rmt1("Elzbieta Kopyto", "123456789", adr);
     Remote rmt2("Barbara Nara", "987654321", adr);
     Remote rmt3("Anna Nara", "987654321", adr);
-    Table& tbl1 = *restaurant.tbbegin();
-    Table& tbl2 = *++restaurant.tbbegin();
-    Waiter& wt1 = *restaurant.wtbegin();
+    Table &tbl1 = *restaurant.tbbegin();
+    Table &tbl2 = *++restaurant.tbbegin();
+    Waiter &wt1 = *restaurant.wtbegin();
 
     restaurant.newRemoteOrder(wt1, rmt1);
     restaurant.newLocalOrder(wt1, tbl1);
     restaurant.newLocalOrder(wt1, tbl2);
-    auto& ro = restaurant.newRemoteOrder(wt1, rmt2);
+    auto &ro = restaurant.newRemoteOrder(wt1, rmt2);
     restaurant.newRemoteOrder(wt1, rmt3);
 
     ASSERT_EQ(wt1.openLocalOrdersCount(), 2);
@@ -1790,20 +1770,19 @@ TEST(RestaurantTest, remote_order_in_waiter_iteration_inprogress)
 
 TEST(RestaurantTest, remote_order_in_waiter_const_iteration_inprogress)
 {
-    Restaurant restaurant;
-
+    Restaurant restaurant("memoryHandlerTestFiles");
     Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
     Remote rmt1("Elzbieta Kopyto", "123456789", adr);
     Remote rmt2("Barbara Nara", "987654321", adr);
     Remote rmt3("Anna Nara", "987654321", adr);
-    Table& tbl1 = *restaurant.tbbegin();
-    Table& tbl2 = *++restaurant.tbbegin();
-    Waiter& wt1 = *restaurant.wtbegin();
+    Table &tbl1 = *restaurant.tbbegin();
+    Table &tbl2 = *++restaurant.tbbegin();
+    Waiter &wt1 = *restaurant.wtbegin();
 
     restaurant.newRemoteOrder(wt1, rmt1);
     restaurant.newLocalOrder(wt1, tbl1);
     restaurant.newLocalOrder(wt1, tbl2);
-    auto& ro = restaurant.newRemoteOrder(wt1, rmt2);
+    auto &ro = restaurant.newRemoteOrder(wt1, rmt2);
     restaurant.newRemoteOrder(wt1, rmt3);
 
     ASSERT_EQ(wt1.openLocalOrdersCount(), 2);
@@ -1825,7 +1804,7 @@ TEST(OrderTest, getWaitingTimeStr_one_min)
 {
     Table tbl(Table::Position(3, 5, 0), 4);
     LocalOrder lo(tbl);
-    Order& ord = lo;
+    Order &ord = lo;
 
     sleep(61);
     ASSERT_EQ(ord.getWaitingTimeStr(), "1 m ago");

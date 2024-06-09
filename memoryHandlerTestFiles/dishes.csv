@@ -1,3 +1,6 @@
 "name","description","category","price","ingredients","volume"
 "Caesar Salad","A classic salad with romaine lettuce and Caesar dressing","14","1200","Romaine Lettuce Caesar Dressing Parmesan Croutons","350"
 "Tomato Soup","A creamy tomato soup","13","700","Tomatoes Cream Garlic Basil","300"
+"Margherita Pizza","Classic pizza with mozzarella and tomato-based sauce","17","1500","Tomato Sauce Mozzarella Basil","500"
+"Beef Burger","Juicy beef burger with lettuce and tomato","18","1800","Beef Patty Lettuce Tomato Onion Pickles Bun","450"
+"Penne Alfredo","Pasta with a creamy Alfredo sauce","15","2000","Penne Pasta Alfredo Sauce Parmesan","400"

@@ -32,7 +32,7 @@ protected:
     bool isRestaurantClosed = false;
 
 public:
-    Restaurant();
+    Restaurant(const std::string &configFolderName = "memoryHandlerConf");
 
     const Menu &getMenu() const;
 

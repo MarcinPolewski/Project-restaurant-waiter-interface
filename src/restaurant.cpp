@@ -16,8 +16,8 @@ bool Restaurant::isTable(const Table &table) const
     return false;
 }
 
-Restaurant::Restaurant()
-    : memoryHandler(),
+Restaurant::Restaurant(const std::string &configFolderName)
+    : memoryHandler(configFolderName),
       serverHandler(memoryHandler),
       menu(memoryHandler.fetchMenu())
 {
