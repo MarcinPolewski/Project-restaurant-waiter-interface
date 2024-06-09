@@ -197,7 +197,7 @@ LocalOrdersPopUpMenu::LocalOrdersPopUpMenu(WINDOW *background, PopUpHandler *pop
     int buttonY = getbegy(window) + BUTTON_TOP_OFFSET;
     int buttonWidth = DEFAULT_WIDTH - 2 * BUTTON_SIDE_OFFSET;
 
-    Waiter::LOiterator it = restaurant->getCurrentWaiter()->lobegin();
+    Waiter::LOiterator it = restaurant->getCurrentWaiter()->lobegin_inprogress();
     Waiter::LOiterator ed = restaurant->getCurrentWaiter()->loend();
 
     scrollStartY = buttonY;

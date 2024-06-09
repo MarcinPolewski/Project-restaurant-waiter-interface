@@ -48,6 +48,7 @@ int main()
     PopUpHandler popUpHandler(mainscreen.getWindow(), &restaurant);
     TopBar topbar(TOPBARHEIGHT, xMax, 0, 0, &popUpHandler, &restaurant);
     mainscreen.addTables(&restaurant);
+    mainscreen.draw();
 
     keypad(stdscr, true);
 
@@ -60,8 +61,8 @@ int main()
     do
     {
 
+        topbar.draw();
         userInput = getch();
-
         // ========== handle user input
         if (state == aplicationState::topBar)
         {
@@ -190,9 +191,3 @@ int main()
     endwin();
     return 0;
 }
-
-// refresh only updated elements after change
-// do not change elements that have not changed !!
-// if you getchar it will automatically refreesh
-// draw only window with focus !!!
-// refresh only things that have changed
