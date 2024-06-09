@@ -9,13 +9,8 @@ public:
     const std::string name;
     const std::string surname;
 
-    Employee(unsigned int id, const std::string &name, const std::string &surname)
-        : id(id), name(name), surname(surname)
-    {
-    }
+    Employee(unsigned int id, const std::string &name,
+        const std::string &surname);
 
-    std::string toString()
-    {
-        return std::to_string(id) + ". " + name + " " + surname;
-    }
+    std::string toString() const;
 };

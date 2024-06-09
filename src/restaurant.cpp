@@ -1,16 +1,16 @@
 #include "restaurant.h"
 
-bool Restaurant::isWaiter(Waiter &waiter)
+bool Restaurant::isWaiter(const Waiter &waiter) const
 {
-    for (WTiterator it = this->wtbegin(); it != this->wtend(); ++it)
+    for (const_WTiterator it = this->wtcbegin(); it != this->wtcend(); ++it)
         if (&*it == &waiter)
             return true;
     return false;
 }
 
-bool Restaurant::isTable(Table &table)
+bool Restaurant::isTable(const Table &table) const
 {
-    for (TBiterator it = this->tbbegin(); it != this->tbend(); ++it)
+    for (const_TBiterator it = this->tbcbegin(); it != this->tbcend(); ++it)
         if (&*it == &table)
             return true;
     return false;
@@ -71,6 +71,16 @@ Restaurant::WTiterator Restaurant::wtend()
     return WTiterator(this->waiters.end(), this->waiters.end());
 }
 
+Restaurant::const_WTiterator Restaurant::wtcbegin() const
+{
+    return const_WTiterator(this->waiters.cbegin(), this->waiters.cend());
+}
+
+Restaurant::const_WTiterator Restaurant::wtcend() const
+{
+    return const_WTiterator(this->waiters.cend(), this->waiters.cend());
+}
+
 Restaurant::TBiterator Restaurant::tbbegin()
 {
     return TBiterator(this->tables.begin(), this->tables.end());
@@ -81,13 +91,23 @@ Restaurant::TBiterator Restaurant::tbend()
     return TBiterator(this->tables.end(), this->tables.end());
 }
 
+Restaurant::const_TBiterator Restaurant::tbcbegin() const
+{
+    return const_TBiterator(this->tables.cbegin(), this->tables.cend());
+}
+
+Restaurant::const_TBiterator Restaurant::tbcend() const
+{
+    return const_TBiterator(this->tables.cend(), this->tables.cend());
+}
+
 Restaurant::LOiterator &Restaurant::LOiterator::operator++()
 {
     filtered_unique_iterator::operator++();
     return *this;
 }
 
-LocalOrder &Restaurant::LOiterator::operator*()
+LocalOrder &Restaurant::LOiterator::operator*() const
 {
     return dynamic_cast<LocalOrder &>(*(*current_it).get());
 }
@@ -111,13 +131,43 @@ Restaurant::LOiterator Restaurant::lobegin_inprogress()
                       { return dynamic_cast<LocalOrder *>(ord.get()) && ord.get()->getStatus() == OrderStatus::inProgress; });
 }
 
+Restaurant::const_LOiterator &Restaurant::const_LOiterator::operator++()
+{
+    const_filtered_unique_iterator::operator++();
+    return *this;
+}
+
+const LocalOrder &Restaurant::const_LOiterator::operator*() const
+{
+    return dynamic_cast<const LocalOrder &>(*(*current_it).get());
+}
+
+Restaurant::const_LOiterator Restaurant::locbegin() const
+{
+    return const_LOiterator(this->orders.cbegin(), this->orders.cend(),
+                            [](const std::unique_ptr<Order> &ord)
+                            { return dynamic_cast<const LocalOrder *>(ord.get()); });
+}
+
+Restaurant::const_LOiterator Restaurant::locend() const
+{
+    return const_LOiterator(this->orders.cend(), this->orders.cend(), nullptr);
+}
+
+Restaurant::const_LOiterator Restaurant::locbegin_inprogress() const
+{
+    return const_LOiterator(this->orders.cbegin(), this->orders.cend(),
+                            [](const std::unique_ptr<Order> &ord)
+                            { return dynamic_cast<const LocalOrder *>(ord.get()) && ord.get()->getStatus() == OrderStatus::inProgress; });
+}
+
 Restaurant::RTiterator &Restaurant::RTiterator::operator++()
 {
     filtered_unique_iterator::operator++();
     return *this;
 }
 
-RemoteOrder &Restaurant::RTiterator::operator*()
+RemoteOrder &Restaurant::RTiterator::operator*() const
 {
     return dynamic_cast<RemoteOrder &>(*(*this->current_it).get());
 }
@@ -141,23 +191,54 @@ Restaurant::RTiterator Restaurant::rtbegin_inprogress()
                       { return dynamic_cast<RemoteOrder *>(ord.get()) && ord.get()->getStatus() == OrderStatus::inProgress; });
 }
 
-unsigned int Restaurant::openLocalOrdersCount()
+// new
+Restaurant::const_RTiterator &Restaurant::const_RTiterator::operator++()
+{
+    const_filtered_unique_iterator::operator++();
+    return *this;
+}
+
+const RemoteOrder &Restaurant::const_RTiterator::operator*() const
+{
+    return dynamic_cast<const RemoteOrder &>(*(*this->current_it).get());
+}
+
+Restaurant::const_RTiterator Restaurant::rtcbegin() const
+{
+    return const_RTiterator(this->orders.cbegin(), this->orders.cend(),
+                            [](const std::unique_ptr<Order> &ord)
+                            { return dynamic_cast<const RemoteOrder *>(ord.get()); });
+}
+
+Restaurant::const_RTiterator Restaurant::rtcend() const
+{
+    return const_RTiterator(this->orders.cend(), this->orders.cend(), nullptr);
+}
+
+Restaurant::const_RTiterator Restaurant::rtcbegin_inprogress() const
+{
+    return const_RTiterator(this->orders.cbegin(), this->orders.cend(),
+                            [](const std::unique_ptr<Order> &ord)
+                            { return dynamic_cast<const RemoteOrder *>(ord.get()) && ord.get()->getStatus() == OrderStatus::inProgress; });
+}
+
+unsigned int Restaurant::openLocalOrdersCount() const
 {
     unsigned int counter = 0;
-    for (LOiterator it = this->lobegin_inprogress(); it != this->loend(); ++it)
+    for (const_LOiterator it = this->locbegin_inprogress(); it != this->locend(); ++it)
         counter++;
     return counter;
 }
 
-unsigned int Restaurant::openRemoteOrdersCount()
+unsigned int Restaurant::openRemoteOrdersCount() const
 {
     unsigned int counter = 0;
-    for (RTiterator it = this->rtbegin_inprogress(); it != this->loend(); ++it)
+    for (const_RTiterator it = this->rtcbegin_inprogress(); it != this->locend(); ++it)
         counter++;
     return counter;
 }
 
-bool Restaurant::canBeClosed()
+bool Restaurant::canBeClosed() const
 {
     return !(this->openLocalOrdersCount() || this->openRemoteOrdersCount());
 }

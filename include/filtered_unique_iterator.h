@@ -36,7 +36,7 @@ public:
         return *this;
     }
 
-    T& operator*()
+    T& operator*() const
     {
         return *((*current_it).get());
     }

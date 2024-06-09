@@ -26,8 +26,8 @@ protected:
     std::vector<std::unique_ptr<Table>> tables;
     std::vector<std::unique_ptr<Order>> orders;
 
-    bool isWaiter(Waiter &waiter);
-    bool isTable(Table &waiter);
+    bool isWaiter(Waiter const &waiter) const;
+    bool isTable(Table const &waiter) const;
 
     bool isRestaurantClosed = false;
 
@@ -40,9 +40,17 @@ public:
     WTiterator wtbegin();
     WTiterator wtend();
 
+    typedef const_filtered_unique_iterator<Waiter> const_WTiterator;
+    const_WTiterator wtcbegin() const;
+    const_WTiterator wtcend() const;
+
     typedef filtered_unique_iterator<Table> TBiterator;
     TBiterator tbbegin();
     TBiterator tbend();
+
+    typedef const_filtered_unique_iterator<Table> const_TBiterator;
+    const_TBiterator tbcbegin() const;
+    const_TBiterator tbcend() const;
 
     LocalOrder &newLocalOrder(Waiter &waiter, Table &table);
     RemoteOrder &newRemoteOrder(Waiter &waiter, Remote &remote);
@@ -52,29 +60,53 @@ public:
     public:
         using filtered_unique_iterator::filtered_unique_iterator;
         LOiterator &operator++();
-        LocalOrder &operator*();
+        LocalOrder &operator*() const;
     };
     LOiterator lobegin();
     LOiterator loend();
 
     LOiterator lobegin_inprogress();
 
+    class const_LOiterator : public const_filtered_unique_iterator<Order>
+    {
+    public:
+        using const_filtered_unique_iterator::const_filtered_unique_iterator;
+        const_LOiterator &operator++();
+        const LocalOrder &operator*() const;
+    };
+    const_LOiterator locbegin() const;
+    const_LOiterator locend() const;
+
+    const_LOiterator locbegin_inprogress() const;
+
     class RTiterator : public filtered_unique_iterator<Order>
     {
     public:
         using filtered_unique_iterator::filtered_unique_iterator;
         RTiterator &operator++();
-        RemoteOrder &operator*();
+        RemoteOrder &operator*() const;
     };
     RTiterator rtbegin();
     RTiterator rtend();
 
     RTiterator rtbegin_inprogress();
 
-    unsigned int openLocalOrdersCount();
-    unsigned int openRemoteOrdersCount();
+    class const_RTiterator : public const_filtered_unique_iterator<Order>
+    {
+    public:
+        using const_filtered_unique_iterator::const_filtered_unique_iterator;
+        const_RTiterator &operator++();
+        const RemoteOrder &operator*() const;
+    };
+    const_RTiterator rtcbegin() const;
+    const_RTiterator rtcend() const;
 
-    bool canBeClosed();
+    const_RTiterator rtcbegin_inprogress() const;
+
+    unsigned int openLocalOrdersCount() const;
+    unsigned int openRemoteOrdersCount() const;
+
+    bool canBeClosed() const;
     void close();
     bool isClosed();
 };
