@@ -221,6 +221,28 @@ void LocalOrdersPopUpMenu::drawInformation()
     mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, DEFAULT_WIDTH_DEVIDER);
 }
 
+void LocalOrdersPopUpMenu::update()
+{
+    int buttonX = startX() + BUTTON_SIDE_OFFSET;
+    int buttonY = getbegy(window) + BUTTON_TOP_OFFSET;
+    int buttonWidth = DEFAULT_WIDTH - 2 * BUTTON_SIDE_OFFSET;
+
+    Waiter::LOiterator it = restaurant->getCurrentWaiter()->lobegin_inprogress();
+    Waiter::LOiterator ed = restaurant->getCurrentWaiter()->loend();
+
+    scrollableButtons.clear();
+    scrollStartY = buttonY;
+    for (; it != ed; ++it)
+    {
+        scrollableButtons.push_back(std::make_unique<LocalOrderButton>(BUTTON_HEIGHT, buttonWidth, buttonY, buttonX, popUpHandler, &(*it)));
+    }
+
+    buttonY = endY() - BUTTON_HEIGHT;
+    staticButtons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, buttonWidth, buttonY, buttonX, popUpHandler));
+
+    auto_initialize();
+}
+
 RemoteOrdersPopUpMenu::RemoteOrdersPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, UIRestaurant *restaurant)
     : PopUpMenu(background, popUpHandler, ORDERS_POP_UP_HEIGHT, DEFAULT_WIDTH), restaurant(restaurant)
 {
@@ -233,6 +255,16 @@ RemoteOrdersPopUpMenu::RemoteOrdersPopUpMenu(WINDOW *background, PopUpHandler *p
     buttonY = endY() - BUTTON_HEIGHT;
     staticButtons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, DEFAULT_WIDTH - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler));
     auto_initialize();
+}
+
+void RemoteOrdersPopUpMenu::drawInformation()
+{
+    int yCoordinate = DEFAULT_SCROLL_SECTION_START_Y;
+
+    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, DEFAULT_WIDTH_DEVIDER);
+    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, "To unlock this feature you need premium plus subscription");
+    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, " If you already have it contact our support team");
+    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, DEFAULT_WIDTH_DEVIDER);
 }
 
 MenuItemView::MenuItemView(WINDOW *background, PopUpHandler *popUpHandler, MenuItem const &menuItem)

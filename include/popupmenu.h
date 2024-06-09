@@ -244,6 +244,7 @@ class LocalOrdersPopUpMenu : public PopUpMenu // presents all local order
 public:
     LocalOrdersPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, UIRestaurant *restaurant);
     void drawInformation() override;
+    void update() override;
 };
 
 class RemoteOrdersPopUpMenu : public PopUpMenu
@@ -252,6 +253,7 @@ class RemoteOrdersPopUpMenu : public PopUpMenu
 
 public:
     RemoteOrdersPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, UIRestaurant *restaurant);
+    void drawInformation() override;
 };
 
 class AddItemToOrderPopUpMenu : public PopUpMenu

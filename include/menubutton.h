@@ -17,29 +17,12 @@ protected:
     PopUpHandler *popUpHandler;
 
 public:
-    MenuButton(int height, int width, int yPosition, int xPosition, std::string title, PopUpHandler *popUpHandler, bool selected = false) // not passed by reference due to nature of initialization of buttons
-        : TerminalUIObject(height, width, yPosition, xPosition), title(title), selected(selected), popUpHandler(popUpHandler)
-    {
-    }
-    void draw() override
-    {
-        box(window, 0, 0);
-        if (selected)
-            wattr_on(window, A_REVERSE, nullptr);
-        mvwprintw(window, 1, 1, title.c_str());
-        wattr_off(window, A_REVERSE, nullptr);
+    MenuButton(int height, int width, int yPosition, int xPosition, std::string title, PopUpHandler *popUpHandler, bool selected = false); // not passed by reference due to nature of initialization of buttons
 
-        wrefresh(window);
-    }
-    void activate()
-    {
-        selected = true;
-    }
+    void draw() override;
 
-    void deactivate()
-    {
-        selected = false;
-    }
+    void activate();
+    void deactivate();
 
     virtual void pressed() = 0;
 };
@@ -47,11 +30,7 @@ public:
 class CloseButton : public MenuButton
 {
 public:
-    CloseButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, bool selected = false)
-        : MenuButton(height, width, yPosition, xPosition, std::string("Close"), popUpHandler, selected)
-    {
-    }
-
+    CloseButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, bool selected = false);
     void pressed() override;
 };
 
@@ -61,11 +40,7 @@ class NewLocalOrderButton : public MenuButton
     Table *table;
 
 public:
-    NewLocalOrderButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, UIRestaurant *restaurant, Table *table, bool selected = false)
-        : MenuButton(height, width, yPosition, xPosition, std::string("Crete new Local Order"), popUpHandler, selected), restaurant(restaurant), table(table)
-    {
-    }
-
+    NewLocalOrderButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, UIRestaurant *restaurant, Table *table, bool selected = false);
     void pressed() override;
 };
 
@@ -75,11 +50,7 @@ class ChangeWaiterButton : public MenuButton
     UIRestaurant *restaurant;
 
 public:
-    ChangeWaiterButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, UIRestaurant *restaurant, Waiter *waiter, bool selected = false)
-        : MenuButton(height, width, yPosition, xPosition, waiter->toString(), popUpHandler, selected), waiter(waiter), restaurant(restaurant)
-    {
-    }
-
+    ChangeWaiterButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, UIRestaurant *restaurant, Waiter *waiter, bool selected = false);
     void pressed() override;
 };
 
@@ -88,11 +59,7 @@ class OrderItemButton : public MenuButton
     OrderItem *orderItem;
 
 public:
-    OrderItemButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, OrderItem *orderItem, bool selected = false)
-        : MenuButton(height, width, yPosition, xPosition, orderItem->menuItem.name, popUpHandler, selected), orderItem(orderItem)
-    {
-        title = orderItem->menuItem.name + " | quantity: " + orderItem->getQuantityStr() + " | total price: " + orderItem->getPriceStr();
-    }
+    OrderItemButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, OrderItem *orderItem, bool selected = false);
 
     void pressed() override;
 };
@@ -102,11 +69,7 @@ class MenuItemButton : public MenuButton
     MenuItem const &menuItem;
 
 public:
-    MenuItemButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, MenuItem const &menuItem, bool selected = false)
-        : MenuButton(height, width, yPosition, xPosition, menuItem.name, popUpHandler, selected), menuItem(menuItem)
-    {
-    }
-
+    MenuItemButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, MenuItem const &menuItem, bool selected = false);
     void pressed() override;
 };
 
@@ -115,10 +78,7 @@ class AddOrderItemButton : public MenuButton // button used to bring up menu, to
     Order *order;
 
 public:
-    AddOrderItemButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, Order *order, bool selected = false)
-        : MenuButton(height, width, yPosition, xPosition, "Add item to order", popUpHandler, selected), order(order)
-    {
-    }
+    AddOrderItemButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, Order *order, bool selected = false);
     void pressed() override;
 };
 
@@ -128,11 +88,7 @@ class AddOrderItemToOrderButton : public MenuButton // represents specyfic menu 
     MenuItem const &menuItem;
 
 public:
-    AddOrderItemToOrderButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, Order *order, MenuItem const &menuItem, bool selected = false)
-        : MenuButton(height, width, yPosition, xPosition, menuItem.name, popUpHandler, selected), order(order), menuItem(menuItem)
-    {
-    }
-
+    AddOrderItemToOrderButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, Order *order, MenuItem const &menuItem, bool selected = false);
     void pressed() override;
 };
 
@@ -141,10 +97,7 @@ class CloseOrderButton : public MenuButton
     Order *order;
 
 public:
-    CloseOrderButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, Order *order, bool selected = false)
-        : MenuButton(height, width, yPosition, xPosition, "Close order", popUpHandler, selected), order(order)
-    {
-    }
+    CloseOrderButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, Order *order, bool selected = false);
     void pressed() override;
 };
 
@@ -153,10 +106,7 @@ class setDeliveredButton : public MenuButton
     OrderItem *orderItem;
 
 public:
-    setDeliveredButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, OrderItem *orderItem, bool selected = false)
-        : MenuButton(height, width, yPosition, xPosition, "Set delivered", popUpHandler, selected), orderItem(orderItem)
-    {
-    }
+    setDeliveredButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, OrderItem *orderItem, bool selected = false);
     void pressed() override;
 };
 class setCanceledButton : public MenuButton
@@ -164,10 +114,7 @@ class setCanceledButton : public MenuButton
     OrderItem *orderItem;
 
 public:
-    setCanceledButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, OrderItem *orderItem, bool selected = false)
-        : MenuButton(height, width, yPosition, xPosition, "Set canceled", popUpHandler, selected), orderItem(orderItem)
-    {
-    }
+    setCanceledButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, OrderItem *orderItem, bool selected = false);
     void pressed() override;
 };
 
@@ -176,10 +123,7 @@ class setDiscountPopUpMenuButton : public MenuButton
     OrderItem *orderItem;
 
 public:
-    setDiscountPopUpMenuButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, OrderItem *orderItem, bool selected = false)
-        : MenuButton(height, width, yPosition, xPosition, "Set discount", popUpHandler, selected), orderItem(orderItem)
-    {
-    }
+    setDiscountPopUpMenuButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, OrderItem *orderItem, bool selected = false);
     void pressed() override;
 };
 
@@ -189,10 +133,7 @@ class setDiscountButton : public MenuButton
     unsigned int discount;
 
 public:
-    setDiscountButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, OrderItem *orderItem, unsigned int discount, bool selected = false)
-        : MenuButton(height, width, yPosition, xPosition, (std::to_string(discount) + " percent").c_str(), popUpHandler, selected), orderItem(orderItem), discount(discount)
-    {
-    }
+    setDiscountButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, OrderItem *orderItem, unsigned int discount, bool selected = false);
     void pressed() override;
 };
 
@@ -201,11 +142,7 @@ class LocalOrderButton : public MenuButton
     LocalOrder *order;
 
 public:
-    LocalOrderButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, LocalOrder *order, bool selected = false)
-        : MenuButton(height, width, yPosition, xPosition, "zamowienie", popUpHandler, selected), order(order)
-    {
-        title = "table " + order->table.getPositionStr() + " | time " + order->getOrderTimeStr() + " | total " + order->getTotalPriceStr();
-    }
+    LocalOrderButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, LocalOrder *order, bool selected = false);
     void pressed() override;
 };
 
@@ -216,9 +153,6 @@ class SelectQuantityButton : public MenuButton
     unsigned int quantity;
 
 public:
-    SelectQuantityButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, Order *order, MenuItem const &menuItem, unsigned int quantity, bool selected = false)
-        : MenuButton(height, width, yPosition, xPosition, std::to_string(quantity), popUpHandler, selected), order(order), menuItem(menuItem), quantity(quantity)
-    {
-    }
+    SelectQuantityButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, Order *order, MenuItem const &menuItem, unsigned int quantity, bool selected = false);
     void pressed() override;
 };
