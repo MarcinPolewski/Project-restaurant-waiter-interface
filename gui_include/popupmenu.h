@@ -299,4 +299,5 @@ class SetQuantityPopUpMenu : public PopUpMenu
 
 public:
     SetQuantityPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Order *order, MenuItem const &menuItem);
+    void drawInformation() override;
 };

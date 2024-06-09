@@ -362,7 +362,7 @@ SetQuantityPopUpMenu::SetQuantityPopUpMenu(WINDOW *background, PopUpHandler *pop
     int buttonY = getbegy(window) + BUTTON_TOP_OFFSET;
     int buttonWidth = ORDER_ITEM_POP_UP_MENU_WIDTH - (2 * BUTTON_SIDE_OFFSET);
 
-    scrollStartY = buttonY;
+    scrollStartY = SELECT_QUANTITY_SCROLL_SECTION_START + startY();
     for (unsigned int i = 1; i <= 10; ++i)
     {
         scrollableButtons.push_back(std::make_unique<SelectQuantityButton>(BUTTON_HEIGHT, buttonWidth, buttonY, buttonX, popUpHandler, order, menuItem, i));
@@ -373,4 +373,13 @@ SetQuantityPopUpMenu::SetQuantityPopUpMenu(WINDOW *background, PopUpHandler *pop
     staticButtons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, buttonWidth, buttonY, buttonX, popUpHandler));
 
     auto_initialize();
+}
+
+void SetQuantityPopUpMenu::drawInformation()
+{
+    int yCoordinate = DEFAULT_TEXT_SECTION_START_Y;
+
+    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, "Select quantity");
+
+    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, ORDER_ITEM_VIEW_DIVIDER);
 }
