@@ -52,8 +52,20 @@ public:
     };
     LOiterator lobegin();
     LOiterator loend();
-
+    
     LOiterator lobegin_inprogress();
+
+    class const_LOiterator : public const_filtered_unique_iterator<Order>
+    {
+    public:
+        using const_filtered_unique_iterator::const_filtered_unique_iterator;
+        const_LOiterator& operator++();
+        const LocalOrder& operator*();
+    };
+    const_LOiterator locbegin() const;
+    const_LOiterator locend() const;
+
+    const_LOiterator locbegin_inprogress() const;
 
     class RTiterator : public filtered_unique_iterator<Order>
     {
@@ -67,7 +79,7 @@ public:
 
     RTiterator rtbegin_inprogress();
 
-    unsigned int openLocalOrdersCount();
+    unsigned int openLocalOrdersCount() const;
     unsigned int openRemoteOrdersCount();
 
     bool canBeClosed();
