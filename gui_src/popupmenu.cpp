@@ -171,7 +171,7 @@ ErrorPrompt::ErrorPrompt(WINDOW *background, PopUpHandler *popUpHandler, std::st
 void ErrorPrompt::drawInformation()
 {
     int yCoordinate = DEFAULT_TEXT_SECTION_START_Y;
-    mvwprintw(window, yCoordinate, BUTTON_SIDE_OFFSET, message.c_str());
+    mvwprintw(window, yCoordinate, BUTTON_SIDE_OFFSET, "%s", message.c_str());
 }
 
 NoOrderAssignedToTablePopUpMenu::NoOrderAssignedToTablePopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, UIRestaurant *rest, Table *table)
@@ -300,7 +300,7 @@ void MenuItemView::drawInformation()
         mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, "%s", line.c_str());
         description = description.substr(maxTextWidth);
     }
-    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, description.c_str());
+    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, "%s", description.c_str());
 }
 
 OrderItemView::OrderItemView(WINDOW *background, PopUpHandler *popUpHandler, OrderItem *orderItem)
