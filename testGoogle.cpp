@@ -41,6 +41,18 @@ TEST(TableTest, get_typical)
     ASSERT_EQ(&tbl, &(tbl.get()));
 }
 
+TEST(TableTest, getPositionStr_typical)
+{
+    Table tbl(Table::Position(3, 5, 0), 4);
+    ASSERT_EQ(tbl.getPositionStr(), "(x: 3, y: 5, lvl: 0)");
+}
+
+TEST(TableTest, getSeatsStr_typical)
+{
+    Table tbl(Table::Position(3, 5, 0), 4);
+    ASSERT_EQ(tbl.getSeatsStr(), "4");
+}
+
 TEST(RemoteTest, create_typical)
 {
     Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
