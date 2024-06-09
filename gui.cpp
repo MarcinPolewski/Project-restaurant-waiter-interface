@@ -33,14 +33,14 @@ int main()
     getmaxyx(stdscr, yMax, xMax);
 
     // ============= initialize restaurant class
-    Restaurant restaurant;
+    UIRestaurant restaurant;
 
     // ============= initialize screen elements
     refresh();
     MainScreen mainscreen(yMax - TOPBARHEIGHT, xMax, TOPBARHEIGHT, 0);
     PopUpHandler popUpHandler(mainscreen.getWindow(), &restaurant);
     TopBar topbar(TOPBARHEIGHT, xMax, 0, 0, &popUpHandler, &restaurant);
-    mainscreen.addTables(restaurant.getTables());
+    mainscreen.addTables(&restaurant);
 
     keypad(stdscr, true);
 

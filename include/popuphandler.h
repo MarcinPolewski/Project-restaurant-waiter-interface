@@ -6,7 +6,7 @@
 #include <algorithm>
 
 // #include "restaurant.h"
-class Restaurant;
+class UIRestaurant;
 class PopUpMenu;
 class ChangeWaiterPopUpMenu;
 class LocalOrdersPopUpMenu;
@@ -23,11 +23,11 @@ class OrderItem;
 class PopUpHandler
 {
     WINDOW *backgroundWindow;
-    Restaurant *restaurant;
+    UIRestaurant *restaurant;
     std::stack<std::unique_ptr<PopUpMenu>> windowStack;
 
 public:
-    PopUpHandler(WINDOW *background, Restaurant *restaurant);
+    PopUpHandler(WINDOW *background, UIRestaurant *restaurant);
 
     void newLocalOrderPopUpMenu(LocalOrder *order);
     //  void newRemoteOrderPopUpMenu(RemoteOrder *order);

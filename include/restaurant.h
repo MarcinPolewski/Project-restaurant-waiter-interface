@@ -17,6 +17,7 @@
 
 class Restaurant
 {
+protected:
     MemoryHandler memoryHandler;
     ServerHandler serverHandler;
     Menu menu;
@@ -70,4 +71,38 @@ public:
 
     bool canBeClosed();
     void close();
+    bool isClosed()
+    {
+        return false;
+    }
+};
+
+class UIRestaurant : public Restaurant
+{
+    Waiter *currentWaiter;
+
+public:
+    UIRestaurant()
+        : Restaurant()
+    {
+        currentWaiter = (waiters[0]).get();
+    }
+
+    RemoteOrder &newRemoteOrder(Remote &remote)
+    {
+        return Restaurant::newRemoteOrder(*currentWaiter, remote);
+    }
+    LocalOrder &newLocalOrder(Table &table)
+    {
+        return Restaurant::newLocalOrder(*currentWaiter, table);
+    }
+
+    Waiter *getCurrentWaiter()
+    {
+        return currentWaiter;
+    }
+    void changeCurrentWaiter(Waiter *newWaiter)
+    {
+        currentWaiter = newWaiter;
+    }
 };

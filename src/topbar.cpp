@@ -10,7 +10,7 @@ TopBarButton::TopBarButton(std::string name, PopUpHandler *popUpHandler) // stri
 {
 }
 
-ChangeWaiterTopBarButton::ChangeWaiterTopBarButton(PopUpHandler *popUpHandler, Restaurant *restaurant)
+ChangeWaiterTopBarButton::ChangeWaiterTopBarButton(PopUpHandler *popUpHandler, UIRestaurant *restaurant)
     : TopBarButton(std::string("Change Waiter (" + restaurant->getCurrentWaiter()->toString() + ")"), popUpHandler),
       restaurant(restaurant) {}
 bool ChangeWaiterTopBarButton::pressed()
@@ -24,8 +24,8 @@ void ChangeWaiterTopBarButton::update()
     name = "Change Waiter (" + restaurant->getCurrentWaiter()->toString() + ")";
 }
 
-RemoteOrderTopBarButton::RemoteOrderTopBarButton(PopUpHandler *popUpHandler, Restaurant *restaurant)
-    : TopBarButton(std::string("Remote Orders (" + std::to_string(restaurant->remoteOrdersCount()) + ")"), popUpHandler),
+RemoteOrderTopBarButton::RemoteOrderTopBarButton(PopUpHandler *popUpHandler, UIRestaurant *restaurant)
+    : TopBarButton(std::string("Remote Orders (" + std::to_string(restaurant->openRemoteOrdersCount()) + ")"), popUpHandler),
       restaurant(restaurant) {}
 
 bool RemoteOrderTopBarButton::pressed()
@@ -35,11 +35,11 @@ bool RemoteOrderTopBarButton::pressed()
 }
 void RemoteOrderTopBarButton::update()
 {
-    name = "Remote Orders (" + std::to_string(restaurant->remoteOrdersCount()) + ")";
+    name = "Remote Orders (" + std::to_string(restaurant->openRemoteOrdersCount()) + ")";
 }
 
-LocalOrderTopBarButton::LocalOrderTopBarButton(PopUpHandler *popUpHandler, Restaurant *restaurant)
-    : TopBarButton(std::string("Local Orders (" + std::to_string(restaurant->localOrdersCount()) + ")"), popUpHandler),
+LocalOrderTopBarButton::LocalOrderTopBarButton(PopUpHandler *popUpHandler, UIRestaurant *restaurant)
+    : TopBarButton(std::string("Local Orders (" + std::to_string(restaurant->openLocalOrdersCount()) + ")"), popUpHandler),
       restaurant(restaurant) {}
 
 bool LocalOrderTopBarButton::pressed()
@@ -49,7 +49,7 @@ bool LocalOrderTopBarButton::pressed()
 }
 void LocalOrderTopBarButton::update()
 {
-    name = "Local Orders (" + std::to_string(restaurant->localOrdersCount()) + ")";
+    name = "Local Orders (" + std::to_string(restaurant->openLocalOrdersCount()) + ")";
 }
 
 MenuTopBarButton::MenuTopBarButton(PopUpHandler *popUpHandler)
@@ -62,7 +62,7 @@ bool MenuTopBarButton::pressed()
     return true;
 }
 
-CloseOrderTopBarButton::CloseOrderTopBarButton(PopUpHandler *popUpHandler, Restaurant *restaurant)
+CloseOrderTopBarButton::CloseOrderTopBarButton(PopUpHandler *popUpHandler, UIRestaurant *restaurant)
     : TopBarButton(std::string("Close Restaurant"), popUpHandler),
       restaurant(restaurant) {}
 
@@ -75,7 +75,7 @@ bool CloseOrderTopBarButton::pressed()
         popUpHandler->newErrorPrompt(std::string("Cannot close restaurant, orders are still in progress."));
     return true;
 }
-TopBar::TopBar(int height, int width, int positionY, int positionX, PopUpHandler *popUpHandler, Restaurant *restaurant)
+TopBar::TopBar(int height, int width, int positionY, int positionX, PopUpHandler *popUpHandler, UIRestaurant *restaurant)
     : TerminalUIObject(height, width, positionY, positionX), popUpHandler(popUpHandler), restaurant(restaurant)
 {
     buttons.push_back(std::make_unique<ChangeWaiterTopBarButton>(popUpHandler, restaurant));

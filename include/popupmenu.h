@@ -208,30 +208,30 @@ public:
 
 class ChangeWaiterPopUpMenu : public PopUpMenu // used to select new waiter
 {
-    Restaurant *restaurant;
+    UIRestaurant *restaurant;
 
 public:
-    ChangeWaiterPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Restaurant *rest);
+    ChangeWaiterPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, UIRestaurant *rest);
     void drawInformation() override;
 };
 
 class NoOrderAssignedToTablePopUpMenu : public PopUpMenu // used to signal to user, that this table does not have a order assigned
 {
-    Restaurant *restaurant;
+    UIRestaurant *restaurant;
     Table *table;
 
 public:
-    NoOrderAssignedToTablePopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Restaurant *rest, Table *table);
+    NoOrderAssignedToTablePopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, UIRestaurant *rest, Table *table);
     void drawInformation() override;
 };
 
 class LocalOrderPopUpMenu : public PopUpMenu
 {
-    Restaurant *restaurant;
+    UIRestaurant *restaurant;
     Order *order;
 
 public:
-    LocalOrderPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Restaurant *rest, Order *order);
+    LocalOrderPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, UIRestaurant *rest, Order *order);
     void drawInformation() override;
     void update() override;
     void buttonPressed() override;
@@ -239,19 +239,19 @@ public:
 
 class LocalOrdersPopUpMenu : public PopUpMenu // presents all local order
 {
-    Restaurant *restaurant;
+    UIRestaurant *restaurant;
 
 public:
-    LocalOrdersPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Restaurant *restaurant);
+    LocalOrdersPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, UIRestaurant *restaurant);
     void drawInformation() override;
 };
 
 class RemoteOrdersPopUpMenu : public PopUpMenu
 {
-    Restaurant *restaurant;
+    UIRestaurant *restaurant;
 
 public:
-    RemoteOrdersPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Restaurant *restaurant);
+    RemoteOrdersPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, UIRestaurant *restaurant);
 };
 
 class AddItemToOrderPopUpMenu : public PopUpMenu

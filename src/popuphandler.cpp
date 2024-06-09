@@ -4,7 +4,7 @@
 
 #include "restaurant.h"
 
-PopUpHandler::PopUpHandler(WINDOW *background, Restaurant *restaurant)
+PopUpHandler::PopUpHandler(WINDOW *background, UIRestaurant *restaurant)
     : backgroundWindow(background), restaurant(restaurant)
 {
 }

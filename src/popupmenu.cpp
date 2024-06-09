@@ -2,18 +2,16 @@
 
 #include "restaurant.h"
 
-ChangeWaiterPopUpMenu::ChangeWaiterPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Restaurant *rest)
+ChangeWaiterPopUpMenu::ChangeWaiterPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, UIRestaurant *rest)
     : PopUpMenu(background, popUpHandler, WAITER_POP_UP_HEIGHT, DEFAULT_WIDTH), restaurant(rest)
 {
     int buttonX = startX() + BUTTON_SIDE_OFFSET;
     int buttonY = getbegy(window) + DEFAULT_SCROLL_SECTION_START_Y;
     scrollStartY = buttonY;
 
-    std::vector<Waiter> &waiters = restaurant->getWaiters();
-
-    for (auto &it : waiters)
+    for (auto it = rest->wtbegin(); it != rest->wtend(); ++it)
     {
-        scrollableButtons.push_back(std::make_unique<ChangeWaiterButton>(BUTTON_HEIGHT, DEFAULT_WIDTH - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler, restaurant, &it));
+        scrollableButtons.push_back(std::make_unique<ChangeWaiterButton>(BUTTON_HEIGHT, DEFAULT_WIDTH - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler, restaurant, &(*it)));
         buttonY += BUTTON_HEIGHT;
     }
 
@@ -32,7 +30,7 @@ void ChangeWaiterPopUpMenu::drawInformation()
     mvwprintw(window, yCoordinate, BUTTON_SIDE_OFFSET, DEFAULT_WIDTH_DEVIDER);
 }
 
-LocalOrderPopUpMenu::LocalOrderPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Restaurant *rest, Order *order)
+LocalOrderPopUpMenu::LocalOrderPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, UIRestaurant *rest, Order *order)
     : PopUpMenu(background, popUpHandler, LOCAL_ORDER_POP_UP_HEIGHT, DEFAULT_WIDTH, NUMBER_OF_SCROLL_BUTTONS_ORDERS), restaurant(rest), order(order)
 {
 
@@ -40,7 +38,7 @@ LocalOrderPopUpMenu::LocalOrderPopUpMenu(WINDOW *background, PopUpHandler *popUp
     int buttonY = getbegy(window) + 8;
 
     scrollStartY = buttonY;
-    for (auto it = order->begin(); it != order->end(); ++it)
+    for (auto it = order->oibegin(); it != order->oiend(); ++it)
     {
         scrollableButtons.push_back(std::make_unique<OrderItemButton>(BUTTON_HEIGHT, DEFAULT_WIDTH - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler, &(*it)));
         buttonY += BUTTON_HEIGHT;
@@ -83,7 +81,7 @@ void LocalOrderPopUpMenu::update()
     int buttonX = startX() + BUTTON_SIDE_OFFSET;
     int buttonY = getbegy(window) + 4;
 
-    for (auto it = order->begin(); it != order->end(); ++it)
+    for (auto it = order->oibegin(); it != order->oiend(); ++it)
     {
         scrollableButtons.push_back(std::make_unique<OrderItemButton>(BUTTON_HEIGHT, DEFAULT_WIDTH - 2 * BUTTON_SIDE_OFFSET, buttonY, buttonX, popUpHandler, &(*it)));
     }
@@ -172,7 +170,7 @@ void ErrorPrompt::drawInformation()
     mvwprintw(window, yCoordinate, BUTTON_SIDE_OFFSET, message.c_str());
 }
 
-NoOrderAssignedToTablePopUpMenu::NoOrderAssignedToTablePopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Restaurant *rest, Table *table)
+NoOrderAssignedToTablePopUpMenu::NoOrderAssignedToTablePopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, UIRestaurant *rest, Table *table)
     : PopUpMenu(background, popUpHandler, NO_ORDER_ASSIGNED_POP_UP_HEIGHT, strlen(NO_ORDER_ASSIGNED_MESS) + 2), restaurant(rest), table(table)
 {
     int buttonX = startX() + BUTTON_SIDE_OFFSET;
@@ -190,7 +188,7 @@ void NoOrderAssignedToTablePopUpMenu::drawInformation()
     mvwprintw(window, yCoordinate, BUTTON_SIDE_OFFSET, NO_ORDER_ASSIGNED_MESS);
 }
 
-LocalOrdersPopUpMenu::LocalOrdersPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Restaurant *restaurant)
+LocalOrdersPopUpMenu::LocalOrdersPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, UIRestaurant *restaurant)
     : PopUpMenu(background, popUpHandler, ORDERS_POP_UP_HEIGHT, DEFAULT_WIDTH), restaurant(restaurant)
 {
 
@@ -220,7 +218,7 @@ void LocalOrdersPopUpMenu::drawInformation()
     mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, DEFAULT_WIDTH_DEVIDER);
 }
 
-RemoteOrdersPopUpMenu::RemoteOrdersPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Restaurant *restaurant)
+RemoteOrdersPopUpMenu::RemoteOrdersPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, UIRestaurant *restaurant)
     : PopUpMenu(background, popUpHandler, ORDERS_POP_UP_HEIGHT, DEFAULT_WIDTH), restaurant(restaurant)
 {
 
@@ -294,7 +292,7 @@ void OrderItemView::drawInformation()
     mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, ("Price:    " + orderItem->priceStr()).c_str());
     mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, ("Quantity: " + orderItem->quantityStr()).c_str());
     mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, ("Status:   " + orderItem->statusStr()).c_str());
-    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, ("Discount: " + orderItem->discoutnStr()).c_str());
+    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, ("Discount: " + orderItem->discountStr()).c_str());
     // mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSEsT, ().c_str());
     // mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, ().c_str());
     mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, ORDER_ITEM_VIEW_DIVIDER);

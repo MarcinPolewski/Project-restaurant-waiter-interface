@@ -6,7 +6,7 @@
 #include "consoleuiobject.h"
 
 class PopUpHandler;
-class Restaurant;
+class UIRestaurant;
 class Waiter;
 
 class TopBarButton
@@ -28,10 +28,10 @@ public:
 
 class ChangeWaiterTopBarButton : public TopBarButton
 {
-    Restaurant *restaurant;
+    UIRestaurant *restaurant;
 
 public:
-    ChangeWaiterTopBarButton(PopUpHandler *popUpHandler, Restaurant *restaurant);
+    ChangeWaiterTopBarButton(PopUpHandler *popUpHandler, UIRestaurant *restaurant);
 
     bool pressed() override;
     void update() override;
@@ -39,10 +39,10 @@ public:
 
 class RemoteOrderTopBarButton : public TopBarButton
 {
-    Restaurant *restaurant;
+    UIRestaurant *restaurant;
 
 public:
-    RemoteOrderTopBarButton(PopUpHandler *popUpHandler, Restaurant *restaurant);
+    RemoteOrderTopBarButton(PopUpHandler *popUpHandler, UIRestaurant *restaurant);
 
     bool pressed() override;
     void update() override;
@@ -50,10 +50,10 @@ public:
 
 class LocalOrderTopBarButton : public TopBarButton
 {
-    Restaurant *restaurant;
+    UIRestaurant *restaurant;
 
 public:
-    LocalOrderTopBarButton(PopUpHandler *popUpHandler, Restaurant *restaurant);
+    LocalOrderTopBarButton(PopUpHandler *popUpHandler, UIRestaurant *restaurant);
 
     bool pressed() override;
     void update() override;
@@ -70,10 +70,10 @@ public:
 
 class CloseOrderTopBarButton : public TopBarButton
 {
-    Restaurant *restaurant;
+    UIRestaurant *restaurant;
 
 public:
-    CloseOrderTopBarButton(PopUpHandler *popUpHandler, Restaurant *restaurant);
+    CloseOrderTopBarButton(PopUpHandler *popUpHandler, UIRestaurant *restaurant);
 
     bool pressed();
 };
@@ -84,11 +84,11 @@ class TopBar : public TerminalUIObject
     std::vector<std::unique_ptr<TopBarButton>> buttons;
     bool active = true;
     PopUpHandler *popUpHandler;
-    Restaurant *restaurant;
+    UIRestaurant *restaurant;
     void update();
 
 public:
-    TopBar(int height, int width, int positionY, int positionX, PopUpHandler *popUpHandler, Restaurant *restaurant);
+    TopBar(int height, int width, int positionY, int positionX, PopUpHandler *popUpHandler, UIRestaurant *restaurant);
 
     void draw() override;
 

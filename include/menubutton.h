@@ -7,7 +7,7 @@
 // #include "popuphandler.h"
 
 class PopUpHandler;
-class Restaurant;
+class UIRestaurant;
 
 class MenuButton : public TerminalUIObject
 {
@@ -57,11 +57,11 @@ public:
 
 class NewLocalOrderButton : public MenuButton
 {
-    Restaurant *restaurant;
+    UIRestaurant *restaurant;
     Table *table;
 
 public:
-    NewLocalOrderButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, Restaurant *restaurant, Table *table, bool selected = false)
+    NewLocalOrderButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, UIRestaurant *restaurant, Table *table, bool selected = false)
         : MenuButton(height, width, yPosition, xPosition, std::string("Crete new Local Order"), popUpHandler, selected), restaurant(restaurant), table(table)
     {
     }
@@ -72,10 +72,10 @@ public:
 class ChangeWaiterButton : public MenuButton
 {
     Waiter *waiter;
-    Restaurant *restaurant;
+    UIRestaurant *restaurant;
 
 public:
-    ChangeWaiterButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, Restaurant *restaurant, Waiter *waiter, bool selected = false)
+    ChangeWaiterButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, UIRestaurant *restaurant, Waiter *waiter, bool selected = false)
         : MenuButton(height, width, yPosition, xPosition, waiter->toString(), popUpHandler, selected), waiter(waiter), restaurant(restaurant)
     {
     }
@@ -89,7 +89,7 @@ class OrderItemButton : public MenuButton
 
 public:
     OrderItemButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, OrderItem *orderItem, bool selected = false)
-        : MenuButton(height, width, yPosition, xPosition, orderItem->toString(), popUpHandler, selected), orderItem(orderItem)
+        : MenuButton(height, width, yPosition, xPosition, orderItem->menuItem.name, popUpHandler, selected), orderItem(orderItem)
     {
     }
 

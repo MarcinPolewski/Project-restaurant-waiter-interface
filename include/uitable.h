@@ -2,7 +2,7 @@
 
 #include <ncurses.h>
 
-#include "destination.h"
+#include "table.h"
 #include "uitable.h"
 #include "constants.h"
 #include "consoleuiobject.h"
