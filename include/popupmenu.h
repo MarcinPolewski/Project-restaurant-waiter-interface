@@ -228,10 +228,10 @@ public:
 class LocalOrderPopUpMenu : public PopUpMenu
 {
     UIRestaurant *restaurant;
-    Order *order;
+    LocalOrder *order;
 
 public:
-    LocalOrderPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, UIRestaurant *rest, Order *order);
+    LocalOrderPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, UIRestaurant *rest, LocalOrder *order);
     void drawInformation() override;
     void update() override;
     void buttonPressed() override;
@@ -288,4 +288,13 @@ class SetDisciountPopUpMenu : public PopUpMenu
 
 public:
     SetDisciountPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, OrderItem *orderItem);
+};
+
+class SetQuantityPopUpMenu : public PopUpMenu
+{
+    Order *order;
+    MenuItem const &menuItem;
+
+public:
+    SetQuantityPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Order *order, MenuItem const &menuItem);
 };

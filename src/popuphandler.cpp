@@ -75,6 +75,14 @@ void PopUpHandler::newErrorPrompt(std::string message)
     windowStack.top()->draw();
 }
 
+void PopUpHandler::newSetQuantityPopUpMenu(Order *order, MenuItem const &menuItem)
+{
+    //    SetQuantityPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Order *order, MenuItem const &menuItem);
+
+    windowStack.push(std::make_unique<SetQuantityPopUpMenu>(backgroundWindow, this, order, menuItem));
+    windowStack.top()->draw();
+}
+
 bool PopUpHandler::closePopUpMenu()
 {
     wclear(windowStack.top()->getWindow());

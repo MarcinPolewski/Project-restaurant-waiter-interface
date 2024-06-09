@@ -30,7 +30,7 @@ void ChangeWaiterPopUpMenu::drawInformation()
     mvwprintw(window, yCoordinate, BUTTON_SIDE_OFFSET, DEFAULT_WIDTH_DEVIDER);
 }
 
-LocalOrderPopUpMenu::LocalOrderPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, UIRestaurant *rest, Order *order)
+LocalOrderPopUpMenu::LocalOrderPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, UIRestaurant *rest, LocalOrder *order)
     : PopUpMenu(background, popUpHandler, LOCAL_ORDER_POP_UP_HEIGHT, DEFAULT_WIDTH, NUMBER_OF_SCROLL_BUTTONS_ORDERS), restaurant(rest), order(order)
 {
 
@@ -61,6 +61,7 @@ void LocalOrderPopUpMenu::drawInformation()
     mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, ("Order time:   " + order->getOrderTimeStr()).c_str());
     mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, ("Waiting time: " + order->getWaitingTimeStr()).c_str());
     mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, ("Total price:  " + order->getTotalPriceStr()).c_str());
+    mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, ("Table:  " + order->table.getPositionStr() + " Seats: " + order->table.getSeatsStr()).c_str());
     mvwprintw(window, yCoordinate++, BUTTON_SIDE_OFFSET, DEFAULT_WIDTH_DEVIDER);
 
     yCoordinate = ORDER_SCROLL_SECTION_START_Y + (NUMBER_OF_SCROLL_BUTTONS_ORDERS * BUTTON_HEIGHT);
@@ -319,5 +320,25 @@ SetDisciountPopUpMenu::SetDisciountPopUpMenu(WINDOW *background, PopUpHandler *p
     // TODO add order buttons here
     buttonY = endY() - BUTTON_HEIGHT;
     staticButtons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, buttonWidth, buttonY, buttonX, popUpHandler));
+    auto_initialize();
+}
+
+SetQuantityPopUpMenu::SetQuantityPopUpMenu(WINDOW *background, PopUpHandler *popUpHandler, Order *order, MenuItem const &menuItem)
+    : PopUpMenu(background, popUpHandler, ORDER_ITEM_POP_UP_MENU_HEIGHT, ORDER_ITEM_POP_UP_MENU_WIDTH, NUMBER_OF_BUTTONS_IN_SCROLL_DISCOUNT), order(order), menuItem(menuItem)
+{
+    int buttonX = startX() + BUTTON_SIDE_OFFSET;
+    int buttonY = getbegy(window) + BUTTON_TOP_OFFSET;
+    int buttonWidth = ORDER_ITEM_POP_UP_MENU_WIDTH - (2 * BUTTON_SIDE_OFFSET);
+
+    scrollStartY = buttonY;
+    for (unsigned int i = 1; i <= 10; ++i)
+    {
+        scrollableButtons.push_back(std::make_unique<SelectQuantityButton>(BUTTON_HEIGHT, buttonWidth, buttonY, buttonX, popUpHandler, order, menuItem, i));
+    }
+
+    // TODO add order buttons here
+    buttonY = endY() - BUTTON_HEIGHT;
+    staticButtons.push_back(std::make_unique<CloseButton>(BUTTON_HEIGHT, buttonWidth, buttonY, buttonX, popUpHandler));
+
     auto_initialize();
 }

@@ -166,4 +166,5 @@ void Restaurant::close()
 {
     if (!this->canBeClosed())
         throw std::runtime_error("Cannot close restaurant, some orders are still in progress");
+    isRestaurantClosed = true;
 }

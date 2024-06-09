@@ -204,7 +204,21 @@ public:
     LocalOrderButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, LocalOrder *order, bool selected = false)
         : MenuButton(height, width, yPosition, xPosition, "zamowienie", popUpHandler, selected), order(order)
     {
-        title = order->table.getPositionStr() + " " + order->getOrderTimeStr() + " " + order->getTotalPriceStr();
+        title = "table " + order->table.getPositionStr() + " | time " + order->getOrderTimeStr() + " | total " + order->getTotalPriceStr();
+    }
+    void pressed() override;
+};
+
+class SelectQuantityButton : public MenuButton
+{
+    Order *order;
+    MenuItem const &menuItem;
+    unsigned int quantity;
+
+public:
+    SelectQuantityButton(int height, int width, int yPosition, int xPosition, PopUpHandler *popUpHandler, Order *order, MenuItem const &menuItem, unsigned int quantity, bool selected = false)
+        : MenuButton(height, width, yPosition, xPosition, std::to_string(quantity), popUpHandler, selected), order(order), menuItem(menuItem), quantity(quantity)
+    {
     }
     void pressed() override;
 };

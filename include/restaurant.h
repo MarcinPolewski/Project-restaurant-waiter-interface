@@ -29,6 +29,8 @@ protected:
     bool isWaiter(Waiter &waiter);
     bool isTable(Table &waiter);
 
+    bool isRestaurantClosed = false;
+
 public:
     Restaurant();
 
@@ -76,7 +78,7 @@ public:
     void close();
     bool isClosed()
     {
-        return false;
+        return isRestaurantClosed;
     }
 };
 

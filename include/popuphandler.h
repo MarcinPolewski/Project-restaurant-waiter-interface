@@ -11,6 +11,7 @@ class PopUpMenu;
 class ChangeWaiterPopUpMenu;
 class LocalOrdersPopUpMenu;
 class RemoteOrdersPopUpMenu;
+
 class ErrorPrompt;
 class UITable;
 class LocalOrder;
@@ -36,6 +37,7 @@ public:
     void newMenuItemView(MenuItem const &menuItem);
     void newOrderItemView(OrderItem *orderItem);
     void newSetDisciountPopUpMenu(OrderItem *orderItem);
+    void newSetQuantityPopUpMenu(Order *order, MenuItem const &menuItem);
 
     void newMenuPopUpMenu();
     void newChangeWaiterPopUpMenu();

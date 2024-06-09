@@ -26,7 +26,7 @@ void AddOrderItemButton::pressed()
 
 void AddOrderItemToOrderButton::pressed()
 {
-    order->addOrderItem(menuItem, 1);
+    popUpHandler->newSetQuantityPopUpMenu(order, menuItem);
 }
 
 void CloseOrderButton::pressed()
@@ -99,4 +99,10 @@ void setDiscountButton::pressed()
 void LocalOrderButton::pressed()
 {
     popUpHandler->newLocalOrderPopUpMenu(order);
+}
+
+void SelectQuantityButton::pressed()
+{
+    order->addOrderItem(menuItem, quantity);
+    popUpHandler->closePopUpMenu();
 }
