@@ -37,6 +37,8 @@ public:
 
     void changeStatus(ItemStatus new_status);
     void setOrdered();
+    void setInPreparation();
+    void setReadyToDeliver();
     void setDelivered();
     void setCancelled();
     ItemStatus getStatus() const;
