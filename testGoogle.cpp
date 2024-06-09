@@ -5,13 +5,13 @@
 TEST(AddressTest, create_typical)
 {
     Address adr("Olsztyn", "10-555", "Baltycka", "4");
-    ASSERT_EQ(adr.str(), "Baltycka 4\n10-555 Olsztyn");
+    ASSERT_EQ(adr.getStr(), "Baltycka 4\n10-555 Olsztyn");
 }
 
 TEST(AddressTest, create_with_additional_info)
 {
     Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
-    ASSERT_EQ(adr.str(), "Baltycka 4\n10-555 Olsztyn\nAI: Klatka H6");
+    ASSERT_EQ(adr.getStr(), "Baltycka 4\n10-555 Olsztyn\nAI: Klatka H6");
 }
 
 TEST(TableTest, create_typical)
