@@ -19,26 +19,9 @@ class UITable : public TerminalUIObject
     Table &table;
 
 public:
-    UITable(WINDOW *backgroundWindow, Table &table) : table(table)
-    {
-        rawCoordinate = (table.position.y) * CURSORSPEED - howManyRowsFromCenter;
-        columnCoordinate = (table.position.x) * CURSORSPEED * COLUMN_TO_WIDTH_RATION - howManyColumnsFromCeneter;
+    UITable(WINDOW *backgroundWindow, Table &table);
 
-        window = newwin(height, width, rawCoordinate + getbegy(backgroundWindow), columnCoordinate + getbegx(backgroundWindow));
-        box(window, 0, 0);
-        wrefresh(window);
-    }
+    Table *getTable();
 
-    Table *getTable()
-    {
-        return &table;
-    }
-
-    void draw() override
-    {
-        box(window, 0, 0);
-        wrefresh(window);
-    }
-    void activate();
-    void deactivate();
+    void draw() override;
 };

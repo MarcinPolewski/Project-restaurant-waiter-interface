@@ -76,10 +76,7 @@ public:
 
     bool canBeClosed();
     void close();
-    bool isClosed()
-    {
-        return isRestaurantClosed;
-    }
+    bool isClosed();
 };
 
 class UIRestaurant : public Restaurant
@@ -87,27 +84,10 @@ class UIRestaurant : public Restaurant
     Waiter *currentWaiter;
 
 public:
-    UIRestaurant()
-        : Restaurant()
-    {
-        currentWaiter = (waiters[0]).get();
-    }
+    UIRestaurant();
+    RemoteOrder &newRemoteOrder(Remote &remote);
+    LocalOrder &newLocalOrder(Table &table);
 
-    RemoteOrder &newRemoteOrder(Remote &remote)
-    {
-        return Restaurant::newRemoteOrder(*currentWaiter, remote);
-    }
-    LocalOrder &newLocalOrder(Table &table)
-    {
-        return Restaurant::newLocalOrder(*currentWaiter, table);
-    }
-
-    Waiter *getCurrentWaiter()
-    {
-        return currentWaiter;
-    }
-    void changeCurrentWaiter(Waiter *newWaiter)
-    {
-        currentWaiter = newWaiter;
-    }
+    Waiter *getCurrentWaiter();
+    void changeCurrentWaiter(Waiter *newWaiter);
 };

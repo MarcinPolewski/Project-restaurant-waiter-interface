@@ -168,3 +168,32 @@ void Restaurant::close()
         throw std::runtime_error("Cannot close restaurant, some orders are still in progress");
     isRestaurantClosed = true;
 }
+
+bool Restaurant::isClosed()
+{
+    return isRestaurantClosed;
+}
+
+UIRestaurant::UIRestaurant()
+    : Restaurant()
+{
+    currentWaiter = (waiters[0]).get();
+}
+
+RemoteOrder &UIRestaurant::newRemoteOrder(Remote &remote)
+{
+    return Restaurant::newRemoteOrder(*currentWaiter, remote);
+}
+LocalOrder &UIRestaurant::newLocalOrder(Table &table)
+{
+    return Restaurant::newLocalOrder(*currentWaiter, table);
+}
+
+Waiter *UIRestaurant::getCurrentWaiter()
+{
+    return currentWaiter;
+}
+void UIRestaurant::changeCurrentWaiter(Waiter *newWaiter)
+{
+    currentWaiter = newWaiter;
+}

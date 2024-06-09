@@ -1,7 +1,5 @@
 #include "popuphandler.h"
-
 #include "popupmenu.h"
-
 #include "restaurant.h"
 
 PopUpHandler::PopUpHandler(WINDOW *background, UIRestaurant *restaurant)
