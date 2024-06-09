@@ -12,7 +12,7 @@ protected:
 
     iter current_it;
     iter end_it;
-    predicate pred = [](T*){return true;};
+    predicate pred = [](const T*){return true;};
 public:
     filtered_iterator(iter start_it, iter end_it, predicate func)
         : current_it(start_it), end_it(end_it), pred(func)
