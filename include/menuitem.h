@@ -69,7 +69,7 @@ struct Beverage : public MenuItem
 
     Beverage(const std::string &name, const std::string &description,
         Category category, unsigned int price, unsigned int alcoholPercentage,
-        unsigned int volume);
+        unsigned int volume, Unit unit = Unit::ml);
 
     Beverage& get() override;
 };

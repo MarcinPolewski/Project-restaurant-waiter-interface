@@ -48,8 +48,8 @@ Dish& Dish::get()
 
 Beverage::Beverage(const std::string &name, const std::string &description,
     Category category, unsigned int price, unsigned int alcoholPercentage,
-    unsigned int volume)
-    : MenuItem{name, description, category, price, volume, Unit::ml},
+    unsigned int volume, Unit unit)
+    : MenuItem{name, description, category, price, volume, unit},
       alcoholPercentage{alcoholPercentage}
 {
 }
