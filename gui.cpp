@@ -32,6 +32,13 @@ int main()
     int yMax, xMax;
     getmaxyx(stdscr, yMax, xMax);
 
+    if (yMax < MINIMUM_WINDOW_HEIGHT || xMax < MINIMIUM_WINDOW_WIDTH)
+    {
+        endwin();
+        std::cout << "Your window is to small, must have minimum width: " << MINIMIUM_WINDOW_WIDTH << " and height: " << MINIMUM_WINDOW_HEIGHT << '\n';
+        return 0;
+    }
+
     // ============= initialize restaurant class
     UIRestaurant restaurant;
 
@@ -56,9 +63,6 @@ int main()
         userInput = getch();
 
         // ========== handle user input
-        if (userInput == 'q')
-            break;
-
         if (state == aplicationState::topBar)
         {
 
