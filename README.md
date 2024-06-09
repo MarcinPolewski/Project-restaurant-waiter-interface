@@ -7,13 +7,6 @@
 Celem projektu było stworzenie aplikacji typu POS(Point Of Sale) do obsługi zamówień przez kelnera. W tym celu stworzyliśmy bibliotekę ***restaurant***, zawierającą implementację poszczególnych klas(składowych) restauracji, wyróżnionych na diagramie UML zamieszczonym poniżej.
 %diagram UML%
 
-## Biblioteka
-### Główne założenia
-1.
-2.
-3.
-4.
-
 ## Klasa ServerHandler
 Jest to klasa stworzona głównie w celach pokazowych, tzn. w realnym zastosowaniu miałaby ona odpowiadać za komunikację z serwerem. Dokładniej, wysyłanie zamówionych rzeczy na serwer oraz archiwizowanie zamówień. Nie rozwijaliśmy jej dalej ze względu na to, że w tym miejscu postawiliśmy granice naszego projektu.
 
