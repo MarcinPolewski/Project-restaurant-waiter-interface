@@ -33,14 +33,14 @@ public:
         updateFile(memoryHandler.getBeveragesPath(), memoryHandler.getBeveragesVersion());
     }
 
-    std::string updateFile(const std::string &path, const std::string &version)
+    std::string updateFile(const std::string, const std::string)
     {
         return "1.1.0";
     }
-    void archiveOrder(const Order *order) override
+    void archiveOrder(const Order*) override
     {
     }
-    void sendOrderItem(OrderItem *order) override // sends this message to server
+    void sendOrderItem(OrderItem*) override // sends this message to server
     {
     }
 };
