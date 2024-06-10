@@ -1792,6 +1792,58 @@ TEST(RestaurantTest, remote_order_in_waiter_const_iteration_inprogress)
     ASSERT_EQ(++rtit != wt1.rtcend(), false);
 }
 
+TEST(RestaurantTest, close_functionality_remote_order)
+{
+    Restaurant restaurant("memoryHandlerTestFiles");
+    Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
+    Remote rmt1("Elzbieta Kopyto", "123456789", adr);
+    Remote rmt2("Barbara Nara", "987654321", adr);
+    Remote rmt3("Anna Nara", "987654321", adr);
+    Table &tbl1 = *restaurant.tbbegin();
+    Table &tbl2 = *++restaurant.tbbegin();
+    Waiter &wt1 = *restaurant.wtbegin();
+
+    ASSERT_FALSE(restaurant.isClosed());
+    ASSERT_TRUE(restaurant.canBeClosed());
+
+    RemoteOrder &rOrder = restaurant.newRemoteOrder(wt1, rmt1);
+    ASSERT_FALSE(restaurant.isClosed());
+    ASSERT_FALSE(restaurant.canBeClosed());
+    ASSERT_THROW(restaurant.close(), std::runtime_error);
+
+    rOrder.setClosed();
+    ASSERT_FALSE(restaurant.isClosed());
+    ASSERT_TRUE(restaurant.canBeClosed());
+    ASSERT_NO_THROW(restaurant.close());
+    ASSERT_TRUE(restaurant.isClosed());
+}
+
+TEST(RestaurantTest, close_functionality_local_order)
+{
+    Restaurant restaurant("memoryHandlerTestFiles");
+    Address adr("Olsztyn", "10-555", "Baltycka", "4", "Klatka H6");
+    Remote rmt1("Elzbieta Kopyto", "123456789", adr);
+    Remote rmt2("Barbara Nara", "987654321", adr);
+    Remote rmt3("Anna Nara", "987654321", adr);
+    Table &tbl1 = *restaurant.tbbegin();
+    Table &tbl2 = *++restaurant.tbbegin();
+    Waiter &wt1 = *restaurant.wtbegin();
+
+    ASSERT_FALSE(restaurant.isClosed());
+    ASSERT_TRUE(restaurant.canBeClosed());
+
+    LocalOrder &lOrder = restaurant.newLocalOrder(wt1, tbl1);
+    ASSERT_FALSE(restaurant.isClosed());
+    ASSERT_FALSE(restaurant.canBeClosed());
+    ASSERT_THROW(restaurant.close(), std::runtime_error);
+
+    lOrder.setClosed();
+    ASSERT_FALSE(restaurant.isClosed());
+    ASSERT_TRUE(restaurant.canBeClosed());
+    ASSERT_NO_THROW(restaurant.close());
+    ASSERT_TRUE(restaurant.isClosed());
+}
+
 TEST(OrderTest, getWaitingTimeStr_one_min)
 {
     Table tbl(Table::Position(3, 5, 0), 4);
