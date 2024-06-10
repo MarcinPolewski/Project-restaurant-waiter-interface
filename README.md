@@ -8,7 +8,7 @@ Celem projektu było stworzenie aplikacji typu POS(Point Of Sale) do obsługi za
 
 ![diagram UML](restaurant_uml.png)
 ## Działanie
-Aby uruchomić program, należy go skompilować, a następnie wykonać plik "gui.cpp". Po interfejsie należy poruszać się strzałkami, a zatwierdzać przyciskiem Enter. Na górze widoczny jest "TopBar", a na dole "MainScreen" zawierający stoliki. Na jego środku będą wyświetlane okienka. W przypadku uzyskania komunikatu o zamałym oknie, nalezy je zwiększyć, bądź zmniejszyć czcionke terminale(cntr + '-'). Po poprawnym uruchomieniu powinien być widoczny ekran główny przedstawiający stoliki oraz pasek na górze(zwanym dalej TopBar-em). Po interfejscie nawiguje się guzikami strzałek i enterem. Wszystkie dane są wczytywane z plików csv zawartych w folderze memoryHandlerConf. 
+Aby uruchomić program, należy go skompilować, a następnie wykonać plik "gui.cpp". Po interfejsie należy poruszać się strzałkami, a zatwierdzać przyciskiem Enter. Na górze widoczny jest "TopBar", a na dole "MainScreen" zawierający stoliki. Na jego środku będą wyświetlane okienka. W przypadku uzyskania komunikatu o za małym oknie, należy je zwiększyć bądź zmniejszyć czcionkę terminala (Ctrl + '-'). Po poprawnym uruchomieniu powinien być widoczny ekran główny przedstawiający stoliki oraz pasek na górze (zwany dalej TopBar-em). Wszystkie dane są wczytywane z plików CSV zawartych w folderze memoryHandlerConf.
 
 ### TopBar zawiera przyciski do:
 - zmiany profilu kelnera. Wszystkie wykonywane akcje będą przypisywane do tego kelnera, a w okienkach do przeglądu zamówień będą się wyświetlać tylko jego zamówienia. Każdy kelner jednak może wejść do dowolnego zamówienia przypisanego do stolika.
