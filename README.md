@@ -33,3 +33,8 @@ Interfejs graficzny został wykonany w ncurses. W pliku gui.cpp przechwytywane j
 
 ## Wnioski - Michał
 Największą trudnością w tym projekcie było ustanowienie jego struktury. Od samego początku zależało nam na tym, aby nasze rozwiązanie było maksymalnie modularne i umożliwiało jego dalszy rozwój bez konieczności znacznej ingerencji w szkielet całej aplikacji. Wobec tego niektóre komponenty, mogą wydawać się zaimplementowane pozornie na wyrost, jednak dzięki temu w każdym momencie można je wymienić na bardziej wyspecjalizowane, wykonujące określone zadania. Nasz diagram UML zmieniał się i ewoluował aż do samego końca pracy. Jednak z każdą zmianą coraz bardziej się do niego przekonywaliśmy, a nasze pierwotne dosyć swobodne założenia ulegały konkretyzacji w coraz większym stopniu. O ile na początku pracy, było to kolokwialnie ujmując "błądzenie po omacku" o tyle pod koniec każdy z członków zespołu podzielał tą samą wizje rozwoju.
+
+## zewnętrzne biblioteki
+Do czytania plików .csv została wykorzsytana ponizsza biblioteka. W pliku LICENSE.third-party została zawarta licencja.
+https://github.com/ben-strasser/fast-cpp-csv-parser.git
+
