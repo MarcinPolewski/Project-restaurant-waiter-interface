@@ -1,39 +1,45 @@
 # Restaurant
-## Dane autorów
+## Author Information
 - Michał Gryglicki
 - Marcin Polewski
 
-## Temat projektu
-Celem projektu było stworzenie aplikacji typu POS(Point Of Sale) do obsługi zamówień przez kelnera. W tym celu stworzyliśmy bibliotekę ***restaurant***, zawierającą implementację poszczególnych klas(składowych) restauracji, wyróżnionych na diagramie UML zamieszczonym poniżej.
+## Project Topic
+The goal of the project was to create a POS (Point Of Sale) application for order management by a waiter. To achieve this, we created a library called ***restaurant***, containing implementations of various restaurant components, as shown in the UML diagram below.
 
-![diagram UML](restaurant_uml.png)
-## Działanie
-Aby uruchomić program, należy go skompilować, a następnie wykonać plik "gui.cpp". Po interfejsie należy poruszać się strzałkami, a zatwierdzać przyciskiem Enter. Na górze widoczny jest "TopBar", a na dole "MainScreen" zawierający stoliki. Na jego środku będą wyświetlane okienka. W przypadku uzyskania komunikatu o za małym oknie, należy je zwiększyć bądź zmniejszyć czcionkę terminala (Ctrl + '-'). Po poprawnym uruchomieniu powinien być widoczny ekran główny przedstawiający stoliki oraz pasek na górze (zwany dalej TopBar-em). Wszystkie dane są wczytywane z plików CSV zawartych w folderze memoryHandlerConf.
+![UML diagram](photos_for_readme/restaurant_uml.png)
 
-### TopBar zawiera przyciski do:
-- zmiany profilu kelnera. Wszystkie wykonywane akcje będą przypisywane do tego kelnera, a w okienkach do przeglądu zamówień będą się wyświetlać tylko jego zamówienia. Każdy kelner jednak może wejść do dowolnego zamówienia przypisanego do stolika.
-- przeglądu zamówień zdalnych przypisanych do kelnera, w nawiasie wyświetlana jest ich liczba.
-- przeglądu zamówień lokalnych przypisanych do kelnera, w nawiasie wyświetlana jest ich liczba.
-- przeglądania menu. Wyświetla się lista dostępnych elementów, a klikając na dany element, można uzyskać dodatkowe informacje.
-- zamknięcia restauracji. Jest to możliwe tylko wtedy, kiedy nie ma aktualnie realizowanych zamówień - wszystkie muszą być zamknięte.
+## Functionality
+To run the program, you need to compile it and then execute the "gui.cpp" file. Navigate the interface using the arrow keys and confirm actions with the Enter key. At the top, there is a "TopBar," and at the bottom, there is the "MainScreen" displaying the tables. In the center, pop-up windows will appear. If you receive a message about the window being too small, increase the window size or reduce the terminal font (Ctrl + '-'). Upon correct launch, the main screen should display tables and a top bar (referred to as TopBar). All data is loaded from CSV files contained in the memoryHandlerConf folder.
 
-### Obsługa zamówień
-Klikając na stolik, mamy dwie opcje. Jeśli do niego nie jest przypisane zamówienie, to zostaniemy o tym powiadomieni i zapytani, czy chcemy je utworzyć. W przeciwnym wypadku pokaże się widok zamówienia. Na górze zostaną wyświetlone podstawowe informacje, poniżej będzie lista zamówionych obiektów, która ma funkcjonalność scrolla, a na samym dole będą przyciski funkcyjne. Po kliknięciu na dany element zamówienia zostanie wyświetlony widok tego elementu, możemy zmienić jego status czy też dać zniżkę.
+### TopBar includes buttons for:
+- Changing the waiter profile. All actions will be assigned to this waiter, and only their orders will be displayed in the review windows. However, any waiter can access any order assigned to a table.
+- Viewing remote orders assigned to the waiter, with the count displayed in parentheses.
+- Viewing local orders assigned to the waiter, with the count displayed in parentheses.
+- Browsing the menu. A list of available items is shown, and clicking on an item reveals additional information.
+- Closing the restaurant. This is only possible when no orders are currently being processed – all orders must be closed.
 
-## Klasa ServerHandler
-Jest to klasa stworzona głównie w celach pokazowych, tzn. w realnym zastosowaniu miałaby ona odpowiadać za komunikację z serwerem. Dokładniej, wysyłanie zamówionych rzeczy na serwer (które dalej byłyby przesyłane do kuchni) oraz archiwizowanie zamówień. Nie rozwijaliśmy jej dalej ze względu na to, że w tym miejscu postawiliśmy granicę naszego projektu.
+### Order Management
+Clicking on a table gives two options. If there is no order assigned to the table, you will be notified and asked if you want to create one. Otherwise, the order view will appear. At the top, basic information will be displayed, followed by a list of ordered items with scroll functionality, and functional buttons at the bottom. Clicking on an order item will display its details, allowing you to change its status or apply a discount.
+
+## ServerHandler Class
+This class was created mainly for demonstration purposes, i.e., in a real application, it would be responsible for communication with the server. Specifically, sending ordered items to the server (which would then be forwarded to the kitchen) and archiving orders. We did not develop this class further, as we set the boundary of our project here.
 
 ## GUI
-Interfejs graficzny został wykonany w ncurses. W pliku gui.cpp przechwytywane jest wejście użytkownika, a następnie przekierowywane do odpowiednich klas. Staraliśmy się zachować budowę modularną, która w łatwy sposób umożliwiła nam szybkie tworzenie kolejnych przycisków i wyskakujących okienek. Na szczególną uwagę zasługują klasy PopUpMenu i PopUpHandler. Pierwsza z nich jest klasą bazową dla poszczególnych menu w naszym interfejsie. W konstruktorze są definiowane przyciski, które muszą być umieszczone w odpowiedniej kolejności - najpierw przyciski scrolla, potem przyciski statyczne. Informacje tekstowe mogą znajdować się w dowolnym miejscu. Klasa PopUpHandler zarządza obiektami PopUpMenu. Tworzy i zamyka te obiekty. W klasie tej zastosowano strukturę stosu, co jest intuicyjne i efektywne. Niemniej jednak, takie podejście ma swoje ograniczenia - każde górne okno musi być mniejsze, ponieważ po dezaktywacji górnego okna nie można odświeżyć wszystkich pod nim. U nas została zachowana taka zasada z wyjątkiem wyskakujących błędów. Gdybyśmy mieli więcej czasu, zmienilibyśmy tę strukturę na wektor.
+The graphical interface was created using ncurses. In the gui.cpp file, user input is captured and then redirected to the appropriate classes. We aimed to maintain a modular structure, allowing us to quickly create additional buttons and pop-up windows. Noteworthy classes include PopUpMenu and PopUpHandler. The former is a base class for various menus in our interface. Buttons are defined in the constructor and must be placed in a specific order – scroll buttons first, followed by static buttons. Text information can be placed anywhere. The PopUpHandler class manages PopUpMenu objects, creating and closing these objects. A stack structure is used in this class, which is both intuitive and efficient. However, this approach has its limitations – each top window must be smaller because, after deactivating the top window, it is impossible to refresh all windows beneath it. This rule was maintained except for pop-up error messages. If we had more time, we would change this structure to a vector.
 
-## Wnioski - Marcin
-- Interfejs jest czasochłonnym elementem projektu i warto na niego zostawić dużo czasu, z pewnością więcej niż my. Naszym głównym celem było dopracowanie klas logiki, co moim zdaniem udało się osiągnąć, lecz implementacja warstwy wyświetlania na tym ucierpiała.
-- Dobrze dobrana struktura jest kluczowa, a późniejsze nakładanie na nią interfejsu jest tylko przyjemnością.
-- Wraz z partnerem, na początku, dobrze udało nam się ustalić wspólne cele, podział pracy, komunikację między klasami (diagram UML) i wspólne wzorce projektowe (struktura nazw plików, nazwy klas pisane od dużej litery itp.), co było jedną z lepszych naszych decyzji.
+## Conclusions - Marcin
+- The interface is a time-consuming part of the project, and it’s important to allocate more time to it, definitely more than we did. Our main goal was to perfect the logic classes, which I believe we achieved, but the implementation of the display layer suffered as a result.
+- A well-chosen structure is key, and later layering the interface on top is only a pleasure.
+- Together with my partner, we managed to establish shared goals, divide work, communicate between classes (UML diagram), and agree on common design patterns (file structure, class names starting with capital letters, etc.) early on, which was one of our best decisions.
 
-## Wnioski - Michał
-Największą trudnością w tym projekcie było ustanowienie jego struktury. Od samego początku zależało nam na tym, aby nasze rozwiązanie było maksymalnie modularne i umożliwiało jego dalszy rozwój bez konieczności znacznej ingerencji w szkielet całej aplikacji. Wobec tego niektóre komponenty, mogą wydawać się zaimplementowane pozornie na wyrost, jednak dzięki temu w każdym momencie można je wymienić na bardziej wyspecjalizowane, wykonujące określone zadania. Nasz diagram UML zmieniał się i ewoluował aż do samego końca pracy. Jednak z każdą zmianą coraz bardziej się do niego przekonywaliśmy, a nasze pierwotne dosyć swobodne założenia ulegały konkretyzacji w coraz większym stopniu. O ile na początku pracy, było to kolokwialnie ujmując "błądzenie po omacku" o tyle pod koniec każdy z członków zespołu podzielał tą samą wizje rozwoju.
+## Conclusions - Michał
+The biggest challenge in this project was establishing its structure. From the very beginning, we wanted our solution to be as modular as possible, allowing for future development without significant changes to the core framework. Therefore, some components may seem overly implemented, but this ensures that they can be replaced at any time with more specialized ones. Our UML diagram evolved until the very end of the project, but with each change, we became more convinced of its effectiveness, and our initial loose assumptions became more concrete. While at the start, it felt like "groping in the dark," by the end, every team member shared the same vision for development.
 
-## zewnętrzne biblioteki
-Do czytania plików .csv została wykorzystana poniższa biblioteka. Licencja została zawarta w pliku LICENSE.third-party.https://github.com/ben-strasser/fast-cpp-csv-parser.git
+## External Libraries
+The following library was used to read .csv files. The license is included in the LICENSE.third-party file. https://github.com/ben-strasser/fast-cpp-csv-parser.git
 
+# Project Photos
+![demo1](photos_for_readme/demo1.png)
+![demo2](photos_for_readme/demo2.png)
+![demo3](photos_for_readme/demo3.png)
+![demo4](photos_for_readme/demo4.png)
